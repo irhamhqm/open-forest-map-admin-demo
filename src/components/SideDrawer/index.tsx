@@ -3,10 +3,6 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import FireEventsInput from "../FireEventsInput";
 
 export default function SideDrawer() {
-  // const [type, setType] = useState<
-  //   "fire_events" | "policy" | "programs" | "soil_type" | ""
-  // >("");
-
   return (
     <div
       className="bg-white w-80 h-[100vh] fixed z-[1001] top-0 right-0 overflow-y-auto"
