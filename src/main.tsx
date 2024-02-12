@@ -5,9 +5,9 @@ import "./index.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 async function enableMocking() {
-  if (import.meta.env.PROD) {
-    return;
-  }
+  // if (import.meta.env.PROD) {
+  //   return;
+  // }
   const { worker } = await import("./mocks/browser");
   return worker.start();
 }

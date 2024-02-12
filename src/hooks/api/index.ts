@@ -6,6 +6,14 @@ import {
   getLocationServicesByLevel,
 } from "../../api";
 
+export const useGetLocationServicesLevel0 = () => {
+  return useQuery({
+    queryKey: ["location_services__level_0"],
+    queryFn: () => getLocationServicesByLevel({ level: 0 }),
+    select: ({ data }) => data,
+  });
+};
+
 export const useGetLocationServicesByLevel = (
   payload: GetLocationServicesByLevelPayload
 ) => {
@@ -14,6 +22,7 @@ export const useGetLocationServicesByLevel = (
     queryKey: ["location_services_by_level", parent_id, level],
     queryFn: () => getLocationServicesByLevel(payload),
     select: ({ data }) => data,
+    enabled: Boolean(parent_id),
   });
 };
 

@@ -7,6 +7,7 @@ import FormSelectInput from "../common/form/SelectInput";
 import {
   useGetLocationServiceById,
   useGetLocationServicesByLevel,
+  useGetLocationServicesLevel0,
 } from "../../hooks/api";
 import { LocationService } from "../../types";
 
@@ -40,7 +41,7 @@ export default function FireEventsInput() {
     },
   });
 
-  const servicesLevel0 = useGetLocationServicesByLevel({ level: 0 });
+  const servicesLevel0 = useGetLocationServicesLevel0();
   const servicesLevel1 = useGetLocationServicesByLevel({
     level: 1,
     parent_id: Number(watch("level0")),
@@ -53,7 +54,7 @@ export default function FireEventsInput() {
     level: 3,
     parent_id: Number(watch("level2")),
   });
-  const serviceById = useGetLocationServiceById({ id: watch("level0") });
+  // const serviceById = useGetLocationServiceById({ id: watch("level0") });
 
   useEffect(() => {
     const subscription = watch((value, { name, type }) =>
@@ -62,7 +63,9 @@ export default function FireEventsInput() {
     return () => subscription.unsubscribe();
   }, [watch]);
 
-  const onSubmit = (data: FormValues) => {};
+  const onSubmit = (data: FormValues) => {
+    console.log(data);
+  };
 
   return (
     <div className="overflow-y-auto h-[510px]">
@@ -118,10 +121,10 @@ export default function FireEventsInput() {
                 idPropName="regional_entity_id"
                 data={servicesLevel0.data || []}
               />
-              {!servicesLevel0.isPending &&
-                !servicesLevel0.isLoading &&
-                !servicesLevel0.isError &&
-                servicesLevel0.data?.find(
+              {!servicesLevel1.isPending &&
+                !servicesLevel1.isLoading &&
+                !servicesLevel1.isError &&
+                servicesLevel1.data?.find(
                   (value: LocationService) =>
                     value.regional_entity_id === Number(watch("level0"))
                 ) && (
@@ -142,38 +145,54 @@ export default function FireEventsInput() {
                     data={servicesLevel1.data || []}
                   />
                 )}
-              {/* <FormSelectInput
-                htmlFor="level2"
-                name="level2"
-                label="Select Location"
-                containerClass={containerClass}
-                labelClass={labelClass}
-                inputClass={selectInputClass}
-                disabled={
-                  servicesLevel2.isPending ||
-                  servicesLevel2.isLoading ||
-                  servicesLevel2.isError
-                }
-                namePropName="name"
-                idPropName="regional_entity_id"
-                data={servicesLevel2.data || []}
-              />
-              <FormSelectInput
-                htmlFor="level3"
-                name="level3"
-                label="Select Location"
-                containerClass={containerClass}
-                labelClass={labelClass}
-                inputClass={selectInputClass}
-                disabled={
-                  servicesLevel3.isPending ||
-                  servicesLevel3.isLoading ||
-                  servicesLevel3.isError
-                }
-                namePropName="name"
-                idPropName="regional_entity_id"
-                data={servicesLevel3.data || []}
-              /> */}
+              {!servicesLevel2.isPending &&
+                !servicesLevel2.isLoading &&
+                !servicesLevel2.isError &&
+                servicesLevel2.data?.find(
+                  (value: LocationService) =>
+                    value.regional_entity_id === Number(watch("level0"))
+                ) && (
+                  <FormSelectInput
+                    htmlFor="level2"
+                    name="level2"
+                    label="Select Location"
+                    containerClass={containerClass}
+                    labelClass={labelClass}
+                    inputClass={selectInputClass}
+                    disabled={
+                      servicesLevel2.isPending ||
+                      servicesLevel2.isLoading ||
+                      servicesLevel2.isError
+                    }
+                    namePropName="name"
+                    idPropName="regional_entity_id"
+                    data={servicesLevel2.data || []}
+                  />
+                )}
+              {!servicesLevel3.isPending &&
+                !servicesLevel3.isLoading &&
+                !servicesLevel3.isError &&
+                servicesLevel3.data?.find(
+                  (value: LocationService) =>
+                    value.regional_entity_id === Number(watch("level0"))
+                ) && (
+                  <FormSelectInput
+                    htmlFor="level3"
+                    name="level3"
+                    label="Select Location"
+                    containerClass={containerClass}
+                    labelClass={labelClass}
+                    inputClass={selectInputClass}
+                    disabled={
+                      servicesLevel3.isPending ||
+                      servicesLevel3.isLoading ||
+                      servicesLevel3.isError
+                    }
+                    namePropName="name"
+                    idPropName="regional_entity_id"
+                    data={servicesLevel3.data || []}
+                  />
+                )}
             </CustomTabPanel>
           </div>
           <FormTextInput
