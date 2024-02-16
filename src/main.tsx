@@ -7,11 +7,11 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 
 async function enableMocking() {
-  // if (import.meta.env.PROD) {
-  //   return;
-  // }
-  // const { worker } = await import("./mocks/browser");
-  // return worker.start();
+  if (import.meta.env.PROD) {
+    return;
+  }
+  const { worker } = await import("./mocks/browser");
+  return worker.start();
 }
 
 const queryClient = new QueryClient({
