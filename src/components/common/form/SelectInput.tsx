@@ -1,4 +1,4 @@
-import { useFormContext } from "react-hook-form";
+import { Dispatch, SetStateAction } from "react";
 import { LocationService } from "../../../types";
 
 type FormSelectInputProps = {
@@ -9,14 +9,12 @@ type FormSelectInputProps = {
   containerClass?: string;
   labelClass?: string;
   inputClass?: string;
-  idPropName?: string;
-  namePropName?: string;
   htmlFor: string;
+  value: string;
+  onChange: Dispatch<SetStateAction<string>>;
 };
 
 export default function FormSelectInput(props: FormSelectInputProps) {
-  const { register } = useFormContext();
-
   return (
     <div className={`${props.containerClass} flex flex-col`}>
       <label
@@ -27,9 +25,10 @@ export default function FormSelectInput(props: FormSelectInputProps) {
       </label>
       <select
         className={`${props.inputClass} disabled:bg-[#f2f2f2]`}
-        {...register(props.name)}
         id={props.name}
         disabled={props.disabled}
+        value={props.value}
+        onChange={(e) => props.onChange(e.target.value)}
       >
         <option
           disabled
@@ -38,7 +37,7 @@ export default function FormSelectInput(props: FormSelectInputProps) {
         >
           Select
         </option>
-        <option value="none">None</option>
+        {props.name !== "level0" && <option value="none">None</option>}
         {props.data.map((value) => (
           <option
             key={value.regional_entity_id}

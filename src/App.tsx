@@ -1,37 +1,61 @@
-import { MapContainer, TileLayer } from "react-leaflet";
+import { FeatureGroup, MapContainer, TileLayer } from "react-leaflet";
 // import { CssBaseline } from "@mui/material";
-import React from "react";
+import { useEffect, useState } from "react";
 import SideDrawer from "./components/SideDrawer";
 import Drawing from "./components/Drawing";
+import { Close, Menu } from "@mui/icons-material";
+import { useGetLocationServiceById } from "./hooks/api";
+import GeoJsonLayer from "./components/geojson";
 
 function App() {
-  // const [drawerOpen, setDrawerOpen] = useState(true);
+  const [activeTab, setActiveTab] = useState(1);
+  const [coord, setCoord] = useState<string>("");
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState<string>("");
+
+  const serviceById = useGetLocationServiceById({ id: selectedLocation });
+
+  useEffect(() => {
+    console.log(coord);
+  }, [coord]);
+
   return (
     <>
-      {/* <CssBaseline /> */}
       <MapContainer
         center={[51.505, -0.09]}
         zoom={13}
-        scrollWheelZoom={false}
+        scrollWheelZoom={true}
         style={{ height: "100vh" }}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {/* <Marker position={[51.505, -0.09]}>
-          <Popup>
-            A pretty CSS3 popup. <br /> Easily customizable.
-          </Popup>
-        </Marker> */}
-        <Drawing />
+        {serviceById.data && <GeoJsonLayer data={serviceById.data} />}
+        {activeTab === 0 && (
+          <FeatureGroup>
+            <Drawing
+              onCreate={setCoord}
+              activeTab={activeTab}
+            />
+          </FeatureGroup>
+        )}
+        {/* <GeoJSON data={serviceById.data?.geometry}></GeoJSON> */}
       </MapContainer>
-      <React.Fragment key={"right"}>
+      <button
+        className="bg-white p-2 rounded-full fixed z-[1002] top-4 right-4"
+        onClick={() => setDrawerOpen((prev) => !prev)}
+      >
+        {drawerOpen ? <Close /> : <Menu />}
+      </button>
+      {drawerOpen && (
         <SideDrawer
-        // open={drawerOpen}
-        // onClose={() => setDrawerOpen(false)}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          setSelectedLocation={setSelectedLocation}
+          loading={serviceById.isLoading}
         />
-      </React.Fragment>
+      )}
     </>
   );
 }

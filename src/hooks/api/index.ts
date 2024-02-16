@@ -22,7 +22,7 @@ export const useGetLocationServicesByLevel = (
     queryKey: ["location_services_by_level", parent_id, level],
     queryFn: () => getLocationServicesByLevel(payload),
     select: ({ data }) => data,
-    enabled: Boolean(parent_id),
+    enabled: Boolean(parent_id) && Boolean(level),
   });
 };
 

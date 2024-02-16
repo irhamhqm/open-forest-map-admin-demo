@@ -17,13 +17,7 @@ export interface LocationService {
 
 export interface LocationServiceDetail {
   geometry: {
-    coordinates: [
-      {
-        geom: string;
-        regional_area_id: number;
-        regional_entity_id: number;
-      }
-    ];
+    coordinates: number[][][];
     type: string;
   };
   properties: {
@@ -35,5 +29,14 @@ export interface LocationServiceDetail {
     regional_entity_id: number;
     type: string;
   };
-  type: string;
+  type:
+    | "Point"
+    | "MultiPoint"
+    | "LineString"
+    | "MultiLineString"
+    | "Polygon"
+    | "MultiPolygon"
+    | "GeometryCollection"
+    | "Feature"
+    | "FeatureCollection";
 }
