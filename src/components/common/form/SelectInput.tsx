@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction } from "react";
 import { LocationService } from "../../../types";
 
 type FormSelectInputProps = {
@@ -11,7 +10,7 @@ type FormSelectInputProps = {
   inputClass?: string;
   htmlFor: string;
   value: string;
-  onChange: Dispatch<SetStateAction<string>>;
+  onChange: (value: string) => void;
 };
 
 export default function FormSelectInput(props: FormSelectInputProps) {
@@ -37,7 +36,7 @@ export default function FormSelectInput(props: FormSelectInputProps) {
         >
           Select
         </option>
-        {props.name !== "level0" && <option value="none">None</option>}
+        {props.name !== "level0" && <option value="">None</option>}
         {props.data.map((value) => (
           <option
             key={value.regional_entity_id}

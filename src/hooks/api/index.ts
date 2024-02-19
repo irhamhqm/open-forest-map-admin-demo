@@ -1,10 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
+import { getLocationServiceById, getLocationServicesByLevel } from "../../api/";
 import {
   GetLocationServiceByIdPayload,
   GetLocationServicesByLevelPayload,
-  getLocationServiceById,
-  getLocationServicesByLevel,
-} from "../../api";
+} from "../../types/api";
 
 export const useGetLocationServicesLevel0 = () => {
   return useQuery({
@@ -34,5 +33,6 @@ export const useGetLocationServiceById = (
     queryFn: () => getLocationServiceById(payload),
     enabled: Boolean(payload.id),
     select: ({ data }) => data,
+    gcTime: 0,
   });
 };

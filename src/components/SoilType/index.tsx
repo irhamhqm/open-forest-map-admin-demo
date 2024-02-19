@@ -10,16 +10,14 @@ const textInputClass = "p-2 text-[#8898aa] border border-gray-400";
 
 type FormValues = {
   name: string;
-  value: string;
-  size: string;
+  description: string;
 };
 
-export default function FireEvents() {
+export default function SoilType() {
   const { watch, handleSubmit, ...rest } = useForm<FormValues>({
     defaultValues: {
       name: "",
-      value: "",
-      size: "",
+      description: "",
     },
   });
   const [date, setDate] = useState<Dayjs | null>(dayjs());
@@ -54,15 +52,8 @@ export default function FireEvents() {
             inputClass={textInputClass}
           />
           <FormTextInput
-            name="value"
-            label="Value"
-            containerClass={containerClass}
-            labelClass={labelClass}
-            inputClass={textInputClass}
-          />
-          <FormTextInput
-            name="size"
-            label="Size"
+            name="description"
+            label="description"
             containerClass={containerClass}
             labelClass={labelClass}
             inputClass={textInputClass}

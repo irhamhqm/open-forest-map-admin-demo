@@ -13,12 +13,30 @@ import {
   useGetLocationServicesByLevel,
   useGetLocationServicesLevel0,
 } from "../../hooks/api";
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useReducer } from "react";
+import SoilType from "../SoilType";
 
 const containerClass = "mb-4";
 const labelClass = "mb-2 text-[#212529]";
 const selectInputClass =
   "border border-gray-400 mt-1 text-sm font-medium p-2 w-full";
+
+function reducer(state: string[], action: { type: string; value: string }) {
+  switch (action.type) {
+    case "level0":
+      return [action.value];
+    case "level1":
+      if (action.value === "") return [state[0]];
+      return [state[0], action.value];
+    case "level2":
+      if (action.value === "") return [state[0], state[1]];
+      return [state[0], state[1], action.value];
+    case "level3":
+      if (action.value === "") return [state[0], state[1], state[2]];
+      return [state[0], state[1], state[2], action.value];
+  }
+  return state;
+}
 
 export default function SideDrawer({
   activeTab,
@@ -31,89 +49,25 @@ export default function SideDrawer({
   setSelectedLocation: Dispatch<SetStateAction<string>>;
   loading: boolean;
 }) {
-  const [level0, setLevel0] = useState<string>("");
-  const [level1, setLevel1] = useState<string>("");
-  const [level2, setLevel2] = useState<string>("");
-  const [level3, setLevel3] = useState<string>("");
-  const arr: string[] = useMemo(() => [], []);
+  const [state, dispatch] = useReducer(reducer, [""]);
 
   const servicesLevel0 = useGetLocationServicesLevel0();
   const servicesLevel1 = useGetLocationServicesByLevel({
     level: 1,
-    parent_id: Number(level0),
+    parent_id: Number(state[0]),
   });
   const servicesLevel2 = useGetLocationServicesByLevel({
     level: 2,
-    parent_id: Number(level1),
+    parent_id: Number(state[1]),
   });
   const servicesLevel3 = useGetLocationServicesByLevel({
     level: 3,
-    parent_id: Number(level2),
+    parent_id: Number(state[2]),
   });
 
   useEffect(() => {
-    if (!level0) return;
-    if (arr.length === 0) {
-      arr.push(level0);
-    } else if (arr.length >= 1) {
-      if (arr.length > 1) {
-        arr.forEach(() => {
-          if (arr.length > 1) {
-            arr.pop();
-          }
-        });
-      }
-      arr[0] = level0;
-    }
-    setSelectedLocation(arr[arr.length - 1]);
-  }, [arr, level0, setSelectedLocation]);
-
-  useEffect(() => {
-    if (level1 === "none" && arr.length === 2) {
-      arr.pop();
-    } else if (arr.length === 1) {
-      arr.push(level1);
-    } else if (arr.length >= 2) {
-      if (arr.length > 2) {
-        arr.forEach(() => {
-          if (arr.length >= 2) {
-            arr.pop();
-          }
-        });
-      }
-      arr[1] = level1;
-    }
-    setSelectedLocation(arr[arr.length - 1]);
-  }, [arr, level1, setSelectedLocation]);
-
-  useEffect(() => {
-    if (level2 === "none" && arr.length === 3) {
-      arr.pop();
-    } else if (arr.length === 2) {
-      arr.push(level2);
-    } else if (arr.length === 3) {
-      if (arr.length > 3) {
-        arr.forEach(() => {
-          if (arr.length >= 3) {
-            arr.pop();
-          }
-        });
-      }
-      arr[2] = level2;
-    }
-    setSelectedLocation(arr[arr.length - 1]);
-  }, [arr, level2, setSelectedLocation]);
-
-  useEffect(() => {
-    if (level3 === "none" && arr.length === 4) {
-      arr.pop();
-    } else if (arr.length === 3) {
-      arr.push(level3);
-    } else if (arr.length === 4) {
-      arr[3] = level3;
-    }
-    setSelectedLocation(arr[arr.length - 1]);
-  }, [arr, level3, setSelectedLocation]);
+    setSelectedLocation(state[state.length - 1]);
+  }, [state, setSelectedLocation]);
 
   return (
     <div className="bg-white w-80 h-[100vh] fixed z-[1001] top-0 right-0 overflow-y-auto">
@@ -163,13 +117,13 @@ export default function SideDrawer({
                     servicesLevel0.isError
                   }
                   data={servicesLevel0.data || []}
-                  value={level0}
-                  onChange={setLevel0}
+                  value={state[0]}
+                  onChange={(value) => dispatch({ type: "level0", value })}
                 />
                 {!servicesLevel1.isPending &&
                   !servicesLevel1.isLoading &&
                   !servicesLevel1.isError &&
-                  level1 !== "none" && (
+                  state[1] !== "none" && (
                     <FormSelectInput
                       htmlFor="level1"
                       name="level1"
@@ -183,14 +137,14 @@ export default function SideDrawer({
                         servicesLevel1.isError
                       }
                       data={servicesLevel1.data || []}
-                      value={level1}
-                      onChange={setLevel1}
+                      value={state[1]}
+                      onChange={(value) => dispatch({ type: "level1", value })}
                     />
                   )}
                 {!servicesLevel2.isPending &&
                   !servicesLevel2.isLoading &&
                   !servicesLevel2.isError &&
-                  level2 !== "none" && (
+                  state[2] !== "none" && (
                     <FormSelectInput
                       htmlFor="level2"
                       name="level2"
@@ -204,14 +158,14 @@ export default function SideDrawer({
                         servicesLevel2.isError
                       }
                       data={servicesLevel2.data || []}
-                      value={level2}
-                      onChange={setLevel2}
+                      value={state[2]}
+                      onChange={(value) => dispatch({ type: "level2", value })}
                     />
                   )}
                 {!servicesLevel3.isPending &&
                   !servicesLevel3.isLoading &&
                   !servicesLevel3.isError &&
-                  level3 !== "none" && (
+                  state[3] !== "none" && (
                     <FormSelectInput
                       htmlFor="level3"
                       name="level3"
@@ -225,8 +179,8 @@ export default function SideDrawer({
                         servicesLevel3.isError
                       }
                       data={servicesLevel3.data || []}
-                      value={level3}
-                      onChange={setLevel3}
+                      value={state[3]}
+                      onChange={(value) => dispatch({ type: "level3", value })}
                     />
                   )}
               </div>
@@ -247,51 +201,21 @@ export default function SideDrawer({
               <FireEvents />
             </AccordionDetails>
           </Accordion>
-          {/* <Accordion
-        slotProps={{ transition: { unmountOnExit: true } }}
-        disableGutters
-      >
-        <AccordionSummary
-          expandIcon={<ArrowDropDownIcon />}
-          aria-controls="panel2-content"
-          id="panel2-header"
-        >
-          <span className="text-base font-semibold">Policy</span>
-        </AccordionSummary>
-        <AccordionDetails>
-          <FireEventsInput />
-        </AccordionDetails>
-      </Accordion>
-      <Accordion
-        slotProps={{ transition: { unmountOnExit: true } }}
-        disableGutters
-      >
-        <AccordionSummary
-          expandIcon={<ArrowDropDownIcon />}
-          aria-controls="panel3-content"
-          id="panel3-header"
-        >
-          <span className="text-base font-semibold">Programs</span>
-        </AccordionSummary>
-        <AccordionDetails>
-          <FireEventsInput />
-        </AccordionDetails>
-      </Accordion>
-      <Accordion
-        slotProps={{ transition: { unmountOnExit: true } }}
-        disableGutters
-      >
-        <AccordionSummary
-          expandIcon={<ArrowDropDownIcon />}
-          aria-controls="panel4-content"
-          id="panel4-header"
-        >
-          <span className="text-base font-semibold">Soil Type</span>
-        </AccordionSummary>
-        <AccordionDetails>
-          <FireEventsInput />
-        </AccordionDetails>
-      </Accordion> */}
+          <Accordion
+            slotProps={{ transition: { unmountOnExit: true } }}
+            disableGutters
+          >
+            <AccordionSummary
+              expandIcon={<ArrowDropDownIcon />}
+              aria-controls="panel2-content"
+              id="panel2-header"
+            >
+              <span className="text-base font-semibold">Soil Type</span>
+            </AccordionSummary>
+            <AccordionDetails>
+              <SoilType />
+            </AccordionDetails>
+          </Accordion>
         </>
       )}
     </div>

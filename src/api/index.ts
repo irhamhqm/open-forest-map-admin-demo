@@ -1,19 +1,13 @@
 import axios from "axios";
-import { LocationService, LocationServiceDetail } from "../types";
-import { parseToGeojson } from "../util/";
+import {
+  GetLocationServiceByIdPayload,
+  GetLocationServiceByIdResponse,
+  GetLocationServicesByLevelPayload,
+  GetLocationServicesByLevelResponse,
+} from "../types/api";
+import { parseToGeojson } from "../util";
 
 const baseUrl = import.meta.env.VITE_API_URL;
-
-export interface GetLocationServicesByLevelPayload {
-  parent_id?: number;
-  level: number;
-}
-
-export interface GetLocationServicesByLevelResponse {
-  data: Array<LocationService>;
-  meta: null;
-  status: boolean;
-}
 
 export const getLocationServicesByLevel: (
   payload: GetLocationServicesByLevelPayload
@@ -31,16 +25,6 @@ export const getLocationServicesByLevel: (
 
   return response.data;
 };
-
-export interface GetLocationServiceByIdPayload {
-  id: string;
-}
-
-export interface GetLocationServiceByIdResponse {
-  data: LocationServiceDetail | undefined;
-  meta: null;
-  status: true;
-}
 
 export const getLocationServiceById: (
   payload: GetLocationServiceByIdPayload

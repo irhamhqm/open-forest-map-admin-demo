@@ -20,6 +20,7 @@ export interface LocationServiceDetail {
     coordinates: number[][][];
     type: string;
   };
+  // old method
   properties: {
     meta: {
       code: string;
@@ -29,6 +30,15 @@ export interface LocationServiceDetail {
     regional_entity_id: number;
     type: string;
   };
+  // new method
+  // properties: {
+  //   child_count: number | null;
+  //   engtype: string;
+  //   entity_code: string;
+  //   level: number;
+  //   name: number;
+  //   parent_code: number | null;
+  // };
   type:
     | "Point"
     | "MultiPoint"
