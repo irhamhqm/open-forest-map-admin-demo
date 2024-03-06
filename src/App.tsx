@@ -1,31 +1,58 @@
 import { FeatureGroup, MapContainer, TileLayer } from "react-leaflet";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import SideDrawer from "./components/SideDrawer";
 import Drawing from "./components/Drawing";
 import { Close, Menu } from "@mui/icons-material";
 import { useGetLocationServiceById } from "./hooks/api";
 import GeoJsonLayer from "./components/GeoJsonLayer";
+import {
+  parseJsonToSilvanusCoord,
+  parseStringToSilvanusCoord,
+  sivalnusCoordToSilvanusGeo,
+} from "./util";
 
 function App() {
   const [activeTab, setActiveTab] = useState(1);
-  const [coord, setCoord] = useState<string>("");
+  const [drawnObj, setDrawnObj] = useState({ type: "", coordinates: "" });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<string>("");
   const [showGeo, setShowGeo] = useState(false);
 
   const serviceById = useGetLocationServiceById({ id: selectedLocation });
 
+  const partialFormattedSilvanusGeoJson = useMemo(() => {
+    let val = { coordinates: [[{ lat: 0, lon: 0 }]], type: "" };
+    if (serviceById.data?.geometry) {
+      val = {
+        coordinates: parseJsonToSilvanusCoord(
+          serviceById.data.geometry.coordinates
+        ),
+        type: "Polygon",
+      };
+    }
+    if (drawnObj.coordinates) {
+      val = {
+        coordinates: parseStringToSilvanusCoord(drawnObj.coordinates),
+        type: drawnObj.type,
+      };
+    }
+    return sivalnusCoordToSilvanusGeo(val);
+  }, [serviceById.data?.geometry, drawnObj.coordinates, drawnObj.type]);
+
   useEffect(() => {
     if (activeTab === 0) {
       setShowGeo(false);
     } else if (activeTab === 1) {
       setShowGeo(true);
+      setDrawnObj({ type: "", coordinates: "" });
     }
   }, [activeTab]);
 
   useEffect(() => {
-    console.log(coord);
-  }, [coord]);
+    // parseStringToSilvanusCoord(coord);
+    // if (serviceById.data) {
+    // }
+  }, [drawnObj, serviceById]);
 
   return (
     <>
@@ -45,7 +72,7 @@ function App() {
         {activeTab === 0 && (
           <FeatureGroup>
             <Drawing
-              onCreate={setCoord}
+              onCreate={(val) => setDrawnObj(val)}
               activeTab={activeTab}
             />
           </FeatureGroup>
@@ -63,6 +90,7 @@ function App() {
           setActiveTab={setActiveTab}
           setSelectedLocation={setSelectedLocation}
           loading={serviceById.isLoading}
+          partialGeoJson={partialFormattedSilvanusGeoJson}
         />
       )}
     </>

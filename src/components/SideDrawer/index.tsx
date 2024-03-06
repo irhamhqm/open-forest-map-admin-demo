@@ -6,15 +6,24 @@ import {
   Tabs,
 } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import FireEvents from "../FireEvents";
+import FireEvents from "./FireEvents";
 import CustomTabPanel from "../CustomTabPanel";
 import FormSelectInput from "../common/form/SelectInput";
 import {
   useGetLocationServicesByLevel,
   useGetLocationServicesLevel0,
 } from "../../hooks/api";
-import { Dispatch, SetStateAction, useEffect, useReducer } from "react";
-import SoilType from "../SoilType";
+import {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useReducer,
+} from "react";
+import SoilType from "./SoilType";
+import Policies from "./Policies";
+import Programs from "./Programs";
+import { PartialSilvanusGeoJson } from "../../types";
 
 const containerClass = "mb-4";
 const labelClass = "mb-2 text-[#212529]";
@@ -34,6 +43,13 @@ function reducer(state: string[], action: { type: string; value: string }) {
     case "level3":
       if (action.value === "") return [state[0], state[1], state[2]];
       return [state[0], state[1], state[2], action.value];
+    case "level4":
+      if (action.value === "") return [state[0], state[1], state[2], state[3]];
+      return [state[0], state[1], state[2], state[3], action.value];
+    case "level5":
+      if (action.value === "")
+        return [state[0], state[1], state[2], state[3], state[4]];
+      return [state[0], state[1], state[2], state[3], state[4], action.value];
   }
   return state;
 }
@@ -43,27 +59,45 @@ export default function SideDrawer({
   setActiveTab,
   setSelectedLocation,
   loading,
+  partialGeoJson,
 }: {
   activeTab: number;
   setActiveTab: Dispatch<SetStateAction<number>>;
   setSelectedLocation: Dispatch<SetStateAction<string>>;
   loading: boolean;
+  partialGeoJson: PartialSilvanusGeoJson;
 }) {
   const [state, dispatch] = useReducer(reducer, [""]);
 
   const servicesLevel0 = useGetLocationServicesLevel0();
   const servicesLevel1 = useGetLocationServicesByLevel({
     level: 1,
-    parent_id: Number(state[0]),
+    parent_code: state[0],
   });
   const servicesLevel2 = useGetLocationServicesByLevel({
     level: 2,
-    parent_id: Number(state[1]),
+    parent_code: state[1],
   });
   const servicesLevel3 = useGetLocationServicesByLevel({
     level: 3,
-    parent_id: Number(state[2]),
+    parent_code: state[2],
   });
+  const servicesLevel4 = useGetLocationServicesByLevel({
+    level: 4,
+    parent_code: state[3],
+  });
+  const servicesLevel5 = useGetLocationServicesByLevel({
+    level: 5,
+    parent_code: state[4],
+  });
+
+  const pilot = useMemo(() => {
+    return "indonesia";
+    // return (
+    //   servicesLevel0.data?.find((service) => service.entity_code === state[0])
+    //     ?.name || ""
+    // );
+  }, [state, servicesLevel0.data]);
 
   useEffect(() => {
     setSelectedLocation(state[state.length - 1]);
@@ -183,6 +217,48 @@ export default function SideDrawer({
                       onChange={(value) => dispatch({ type: "level3", value })}
                     />
                   )}
+                {!servicesLevel4.isPending &&
+                  !servicesLevel4.isLoading &&
+                  !servicesLevel4.isError &&
+                  state[4] !== "none" && (
+                    <FormSelectInput
+                      htmlFor="level4"
+                      name="level4"
+                      label="Administration Level 4"
+                      containerClass={containerClass}
+                      labelClass={labelClass}
+                      inputClass={selectInputClass}
+                      disabled={
+                        servicesLevel4.isPending ||
+                        servicesLevel4.isLoading ||
+                        servicesLevel4.isError
+                      }
+                      data={servicesLevel4.data || []}
+                      value={state[4]}
+                      onChange={(value) => dispatch({ type: "level4", value })}
+                    />
+                  )}
+                {!servicesLevel5.isPending &&
+                  !servicesLevel5.isLoading &&
+                  !servicesLevel5.isError &&
+                  state[5] !== "none" && (
+                    <FormSelectInput
+                      htmlFor="level5"
+                      name="level5"
+                      label="Administration Level 5"
+                      containerClass={containerClass}
+                      labelClass={labelClass}
+                      inputClass={selectInputClass}
+                      disabled={
+                        servicesLevel5.isPending ||
+                        servicesLevel5.isLoading ||
+                        servicesLevel5.isError
+                      }
+                      data={servicesLevel5.data || []}
+                      value={state[5]}
+                      onChange={(value) => dispatch({ type: "level5", value })}
+                    />
+                  )}
               </div>
             </CustomTabPanel>
           </div>
@@ -198,7 +274,10 @@ export default function SideDrawer({
               <span className="text-base font-semibold">Fire Events</span>
             </AccordionSummary>
             <AccordionDetails>
-              <FireEvents />
+              <FireEvents
+                partialGeoJson={partialGeoJson}
+                pilot={pilot}
+              />
             </AccordionDetails>
           </Accordion>
           <Accordion
@@ -213,7 +292,40 @@ export default function SideDrawer({
               <span className="text-base font-semibold">Soil Type</span>
             </AccordionSummary>
             <AccordionDetails>
-              <SoilType />
+              <SoilType
+                partialGeoJson={partialGeoJson}
+                pilot={pilot}
+              />
+            </AccordionDetails>
+          </Accordion>
+          <Accordion
+            slotProps={{ transition: { unmountOnExit: true } }}
+            disableGutters
+          >
+            <AccordionSummary
+              expandIcon={<ArrowDropDownIcon />}
+              aria-controls="panel3-content"
+              id="panel3-header"
+            >
+              <span className="text-base font-semibold">Policies</span>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Policies />
+            </AccordionDetails>
+          </Accordion>
+          <Accordion
+            slotProps={{ transition: { unmountOnExit: true } }}
+            disableGutters
+          >
+            <AccordionSummary
+              expandIcon={<ArrowDropDownIcon />}
+              aria-controls="panel4-content"
+              id="panel4-header"
+            >
+              <span className="text-base font-semibold">Programs</span>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Programs />
             </AccordionDetails>
           </Accordion>
         </>

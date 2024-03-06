@@ -1,12 +1,17 @@
 import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
 import { Circle, Polygon, Rectangle } from "leaflet";
-import { Dispatch, SetStateAction } from "react";
 import { useGeomanControls } from "react-leaflet-geoman-v2";
 
 export default function Drawing({
   onCreate,
 }: {
-  onCreate: Dispatch<SetStateAction<string>>;
+  onCreate: ({
+    type,
+    coordinates,
+  }: {
+    type: string;
+    coordinates: string;
+  }) => void;
   activeTab: number;
 }) {
   let layer: Element | undefined;
@@ -14,44 +19,60 @@ export default function Drawing({
   useGeomanControls({
     options: {
       drawText: false,
-      drawCircle: true,
+      drawCircle: false,
       drawCircleMarker: false,
       drawPolyline: false,
+      drawRectangle: false,
       drawMarker: false,
     },
     onCreate: (e) => {
-      // console.log("onCreate", e);
       if (e.shape === "Polygon") {
         if (layer) {
-          onCreate((e.layer as Polygon).getLatLngs().toString());
+          // pass LatLng as string, easier to work with because the data returned from leaflet-geom
+          // can vary
           layer.remove();
         }
         layer = (e.layer as Polygon).getElement();
-        onCreate((e.layer as Polygon).getLatLngs().toString());
+        onCreate({
+          coordinates: (e.layer as Polygon).getLatLngs().toString(),
+          type: "Polygon",
+        });
       } else if (e.shape === "Rectangle") {
         if (layer) {
-          onCreate((e.layer as Rectangle).getLatLngs().toString());
           layer.remove();
         }
         layer = (e.layer as Rectangle).getElement();
-        onCreate((e.layer as Rectangle).getLatLngs().toString());
+        onCreate({
+          coordinates: (e.layer as Rectangle).getLatLngs().toString(),
+          type: "Rectangle",
+        });
       } else if (e.shape === "Circle") {
         if (layer) {
-          onCreate((e.layer as Circle).getLatLng().toString());
           layer.remove();
         }
         layer = (e.layer as Circle).getElement();
-        onCreate((e.layer as Circle).getLatLng().toString());
+        onCreate({
+          coordinates: (e.layer as Circle).getLatLng().toString(),
+          type: "Circle",
+        });
       }
     },
     onEdit: (e) => {
-      // console.log("onEdit", e);
       if (e.shape === "Polygon") {
-        onCreate((e.layer as Polygon).getLatLngs().toString());
+        onCreate({
+          coordinates: (e.layer as Polygon).getLatLngs().toString(),
+          type: "Polygon",
+        });
       } else if (e.shape === "Rectangle") {
-        onCreate((e.layer as Rectangle).getLatLngs().toString());
+        onCreate({
+          coordinates: (e.layer as Rectangle).getLatLngs().toString(),
+          type: "Rectangle",
+        });
       } else if (e.shape === "Circle") {
-        onCreate((e.layer as Circle).getLatLng().toString());
+        onCreate({
+          coordinates: (e.layer as Circle).getLatLng().toString(),
+          type: "Circle",
+        });
       }
     },
     // eventDebugFn: console.log,

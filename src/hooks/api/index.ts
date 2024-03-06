@@ -1,8 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
-import { getLocationServiceById, getLocationServicesByLevel } from "../../api/";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
+  addFireEvent,
+  addPolicies,
+  addPrograms,
+  addSoilType,
+  getLocationServiceById,
+  getLocationServicesByLevel,
+} from "../../api/";
+import {
+  FireEventPayload,
   GetLocationServiceByIdPayload,
   GetLocationServicesByLevelPayload,
+  SoilTypePayload,
 } from "../../types/api";
 
 export const useGetLocationServicesLevel0 = () => {
@@ -16,12 +25,12 @@ export const useGetLocationServicesLevel0 = () => {
 export const useGetLocationServicesByLevel = (
   payload: GetLocationServicesByLevelPayload
 ) => {
-  const { parent_id, level } = payload;
+  const { parent_code, level } = payload;
   return useQuery({
-    queryKey: ["location_services_by_level", parent_id, level],
+    queryKey: ["location_services_by_level", parent_code, level],
     queryFn: () => getLocationServicesByLevel(payload),
     select: ({ data }) => data,
-    enabled: Boolean(parent_id) && Boolean(level),
+    enabled: Boolean(parent_code) && Boolean(level),
   });
 };
 
@@ -34,5 +43,33 @@ export const useGetLocationServiceById = (
     enabled: Boolean(payload.id),
     select: ({ data }) => data,
     gcTime: 0,
+  });
+};
+
+export const usePostFireEvent = () => {
+  return useMutation({
+    mutationKey: ["fire_event"],
+    mutationFn: (payload: FireEventPayload) => addFireEvent(payload),
+  });
+};
+
+export const usePostSoilType = () => {
+  return useMutation({
+    mutationKey: ["soil_type"],
+    mutationFn: (payload: SoilTypePayload) => addSoilType(payload),
+  });
+};
+
+export const usePostPrograms = () => {
+  return useMutation({
+    mutationKey: ["programs"],
+    mutationFn: (payload: FormData) => addPrograms(payload),
+  });
+};
+
+export const usePostPolicies = () => {
+  return useMutation({
+    mutationKey: ["policies"],
+    mutationFn: (payload: FormData) => addPolicies(payload),
   });
 };

@@ -39,8 +39,8 @@ export default function FormSelectInput(props: FormSelectInputProps) {
         {props.name !== "level0" && <option value="">None</option>}
         {props.data.map((value) => (
           <option
-            key={value.regional_entity_id}
-            value={value.regional_entity_id}
+            key={value.entity_code}
+            value={value.entity_code}
           >
             {value.name}
           </option>

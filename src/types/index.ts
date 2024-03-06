@@ -1,18 +1,10 @@
 export interface LocationService {
   child_count: number;
+  engtype: string;
+  entity_code: string;
   level: number;
-  meta: {
-    code: string;
-    country_aff: string;
-    iso: string;
-    iso_aff: string;
-    shape_area: number;
-    shape_len: number;
-  };
-  name: number;
-  parent_id?: number;
-  regional_entity_id: number;
-  type: string;
+  name: string;
+  parent_code: string;
 }
 
 export interface LocationServiceDetail {
@@ -20,25 +12,16 @@ export interface LocationServiceDetail {
     coordinates: number[][][];
     type: string;
   };
-  // old method
   properties: {
-    meta: {
-      code: string;
-    };
+    centroids: [];
+    child_count: number;
+    engtype: string;
+    entity_code: string;
+    level: number;
     name: string;
-    parent_id: number;
-    regional_entity_id: number;
-    type: string;
+    parent_code?: number;
+    polygon_count: number;
   };
-  // new method
-  // properties: {
-  //   child_count: number | null;
-  //   engtype: string;
-  //   entity_code: string;
-  //   level: number;
-  //   name: number;
-  //   parent_code: number | null;
-  // };
   type:
     | "Point"
     | "MultiPoint"
@@ -50,3 +33,14 @@ export interface LocationServiceDetail {
     | "Feature"
     | "FeatureCollection";
 }
+
+export type SilvanusCoord = { lat: number; lon: number };
+
+export type PartialSilvanusGeoJson = {
+  type: "Feature";
+  geometry: {
+    type: string;
+    coordinates: SilvanusCoord[][];
+    pilot?: string;
+  };
+};
