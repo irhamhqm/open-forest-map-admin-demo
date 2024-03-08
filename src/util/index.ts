@@ -62,9 +62,11 @@ export const sivalnusCoordToSilvanusGeo = ({
 };
 
 export const parseJsonToSilvanusCoord = (payload: number[][][]) => {
-  const res = payload[0].map((value) => {
-    return [{ lat: Number(value[0]), lon: Number(value[1]) }];
-  });
+  const res = [
+    payload[0].map((value) => {
+      return { lat: Number(value[0]), lon: Number(value[1]) };
+    }),
+  ];
   return res;
 };
 

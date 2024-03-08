@@ -38,6 +38,8 @@ export default function FireEvents({
   const onSubmit = (data: FormValues) => {
     console.log(data, partialGeoJson);
     const { type } = partialGeoJson;
+    console.log(data);
+
     mutate({
       type,
       geometry: { ...partialGeoJson.geometry, pilot },

@@ -49,7 +49,11 @@ export const useGetLocationServiceById = (
 export const usePostFireEvent = () => {
   return useMutation({
     mutationKey: ["fire_event"],
-    mutationFn: (payload: FireEventPayload) => addFireEvent(payload),
+    mutationFn: (payload: FireEventPayload) => {
+      console.log(payload);
+
+      return addFireEvent(payload);
+    },
   });
 };
 
