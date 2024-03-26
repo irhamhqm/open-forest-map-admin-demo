@@ -49,6 +49,7 @@ export default function Programs() {
           {...rest}
         >
           <form onSubmit={handleSubmit(onSubmit)}>
+            Document
             <input
               {...register("document", {
                 required: "Document file is required",
@@ -56,6 +57,7 @@ export default function Programs() {
               type="file"
               accept=".pdf"
             />
+            Translated Document
             <input
               {...register("translate")}
               type="file"
