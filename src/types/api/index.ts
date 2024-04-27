@@ -24,19 +24,15 @@ export interface GetLocationServiceByIdResponse {
 export interface FireEventPayload {
   type: string;
   properties: {
-    temporal: {
-      datetime: number;
-    };
-    data: {
-      name: string;
-      value: number;
-      size: number;
-    };
+    datetime: number;
+    name: string;
+    value: number;
+    size: number;
   };
   geometry: {
     type: string;
     coordinates: SilvanusCoord[][];
-    pilot: string;
+    // pilot: string;
   };
 }
 
@@ -53,18 +49,14 @@ export interface FireEventResponse {
 export interface SoilTypePayload {
   type: string;
   properties: {
-    temporal: {
-      datetime: number;
-    };
-    data: {
-      name: string;
-      description: string;
-    };
+    datetime: number;
+    name: string;
+    description: string;
   };
   geometry: {
     type: string;
     coordinates: SilvanusCoord[][];
-    pilot: string;
+    // pilot: string;
   };
 }
 

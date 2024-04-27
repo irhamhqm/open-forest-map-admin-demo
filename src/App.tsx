@@ -35,6 +35,7 @@ function App() {
         coordinates: parseStringToSilvanusCoord(drawnObj.coordinates),
         type: drawnObj.type,
       };
+      console.log(parseStringToSilvanusCoord(drawnObj.coordinates));
     }
     return sivalnusCoordToSilvanusGeo(val);
   }, [serviceById.data?.geometry, drawnObj.coordinates, drawnObj.type]);

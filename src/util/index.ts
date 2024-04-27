@@ -1,16 +1,19 @@
 import {
-  LocationServiceDetail,
   SilvanusCoord,
   PartialSilvanusGeoJson,
+  LocationServiceDetail,
 } from "../types";
 
 type Raw = {
   geometry: {
-    coordinates: [string];
+    wkt: [string];
     type: string;
   };
   properties: {
-    centroids: [];
+    centroid: {
+      lat: number;
+      lon: number;
+    };
     child_count: number;
     engtype: string;
     entity_code: string;
@@ -24,6 +27,7 @@ type Raw = {
 
 const parseGeom = (payload: string) => {
   const arr = payload.substring(9, payload.length - 2).split(",");
+
   const res = arr.map((val) => {
     const temp = val.split(" ");
     return [Number(temp[0]), Number(temp[1])];
@@ -33,13 +37,13 @@ const parseGeom = (payload: string) => {
 
 export const parseToGeojson = (payload: Raw | undefined) => {
   if (payload) {
-    const res = payload.geometry.coordinates.map((geom) => {
+    const res = payload.geometry.wkt.map((geom) => {
       return parseGeom(geom);
     });
 
     return {
       ...payload,
-      geometry: { ...payload.geometry, coordinates: res },
+      geometry: { type: "Polygon", coordinates: res },
     } as LocationServiceDetail;
   }
 };
@@ -56,7 +60,6 @@ export const sivalnusCoordToSilvanusGeo = ({
     geometry: {
       type,
       coordinates,
-      pilot: "",
     },
   };
 };
@@ -73,6 +76,8 @@ export const parseJsonToSilvanusCoord = (payload: number[][][]) => {
 // pass LatLng as string, easier to work with because the data returned from leaflet-geom
 // can vary
 export const parseStringToSilvanusCoord = (payload: string) => {
+  console.log(payload);
+
   const arr = payload.split("),");
   const res = arr.map((str) => {
     const temp = str.match(/LatLng\((.*)/);

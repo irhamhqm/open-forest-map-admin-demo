@@ -19,10 +19,8 @@ type FormValues = {
 
 export default function FireEvents({
   partialGeoJson,
-  pilot,
 }: {
   partialGeoJson: PartialSilvanusGeoJson;
-  pilot: string;
 }) {
   const { watch, handleSubmit, ...rest } = useForm<FormValues>({
     defaultValues: {
@@ -42,16 +40,12 @@ export default function FireEvents({
 
     mutate({
       type,
-      geometry: { ...partialGeoJson.geometry, pilot },
+      geometry: { ...partialGeoJson.geometry },
       properties: {
-        temporal: {
-          datetime: date?.unix() || dayjs().unix(),
-        },
-        data: {
-          name: data.name,
-          value: Number(data.value),
-          size: Number(data.size),
-        },
+        datetime: date?.unix() || dayjs().unix(),
+        name: data.name,
+        value: Number(data.value),
+        size: Number(data.size),
       },
     });
   };

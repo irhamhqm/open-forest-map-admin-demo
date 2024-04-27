@@ -13,7 +13,10 @@ export interface LocationServiceDetail {
     type: string;
   };
   properties: {
-    centroids: [];
+    centroid: {
+      lat: number;
+      lon: number;
+    };
     child_count: number;
     engtype: string;
     entity_code: string;

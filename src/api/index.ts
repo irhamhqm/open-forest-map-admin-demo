@@ -17,15 +17,12 @@ export const getLocationServicesByLevel: (
   payload: GetLocationServicesByLevelPayload
 ) => Promise<GetLocationServicesByLevelResponse> = async (payload) => {
   const { level, parent_code } = payload;
-  const response = await axios.get(
-    `${baseUrl}/api/location_services/hierarchy`,
-    {
-      params: {
-        level,
-        parent_code,
-      },
-    }
-  );
+  const response = await axios.get(`${baseUrl}/api/location/hierarchy`, {
+    params: {
+      level,
+      parent_code,
+    },
+  });
 
   return response.data;
 };
@@ -33,9 +30,7 @@ export const getLocationServicesByLevel: (
 export const getLocationServiceById: (
   payload: GetLocationServiceByIdPayload
 ) => Promise<GetLocationServiceByIdResponse> = async (payload) => {
-  const response = await axios.get(
-    `${baseUrl}/api/location_services/${payload.id}`
-  );
+  const response = await axios.get(`${baseUrl}/api/location/${payload.id}`);
 
   const parsedGeoJSON = parseToGeojson(response.data.data);
 

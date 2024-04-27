@@ -18,10 +18,8 @@ type FormValues = {
 
 export default function SoilType({
   partialGeoJson,
-  pilot,
 }: {
   partialGeoJson: PartialSilvanusGeoJson;
-  pilot: string;
 }) {
   const { watch, handleSubmit, ...rest } = useForm<FormValues>({
     defaultValues: {
@@ -37,15 +35,11 @@ export default function SoilType({
     const { type } = partialGeoJson;
     mutate({
       type,
-      geometry: { ...partialGeoJson.geometry, pilot },
+      geometry: { ...partialGeoJson.geometry },
       properties: {
-        temporal: {
-          datetime: date?.unix() || dayjs().unix(),
-        },
-        data: {
-          name: data.name,
-          description: data.description,
-        },
+        datetime: date?.unix() || dayjs().unix(),
+        name: data.name,
+        description: data.description,
       },
     });
   };

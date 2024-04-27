@@ -13,13 +13,7 @@ import {
   useGetLocationServicesByLevel,
   useGetLocationServicesLevel0,
 } from "../../hooks/api";
-import {
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useMemo,
-  useReducer,
-} from "react";
+import { Dispatch, SetStateAction, useEffect, useReducer } from "react";
 import SoilType from "./SoilType";
 import Policies from "./Policies";
 import Programs from "./Programs";
@@ -91,13 +85,13 @@ export default function SideDrawer({
     parent_code: state[4],
   });
 
-  const pilot = useMemo(() => {
-    return "indonesia";
-    // return (
-    //   servicesLevel0.data?.find((service) => service.entity_code === state[0])
-    //     ?.name || ""
-    // );
-  }, [state, servicesLevel0.data]);
+  // const pilot = useMemo(() => {
+  //   return "indonesia";
+  //   // return (
+  //   //   servicesLevel0.data?.find((service) => service.entity_code === state[0])
+  //   //     ?.name || ""
+  //   // );
+  // }, [state, servicesLevel0.data]);
 
   useEffect(() => {
     setSelectedLocation(state[state.length - 1]);
@@ -274,10 +268,7 @@ export default function SideDrawer({
               <span className="text-base font-semibold">Fire Events</span>
             </AccordionSummary>
             <AccordionDetails>
-              <FireEvents
-                partialGeoJson={partialGeoJson}
-                pilot={pilot}
-              />
+              <FireEvents partialGeoJson={partialGeoJson} />
             </AccordionDetails>
           </Accordion>
           <Accordion
@@ -292,10 +283,7 @@ export default function SideDrawer({
               <span className="text-base font-semibold">Soil Type</span>
             </AccordionSummary>
             <AccordionDetails>
-              <SoilType
-                partialGeoJson={partialGeoJson}
-                pilot={pilot}
-              />
+              <SoilType partialGeoJson={partialGeoJson} />
             </AccordionDetails>
           </Accordion>
           <Accordion

@@ -33,7 +33,7 @@ export default function Programs() {
       "datetime",
       date?.unix().toString() || dayjs().unix().toString()
     );
-    formData.append("pilot", "indonesia");
+    // formData.append("pilot", "indonesia");
     mutate(formData);
   };
 
