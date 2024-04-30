@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "react-vite-app-z",
+      name: "ofm-admin-demo",
       script: "npm run preview",
       args: "",
       watch: false,
