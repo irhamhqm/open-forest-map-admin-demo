@@ -1,3 +1,5 @@
+import { GeoJSONPolygon } from "wellknown";
+
 export interface LocationService {
   child_count: number;
   engtype: string;
@@ -8,10 +10,7 @@ export interface LocationService {
 }
 
 export interface LocationServiceDetail {
-  geometry: {
-    coordinates: number[][][];
-    type: string;
-  };
+  geometry: GeoJSONPolygon;
   properties: {
     centroid: {
       lat: number;
@@ -25,16 +24,7 @@ export interface LocationServiceDetail {
     parent_code?: number;
     polygon_count: number;
   };
-  type:
-    | "Point"
-    | "MultiPoint"
-    | "LineString"
-    | "MultiLineString"
-    | "Polygon"
-    | "MultiPolygon"
-    | "GeometryCollection"
-    | "Feature"
-    | "FeatureCollection";
+  type: "Feature";
 }
 
 export type SilvanusCoord = { lat: number; lon: number };
@@ -44,6 +34,5 @@ export type PartialSilvanusGeoJson = {
   geometry: {
     type: string;
     coordinates: SilvanusCoord[][];
-    pilot?: string;
   };
 };
