@@ -1,6 +1,6 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { usePostPrograms } from "../../../hooks/api";
-import { Snackbar } from "@mui/material";
+import { Box, Snackbar } from "@mui/material";
 import { useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import FormTextInput from "../../common/form/TextInput";
@@ -49,6 +49,27 @@ export default function Programs() {
           {...rest}
         >
           <form onSubmit={handleSubmit(onSubmit)}>
+            <FormTextInput
+              name="name"
+              label="Program's Name"
+              containerClass={containerClass}
+              labelClass={labelClass}
+              inputClass={textInputClass}
+            />
+            <FormTextInput
+              name="brief"
+              label="Description"
+              containerClass={containerClass}
+              labelClass={labelClass}
+              inputClass={textInputClass}
+            />
+            <FormTextInput
+              name="scope"
+              label="Size"
+              containerClass={containerClass}
+              labelClass={labelClass}
+              inputClass={textInputClass}
+            />
             Document
             <input
               {...register("document", {
@@ -63,24 +84,12 @@ export default function Programs() {
               type="file"
               accept=".pdf"
             />
-            <FormTextInput
-              name="name"
-              label="Name"
-              containerClass={containerClass}
-              labelClass={labelClass}
-              inputClass={textInputClass}
-            />
-            <FormTextInput
-              name="brief"
-              label="Brief"
-              containerClass={containerClass}
-              labelClass={labelClass}
-              inputClass={textInputClass}
-            />
-            <DatePicker
-              value={date}
-              onChange={(value) => setDate(value)}
-            />
+            <Box marginTop="16px">
+              <DatePicker
+                value={date}
+                onChange={(value) => setDate(value)}
+              />
+            </Box>
             <button
               className="bg-green-500 py-2 px-1 mt-6"
               type="submit"

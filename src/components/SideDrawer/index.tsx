@@ -256,36 +256,40 @@ export default function SideDrawer({
               </div>
             </CustomTabPanel>
           </div>
-          <Accordion
-            slotProps={{ transition: { unmountOnExit: true } }}
-            disableGutters
-          >
-            <AccordionSummary
-              expandIcon={<ArrowDropDownIcon />}
-              aria-controls="panel1-content"
-              id="panel1-header"
+          {activeTab === 0 && (
+            <Accordion
+              slotProps={{ transition: { unmountOnExit: true } }}
+              disableGutters
             >
-              <span className="text-base font-semibold">Fire Events</span>
-            </AccordionSummary>
-            <AccordionDetails>
-              <FireEvents partialGeoJson={partialGeoJson} />
-            </AccordionDetails>
-          </Accordion>
-          <Accordion
-            slotProps={{ transition: { unmountOnExit: true } }}
-            disableGutters
-          >
-            <AccordionSummary
-              expandIcon={<ArrowDropDownIcon />}
-              aria-controls="panel2-content"
-              id="panel2-header"
+              <AccordionSummary
+                expandIcon={<ArrowDropDownIcon />}
+                aria-controls="panel1-content"
+                id="panel1-header"
+              >
+                <span className="text-base font-semibold">Fire Events</span>
+              </AccordionSummary>
+              <AccordionDetails>
+                <FireEvents partialGeoJson={partialGeoJson} />
+              </AccordionDetails>
+            </Accordion>
+          )}
+          {activeTab === 0 && (
+            <Accordion
+              slotProps={{ transition: { unmountOnExit: true } }}
+              disableGutters
             >
-              <span className="text-base font-semibold">Soil Type</span>
-            </AccordionSummary>
-            <AccordionDetails>
-              <SoilType partialGeoJson={partialGeoJson} />
-            </AccordionDetails>
-          </Accordion>
+              <AccordionSummary
+                expandIcon={<ArrowDropDownIcon />}
+                aria-controls="panel2-content"
+                id="panel2-header"
+              >
+                <span className="text-base font-semibold">Soil Type</span>
+              </AccordionSummary>
+              <AccordionDetails>
+                <SoilType partialGeoJson={partialGeoJson} />
+              </AccordionDetails>
+            </Accordion>
+          )}
           <Accordion
             slotProps={{ transition: { unmountOnExit: true } }}
             disableGutters
@@ -295,7 +299,7 @@ export default function SideDrawer({
               aria-controls="panel3-content"
               id="panel3-header"
             >
-              <span className="text-base font-semibold">Policies</span>
+              <span className="text-base font-semibold">Regulation</span>
             </AccordionSummary>
             <AccordionDetails>
               <Policies />
@@ -310,7 +314,9 @@ export default function SideDrawer({
               aria-controls="panel4-content"
               id="panel4-header"
             >
-              <span className="text-base font-semibold">Programs</span>
+              <span className="text-base font-semibold">
+                Rehabilitation and Restoration Programs
+              </span>
             </AccordionSummary>
             <AccordionDetails>
               <Programs />

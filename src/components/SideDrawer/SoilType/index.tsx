@@ -5,7 +5,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { usePostSoilType } from "../../../hooks/api";
 import { PartialSilvanusGeoJson } from "../../../types";
-import { Snackbar } from "@mui/material";
+import { Box, Snackbar } from "@mui/material";
 
 const containerClass = "mb-4";
 const labelClass = "mb-2 text-[#212529]";
@@ -67,15 +67,18 @@ export default function SoilType({
             />
             <FormTextInput
               name="description"
-              label="description"
+              label="Soil Type"
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
             />
-            <DatePicker
-              value={date}
-              onChange={(value) => setDate(value)}
-            />
+            <Box>
+              Observation Date
+              <DatePicker
+                value={date}
+                onChange={(value) => setDate(value)}
+              />
+            </Box>
             <button
               className="bg-green-500 py-2 px-1 mt-6"
               type="submit"

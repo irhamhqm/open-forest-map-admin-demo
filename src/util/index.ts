@@ -43,8 +43,6 @@ export const parseToGeojson = (payload: Raw | undefined) => {
       return val.coordinates;
     });
 
-    console.log(res);
-
     return {
       ...payload,
       geometry: { type: "Polygon", coordinates: res.flat() },
@@ -80,8 +78,6 @@ export const parseJsonToSilvanusCoord = (payload: number[][][]) => {
 // pass LatLng as string, easier to work with because the data returned from leaflet-geom
 // can vary
 export const parseStringToSilvanusCoord = (payload: string) => {
-  // console.log(parse(payload));
-
   const arr = payload.split("),");
   const res = arr.map((str) => {
     const temp = str.match(/LatLng\((.*)/);

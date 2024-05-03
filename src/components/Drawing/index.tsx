@@ -1,5 +1,5 @@
 import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
-import { Circle, Polygon, Rectangle } from "leaflet";
+import { Circle, Marker, Polygon, Rectangle } from "leaflet";
 import { useGeomanControls } from "react-leaflet-geoman-v2";
 
 export default function Drawing({
@@ -23,7 +23,7 @@ export default function Drawing({
       drawCircleMarker: false,
       drawPolyline: false,
       drawRectangle: false,
-      drawMarker: false,
+      drawMarker: true,
     },
     onCreate: (e) => {
       if (e.shape === "Polygon") {
@@ -53,6 +53,15 @@ export default function Drawing({
         layer = (e.layer as Circle).getElement();
         onCreate({
           coordinates: (e.layer as Circle).getLatLng().toString(),
+          type: "Circle",
+        });
+      } else if (e.shape === "Marker") {
+        if (layer) {
+          layer.remove();
+        }
+        layer = (e.layer as Marker).getElement();
+        onCreate({
+          coordinates: (e.layer as Marker).getLatLng().toString(),
           type: "Circle",
         });
       }

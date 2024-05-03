@@ -1,6 +1,6 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { usePostPolicies } from "../../../hooks/api";
-import { Snackbar } from "@mui/material";
+import { Box, Snackbar } from "@mui/material";
 import FormTextInput from "../../common/form/TextInput";
 import { useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
@@ -49,6 +49,20 @@ export default function Policies() {
           {...rest}
         >
           <form onSubmit={handleSubmit(onSubmit)}>
+            <FormTextInput
+              name="name"
+              label="Regulation Name"
+              containerClass={containerClass}
+              labelClass={labelClass}
+              inputClass={textInputClass}
+            />
+            <FormTextInput
+              name="brief"
+              label="Brief of Regulation"
+              containerClass={containerClass}
+              labelClass={labelClass}
+              inputClass={textInputClass}
+            />
             Document
             <input
               {...register("document", {
@@ -63,24 +77,13 @@ export default function Policies() {
               type="file"
               accept=".pdf"
             />
-            <FormTextInput
-              name="name"
-              label="Name"
-              containerClass={containerClass}
-              labelClass={labelClass}
-              inputClass={textInputClass}
-            />
-            <FormTextInput
-              name="brief"
-              label="Brief"
-              containerClass={containerClass}
-              labelClass={labelClass}
-              inputClass={textInputClass}
-            />
-            <DatePicker
-              value={date}
-              onChange={(value) => setDate(value)}
-            />
+            <Box marginTop="16px">
+              Regulation Effective Date
+              <DatePicker
+                value={date}
+                onChange={(value) => setDate(value)}
+              />
+            </Box>
             <button
               className="bg-green-500 py-2 px-1 mt-6"
               type="submit"

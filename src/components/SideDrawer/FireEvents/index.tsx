@@ -5,7 +5,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { PartialSilvanusGeoJson } from "../../../types";
 import { usePostFireEvent } from "../../../hooks/api";
-import { Snackbar } from "@mui/material";
+import { Box, Snackbar } from "@mui/material";
 
 const containerClass = "mb-4";
 const labelClass = "mb-2 text-[#212529]";
@@ -73,7 +73,7 @@ export default function FireEvents({
             />
             <FormTextInput
               name="value"
-              label="Value"
+              label="Fire Severity"
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
@@ -85,10 +85,13 @@ export default function FireEvents({
               labelClass={labelClass}
               inputClass={textInputClass}
             />
-            <DatePicker
-              value={date}
-              onChange={(value) => setDate(value)}
-            />
+            <Box>
+              Date
+              <DatePicker
+                value={date}
+                onChange={(value) => setDate(value)}
+              />
+            </Box>
             <button
               className="bg-green-500 py-2 px-1 mt-6"
               type="submit"
