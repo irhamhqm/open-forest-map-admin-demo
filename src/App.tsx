@@ -37,6 +37,8 @@ function App() {
     }
   }, [activeTab]);
 
+  useEffect(() => {});
+
   return (
     <>
       <MapContainer

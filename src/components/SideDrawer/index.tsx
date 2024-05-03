@@ -290,38 +290,42 @@ export default function SideDrawer({
               </AccordionDetails>
             </Accordion>
           )}
-          <Accordion
-            slotProps={{ transition: { unmountOnExit: true } }}
-            disableGutters
-          >
-            <AccordionSummary
-              expandIcon={<ArrowDropDownIcon />}
-              aria-controls="panel3-content"
-              id="panel3-header"
+          {activeTab === 1 && (
+            <Accordion
+              slotProps={{ transition: { unmountOnExit: true } }}
+              disableGutters
             >
-              <span className="text-base font-semibold">Regulation</span>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Policies />
-            </AccordionDetails>
-          </Accordion>
-          <Accordion
-            slotProps={{ transition: { unmountOnExit: true } }}
-            disableGutters
-          >
-            <AccordionSummary
-              expandIcon={<ArrowDropDownIcon />}
-              aria-controls="panel4-content"
-              id="panel4-header"
+              <AccordionSummary
+                expandIcon={<ArrowDropDownIcon />}
+                aria-controls="panel3-content"
+                id="panel3-header"
+              >
+                <span className="text-base font-semibold">Regulation</span>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Policies />
+              </AccordionDetails>
+            </Accordion>
+          )}
+          {activeTab === 1 && (
+            <Accordion
+              slotProps={{ transition: { unmountOnExit: true } }}
+              disableGutters
             >
-              <span className="text-base font-semibold">
-                Rehabilitation and Restoration Programs
-              </span>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Programs />
-            </AccordionDetails>
-          </Accordion>
+              <AccordionSummary
+                expandIcon={<ArrowDropDownIcon />}
+                aria-controls="panel4-content"
+                id="panel4-header"
+              >
+                <span className="text-base font-semibold">
+                  Rehabilitation and Restoration Programs
+                </span>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Programs />
+              </AccordionDetails>
+            </Accordion>
+          )}
         </>
       )}
     </div>
