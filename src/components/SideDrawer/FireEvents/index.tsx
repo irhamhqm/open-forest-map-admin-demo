@@ -117,9 +117,9 @@ export default function FireEvents({
                 >
                   Select
                 </option>
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
+                <option value="low">Low Intensity</option>
+                <option value="medium">Medium Intensity</option>
+                <option value="high">High Intensity</option>
               </select>
             </div>
             <Box>

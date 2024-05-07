@@ -78,7 +78,7 @@ export default function Programs({ state }: { state: string[] }) {
               type="file"
               accept=".pdf"
             />
-            Translated Document
+            Document(English Version)
             <input
               {...register("program_file_translate", {
                 required: "Document file is required",
@@ -87,6 +87,7 @@ export default function Programs({ state }: { state: string[] }) {
               accept=".pdf"
             />
             <Box marginTop="16px">
+              Program's effective date
               <DatePicker
                 value={date}
                 onChange={(value) => setDate(value)}
