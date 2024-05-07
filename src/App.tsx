@@ -24,8 +24,10 @@ function App() {
         coordinates: parseStringToSilvanusCoord(drawnObj.coordinates),
         type: drawnObj.type,
       };
+      return sivalnusCoordToSilvanusGeo(val);
     }
-    return sivalnusCoordToSilvanusGeo(val);
+
+    return null;
   }, [drawnObj.coordinates, drawnObj.type]);
 
   useEffect(() => {

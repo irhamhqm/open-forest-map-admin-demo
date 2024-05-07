@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import FormTextInput from "../../common/form/TextInput";
 import { FormProvider, useForm } from "react-hook-form";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -10,44 +10,63 @@ import { Box, Snackbar } from "@mui/material";
 const containerClass = "mb-4";
 const labelClass = "mb-2 text-[#212529]";
 const textInputClass = "p-2 text-[#8898aa] border border-gray-400";
+const selectInputClass =
+  "border border-gray-400 mt-1 text-sm font-medium p-2 w-full";
 
 type FormValues = {
-  name: string;
-  value: string;
-  size: string;
+  fire_severity: "low" | "medium" | "high";
+  fire_size: string;
+  shapefile: File[];
 };
 
 export default function FireEvents({
   partialGeoJson,
 }: {
-  partialGeoJson: PartialSilvanusGeoJson;
+  partialGeoJson: PartialSilvanusGeoJson | null;
 }) {
-  const { watch, handleSubmit, ...rest } = useForm<FormValues>({
+  const { watch, handleSubmit, register, ...rest } = useForm<FormValues>({
     defaultValues: {
-      name: "",
-      value: "",
-      size: "",
+      fire_severity: "low",
+      fire_size: "",
     },
   });
-  const [date, setDate] = useState<Dayjs | null>(dayjs());
+  const [start, setStart] = useState<Dayjs | null>(dayjs());
+  const [end, setEnd] = useState<Dayjs | null>(dayjs());
+
+  const formattedStart = useMemo(() => {
+    return dayjs(start).format("YYYY-MM-DD");
+  }, [start]);
+
+  const formattedEnd = useMemo(() => {
+    return dayjs(end).format("YYYY-MM-DD");
+  }, [end]);
 
   const { mutate, isPending, isSuccess, isError } = usePostFireEvent();
 
   const onSubmit = (data: FormValues) => {
-    console.log(data, partialGeoJson);
-    const { type } = partialGeoJson;
-    console.log(data);
+    if (partialGeoJson?.type) {
+      mutate({
+        type: partialGeoJson.type,
+        geometry: {
+          ...partialGeoJson.geometry,
+          coordinates: partialGeoJson.geometry.coordinates.flat(),
+        },
+        properties: {
+          daterange: `${formattedStart}/${formattedEnd}`,
+          fire_severity: data.fire_severity,
+          fire_size: Number(data.fire_size),
+        },
+      });
+    } else {
+      const form = new FormData();
+      form.set("daterange", `${formattedStart}/${formattedEnd}`);
+      form.set("fire_severity", data.fire_severity);
+      form.set("fire_size", data.fire_size);
+      form.set("shapefile", data.shapefile[0]);
+      console.log(form);
 
-    mutate({
-      type,
-      geometry: { ...partialGeoJson.geometry },
-      properties: {
-        datetime: date?.unix() || dayjs().unix(),
-        name: data.name,
-        value: Number(data.value),
-        size: Number(data.size),
-      },
-    });
+      mutate(form);
+    }
   };
 
   return (
@@ -58,38 +77,62 @@ export default function FireEvents({
         <FormProvider
           watch={watch}
           handleSubmit={handleSubmit}
+          register={register}
           {...rest}
         >
           <form
             className="flex flex-col"
             onSubmit={handleSubmit(onSubmit)}
           >
+            SHP File
+            <input
+              {...register("shapefile")}
+              type="file"
+              accept=".zip"
+            />
             <FormTextInput
-              name="name"
-              label="Name"
+              name="fire_size"
+              label="Fire Size (km²)"
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
+              type="number"
             />
-            <FormTextInput
-              name="value"
-              label="Fire Severity"
-              containerClass={containerClass}
-              labelClass={labelClass}
-              inputClass={textInputClass}
-            />
-            <FormTextInput
-              name="size"
-              label="Size"
-              containerClass={containerClass}
-              labelClass={labelClass}
-              inputClass={textInputClass}
-            />
+            <div className={`${containerClass} flex flex-col`}>
+              <label
+                className={labelClass}
+                htmlFor="fire_severity"
+              >
+                Fire Severity
+              </label>
+              <select
+                id="fire_severity"
+                className={`${selectInputClass} disabled:bg-[#f2f2f2]`}
+                {...register}
+              >
+                <option
+                  disabled
+                  hidden
+                  value=""
+                >
+                  Select
+                </option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+            </div>
             <Box>
-              Date
+              Fire start date
               <DatePicker
-                value={date}
-                onChange={(value) => setDate(value)}
+                value={start}
+                onChange={(value) => setStart(value)}
+              />
+              <br />
+              Fire end date
+              <DatePicker
+                value={end}
+                onChange={(value) => setEnd(value)}
               />
             </Box>
             <button

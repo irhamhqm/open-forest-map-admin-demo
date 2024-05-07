@@ -17,7 +17,7 @@ export const getLocationServicesByLevel: (
   payload: GetLocationServicesByLevelPayload
 ) => Promise<GetLocationServicesByLevelResponse> = async (payload) => {
   const { level, parent_code } = payload;
-  const response = await axios.get(`${baseUrl}/api/location/hierarchy`, {
+  const response = await axios.get(`${baseUrl}/api/location/administrative`, {
     params: {
       level,
       parent_code,
@@ -30,7 +30,9 @@ export const getLocationServicesByLevel: (
 export const getLocationServiceById: (
   payload: GetLocationServiceByIdPayload
 ) => Promise<GetLocationServiceByIdResponse> = async (payload) => {
-  const response = await axios.get(`${baseUrl}/api/location/${payload.id}`);
+  const response = await axios.get(
+    `${baseUrl}/api/location/administrative/${payload.id}`
+  );
 
   const parsedGeoJSON = parseToGeojson(response.data.data);
 
@@ -44,7 +46,7 @@ export const getLocationServiceById: (
 export const addFireEvent: (
   payload: FireEventPayload
 ) => Promise<FireEventResponse> = async (payload) => {
-  const res = await axios.post(`${baseUrl}/api/fire_events`, payload);
+  const res = await axios.post(`${baseUrl}/api/admin/add_fire_events`, payload);
   return res.data;
 };
 

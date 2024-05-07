@@ -21,50 +21,49 @@ export interface GetLocationServiceByIdResponse {
   status: true;
 }
 
-export interface FireEventPayload {
+export type FireEventPayload = FEPayloadJSON | FEPayloadShp;
+
+type FEPayloadJSON = {
   type: string;
   properties: {
-    datetime: number;
-    name: string;
-    value: number;
-    size: number;
+    daterange: string;
+    fire_severity: "low" | "medium" | "high";
+    fire_size: number;
   };
   geometry: {
     type: string;
-    coordinates: SilvanusCoord[][];
+    coordinates: SilvanusCoord[];
     // pilot: string;
   };
-}
+};
+
+type FEPayloadShp = FormData;
 
 export interface FireEventResponse {
-  data: {
-    name: string;
-    size: number;
-    value: number;
-  };
+  data: unknown;
   meta: unknown;
   status: boolean;
 }
 
-export interface SoilTypePayload {
-  type: string;
+export type SoilTypePayload = STPayloadJSON | STPayloadShp;
+
+type STPayloadJSON = {
+  // shapefile: File;
   properties: {
-    datetime: number;
-    name: string;
-    description: string;
+    soil_type: string;
+    soil_description: string;
   };
   geometry: {
     type: string;
     coordinates: SilvanusCoord[][];
     // pilot: string;
   };
-}
+};
+
+type STPayloadShp = FormData;
 
 export interface SoilTypeResponse {
-  data: {
-    description: string;
-    name: string;
-  };
+  data: unknown;
   meta: unknown;
   status: true;
 }

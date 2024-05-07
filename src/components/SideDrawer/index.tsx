@@ -59,7 +59,7 @@ export default function SideDrawer({
   setActiveTab: Dispatch<SetStateAction<number>>;
   setSelectedLocation: Dispatch<SetStateAction<string>>;
   loading: boolean;
-  partialGeoJson: PartialSilvanusGeoJson;
+  partialGeoJson: PartialSilvanusGeoJson | null;
 }) {
   const [state, dispatch] = useReducer(reducer, [""]);
 
@@ -124,7 +124,7 @@ export default function SideDrawer({
               index={0}
             >
               <div className="bg-green-500 text-sm font-medium p-4 mb-4 text-center">
-                Use the drawing tools on the left.
+                Use the drawing tools on the left OR .shp files.
               </div>
             </CustomTabPanel>
             <CustomTabPanel

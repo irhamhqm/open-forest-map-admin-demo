@@ -19,7 +19,7 @@ type FormValues = {
 export default function SoilType({
   partialGeoJson,
 }: {
-  partialGeoJson: PartialSilvanusGeoJson;
+  partialGeoJson: PartialSilvanusGeoJson | null;
 }) {
   const { watch, handleSubmit, ...rest } = useForm<FormValues>({
     defaultValues: {

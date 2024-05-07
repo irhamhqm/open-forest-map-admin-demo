@@ -84,6 +84,9 @@ export default function Drawing({
         });
       }
     },
+    onLayerRemove: () => {
+      onCreate({ type: "", coordinates: "" });
+    },
     // eventDebugFn: console.log,
   });
   return null;
