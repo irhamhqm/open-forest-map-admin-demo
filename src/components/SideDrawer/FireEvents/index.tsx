@@ -63,7 +63,6 @@ export default function FireEvents({
       form.set("fire_severity", data.fire_severity);
       form.set("fire_size", data.fire_size);
       form.set("shapefile", data.shapefile[0]);
-      console.log(form);
 
       mutate(form);
     }
@@ -89,6 +88,7 @@ export default function FireEvents({
               {...register("shapefile")}
               type="file"
               accept=".zip"
+              disabled={Boolean(partialGeoJson?.type)}
             />
             <FormTextInput
               name="fire_size"

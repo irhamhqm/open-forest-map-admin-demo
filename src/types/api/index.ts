@@ -55,9 +55,10 @@ type STPayloadJSON = {
   };
   geometry: {
     type: string;
-    coordinates: SilvanusCoord[][];
+    coordinates: SilvanusCoord[];
     // pilot: string;
   };
+  type: string;
 };
 
 type STPayloadShp = FormData;

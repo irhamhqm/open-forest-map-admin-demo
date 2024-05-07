@@ -53,20 +53,20 @@ export const addFireEvent: (
 export const addSoilType: (
   payload: SoilTypePayload
 ) => Promise<SoilTypeResponse> = async (payload) => {
-  const res = await axios.post(`${baseUrl}/api/soil_types`, payload);
+  const res = await axios.post(`${baseUrl}/api/admin/add_soil_types`, payload);
   return res.data;
 };
 
 export const addPolicies: (payload: FormData) => Promise<unknown> = async (
   payload
 ) => {
-  const res = await axios.post(`${baseUrl}/api/policies`, payload);
+  const res = await axios.post(`${baseUrl}/api/admin/add_regulations`, payload);
   return res.data;
 };
 
 export const addPrograms: (payload: FormData) => Promise<unknown> = async (
   payload
 ) => {
-  const res = await axios.post(`${baseUrl}/api/programs`, payload);
+  const res = await axios.post(`${baseUrl}/api/admin/add_programs`, payload);
   return res.data;
 };

@@ -124,7 +124,8 @@ export default function SideDrawer({
               index={0}
             >
               <div className="bg-green-500 text-sm font-medium p-4 mb-4 text-center">
-                Use the drawing tools on the left OR .shp files.
+                Use the drawing tools on the left OR .zip files. Be sure to
+                remove the drawing before using .zip files.
               </div>
             </CustomTabPanel>
             <CustomTabPanel
@@ -303,7 +304,7 @@ export default function SideDrawer({
                 <span className="text-base font-semibold">Regulation</span>
               </AccordionSummary>
               <AccordionDetails>
-                <Policies />
+                <Policies state={state} />
               </AccordionDetails>
             </Accordion>
           )}
@@ -322,7 +323,7 @@ export default function SideDrawer({
                 </span>
               </AccordionSummary>
               <AccordionDetails>
-                <Programs />
+                <Programs state={state} />
               </AccordionDetails>
             </Accordion>
           )}

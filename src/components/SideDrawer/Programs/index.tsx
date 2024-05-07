@@ -7,32 +7,31 @@ import FormTextInput from "../../common/form/TextInput";
 import { DatePicker } from "@mui/x-date-pickers";
 
 type FormValues = {
-  document: File[];
-  translate: File[];
-  name: string;
-  brief: string;
+  program_file: File[];
+  program_file_translate: File[];
+  program_name: string;
+  program_scope: string;
+  program_budget: string;
 };
 
 const containerClass = "mb-4";
 const labelClass = "mb-2 text-[#212529]";
 const textInputClass = "p-2 text-[#8898aa] border border-gray-400";
 
-export default function Programs() {
+export default function Programs({ state }: { state: string[] }) {
   const { handleSubmit, watch, register, ...rest } = useForm<FormValues>();
   const [date, setDate] = useState<Dayjs | null>(dayjs());
   const { mutate, isPending, isError, isSuccess } = usePostPrograms();
 
   const onSubmit = (data: FormValues) => {
     const formData = new FormData();
-    //name, brief, datetime, pilot
-    formData.append("document", data.document[0]);
-    formData.append("translate", data.translate[0]);
-    formData.append("name", data.name);
-    formData.append("brief", data.brief);
-    formData.append(
-      "datetime",
-      date?.unix().toString() || dayjs().unix().toString()
-    );
+    formData.append("entity_code", state[state.length - 1]);
+    formData.append("program_file", data.program_file[0]);
+    formData.append("program_file_translate", data.program_file_translate[0]);
+    formData.append("program_name", data.program_name);
+    formData.append("program_scope", data.program_scope);
+    formData.append("program_budget", data.program_budget);
+    formData.append("datetime", dayjs(date).format("YYYY-MM-DD"));
     // formData.append("pilot", "indonesia");
     mutate(formData);
   };
@@ -50,29 +49,30 @@ export default function Programs() {
         >
           <form onSubmit={handleSubmit(onSubmit)}>
             <FormTextInput
-              name="name"
+              name="program_name"
               label="Program's Name"
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
             />
             <FormTextInput
-              name="brief"
-              label="Description"
+              name="program_scope"
+              label="Program's Scope"
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
             />
             <FormTextInput
-              name="scope"
-              label="Size"
+              name="program_budget"
+              label="Program's Budget"
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
+              type="number"
             />
             Document
             <input
-              {...register("document", {
+              {...register("program_file", {
                 required: "Document file is required",
               })}
               type="file"
@@ -80,7 +80,9 @@ export default function Programs() {
             />
             Translated Document
             <input
-              {...register("translate")}
+              {...register("program_file_translate", {
+                required: "Document file is required",
+              })}
               type="file"
               accept=".pdf"
             />

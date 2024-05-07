@@ -1,19 +1,17 @@
-import { useState } from "react";
 import FormTextInput from "../../common/form/TextInput";
 import { FormProvider, useForm } from "react-hook-form";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import dayjs, { Dayjs } from "dayjs";
 import { usePostSoilType } from "../../../hooks/api";
 import { PartialSilvanusGeoJson } from "../../../types";
-import { Box, Snackbar } from "@mui/material";
+import { Snackbar } from "@mui/material";
 
 const containerClass = "mb-4";
 const labelClass = "mb-2 text-[#212529]";
 const textInputClass = "p-2 text-[#8898aa] border border-gray-400";
 
 type FormValues = {
-  name: string;
-  description: string;
+  soil_type: string;
+  soil_description: string;
+  shapefile: File[];
 };
 
 export default function SoilType({
@@ -21,27 +19,37 @@ export default function SoilType({
 }: {
   partialGeoJson: PartialSilvanusGeoJson | null;
 }) {
-  const { watch, handleSubmit, ...rest } = useForm<FormValues>({
+  const { watch, handleSubmit, register, ...rest } = useForm<FormValues>({
     defaultValues: {
-      name: "",
-      description: "",
+      soil_type: "",
+      soil_description: "",
     },
   });
-  const [date, setDate] = useState<Dayjs | null>(dayjs());
+  // const [date, setDate] = useState<Dayjs | null>(dayjs());
   const { mutate, isPending, isError, isSuccess } = usePostSoilType();
 
   const onSubmit = (data: FormValues) => {
-    console.log(data, partialGeoJson);
-    const { type } = partialGeoJson;
-    mutate({
-      type,
-      geometry: { ...partialGeoJson.geometry },
-      properties: {
-        datetime: date?.unix() || dayjs().unix(),
-        name: data.name,
-        description: data.description,
-      },
-    });
+    if (partialGeoJson?.type) {
+      mutate({
+        type: partialGeoJson.type,
+        geometry: {
+          ...partialGeoJson.geometry,
+          coordinates: partialGeoJson.geometry.coordinates.flat(),
+        },
+        properties: {
+          // daterange: `${formattedStart}/${formattedEnd}`,
+          soil_type: data.soil_type,
+          soil_description: data.soil_description,
+        },
+      });
+    } else {
+      const form = new FormData();
+      form.set("soil_type", data.soil_type);
+      form.set("soil_description", data.soil_description);
+      form.set("shapefile", data.shapefile[0]);
+
+      mutate(form);
+    }
   };
 
   return (
@@ -52,33 +60,41 @@ export default function SoilType({
         <FormProvider
           watch={watch}
           handleSubmit={handleSubmit}
+          register={register}
           {...rest}
         >
           <form
             className="flex flex-col"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <FormTextInput
-              name="name"
-              label="Name"
-              containerClass={containerClass}
-              labelClass={labelClass}
-              inputClass={textInputClass}
+            SHP File
+            <input
+              {...register("shapefile")}
+              type="file"
+              accept=".zip"
+              disabled={Boolean(partialGeoJson?.type)}
             />
             <FormTextInput
-              name="description"
+              name="soil_type"
               label="Soil Type"
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
             />
-            <Box>
+            <FormTextInput
+              name="soil_description"
+              label="soil_description"
+              containerClass={containerClass}
+              labelClass={labelClass}
+              inputClass={textInputClass}
+            />
+            {/* <Box>
               Observation Date
               <DatePicker
                 value={date}
                 onChange={(value) => setDate(value)}
               />
-            </Box>
+            </Box> */}
             <button
               className="bg-green-500 py-2 px-1 mt-6"
               type="submit"

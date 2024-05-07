@@ -7,33 +7,33 @@ import dayjs, { Dayjs } from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers";
 
 type FormValues = {
-  document: File[];
-  translate: File[];
-  name: string;
-  brief: string;
+  regulation_file: File[];
+  regulation_file_translate: File[];
+  regulation_name: string;
+  regulation_brief: string;
 };
 
 const containerClass = "mb-4";
 const labelClass = "mb-2 text-[#212529]";
 const textInputClass = "p-2 text-[#8898aa] border border-gray-400";
 
-export default function Policies() {
+export default function Policies({ state }: { state: string[] }) {
   const { handleSubmit, watch, register, ...rest } = useForm<FormValues>();
   const [date, setDate] = useState<Dayjs | null>(dayjs());
   const { mutate, isPending, isError, isSuccess } = usePostPolicies();
 
   const onSubmit = (data: FormValues) => {
     const formData = new FormData();
-    //name, brief, datetime, pilot
-    formData.append("document", data.document[0]);
-    formData.append("translate", data.translate[0]);
-    formData.append("name", data.name);
-    formData.append("brief", data.brief);
+    formData.append("entity_code", state[state.length - 1]);
+    formData.append("regulation_file", data.regulation_file[0]);
     formData.append(
-      "datetime",
-      date?.unix().toString() || dayjs().unix().toString()
+      "regulation_file_translate",
+      data.regulation_file_translate[0]
     );
-    // formData.append("pilot", "indonesia");
+    formData.append("regulation_name", data.regulation_name);
+    formData.append("regulation_brief", data.regulation_brief);
+    formData.append("datetime", dayjs(date).format("YYYY-MM-DD"));
+
     mutate(formData);
   };
 
@@ -50,22 +50,22 @@ export default function Policies() {
         >
           <form onSubmit={handleSubmit(onSubmit)}>
             <FormTextInput
-              name="name"
-              label="Regulation Name"
+              name="regulation_name"
+              label="Regulation's Name"
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
             />
             <FormTextInput
-              name="brief"
-              label="Brief of Regulation"
+              name="regulation_bref"
+              label="Regulation's Brief"
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
             />
             Document
             <input
-              {...register("document", {
+              {...register("regulation_file", {
                 required: "Document file is required",
               })}
               type="file"
@@ -73,7 +73,9 @@ export default function Policies() {
             />
             Translated Document
             <input
-              {...register("translate")}
+              {...register("regulation_file_translate", {
+                required: "Document file is required",
+              })}
               type="file"
               accept=".pdf"
             />
