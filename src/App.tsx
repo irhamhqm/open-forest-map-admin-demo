@@ -1,11 +1,12 @@
 import { FeatureGroup, MapContainer, TileLayer } from "react-leaflet";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import SideDrawer from "./components/SideDrawer";
 import Drawing from "./components/Drawing";
 import { Close, Menu } from "@mui/icons-material";
 import { useGetLocationServiceById } from "./hooks/api";
 import GeoJsonLayer from "./components/GeoJsonLayer";
 import { parseStringToSilvanusCoord, sivalnusCoordToSilvanusGeo } from "./util";
+import { Map } from "leaflet";
 
 function App() {
   const [activeTab, setActiveTab] = useState(1);
@@ -13,6 +14,7 @@ function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<string>("");
   const [showGeo, setShowGeo] = useState(false);
+  const mapRef = useRef<Map | null>(null);
 
   const serviceById = useGetLocationServiceById({ id: selectedLocation });
 
@@ -31,6 +33,15 @@ function App() {
   }, [drawnObj.coordinates, drawnObj.type]);
 
   useEffect(() => {
+    if (serviceById.data?.properties.centroid) {
+      mapRef.current?.panTo([
+        serviceById.data?.properties.centroid.lat,
+        serviceById.data?.properties.centroid.lon,
+      ]);
+    }
+  }, [serviceById.data?.properties.centroid]);
+
+  useEffect(() => {
     if (activeTab === 0) {
       setShowGeo(false);
     } else if (activeTab === 1) {
@@ -39,8 +50,6 @@ function App() {
     }
   }, [activeTab]);
 
-  useEffect(() => {});
-
   return (
     <>
       <MapContainer
@@ -48,6 +57,7 @@ function App() {
         zoom={13}
         scrollWheelZoom={true}
         style={{ height: "100vh" }}
+        ref={mapRef}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

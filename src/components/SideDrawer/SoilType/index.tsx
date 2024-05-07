@@ -83,7 +83,7 @@ export default function SoilType({
             />
             <FormTextInput
               name="soil_description"
-              label="soil_description"
+              label="Soil Texture"
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}

@@ -71,7 +71,7 @@ export default function Policies({ state }: { state: string[] }) {
               type="file"
               accept=".pdf"
             />
-            Translated Document
+            Document(English Version)
             <input
               {...register("regulation_file_translate", {
                 required: "Document file is required",
