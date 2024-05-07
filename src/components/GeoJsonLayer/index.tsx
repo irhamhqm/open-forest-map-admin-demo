@@ -4,11 +4,7 @@ import {
   //  useMap
 } from "react-leaflet";
 // import { LocationServiceDetail } from "../../types";
-import {
-  GeoJSONFeature,
-  GeoJSONGeometryCollection,
-  GeoJSONGeometryOrNull,
-} from "wellknown";
+import { GeoJSONFeature } from "wellknown";
 // import * as L from "leaflet";
 
 export default function GeoJsonLayer({ data }: { data: GeoJSONFeature }) {
