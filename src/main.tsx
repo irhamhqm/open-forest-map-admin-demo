@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.tsx";
+import AppRouter from "./AppRouter";
 import "./index.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -28,7 +28,7 @@ enableMocking().then(() => {
     <React.StrictMode>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <QueryClientProvider client={queryClient}>
-          <App />
+          <AppRouter />
         </QueryClientProvider>
       </LocalizationProvider>
     </React.StrictMode>
