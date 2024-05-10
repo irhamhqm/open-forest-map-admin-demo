@@ -2,7 +2,10 @@ import FormTextInput from "../../common/form/TextInput";
 import { FormProvider, useForm } from "react-hook-form";
 import { usePostSoilType } from "../../../hooks/api";
 import { PartialSilvanusGeoJson } from "../../../types";
-import { Snackbar } from "@mui/material";
+import { Box, Snackbar } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers";
+import { useState } from "react";
+import dayjs, { Dayjs } from "dayjs";
 
 const containerClass = "mb-4";
 const labelClass = "mb-2 text-[#212529]";
@@ -16,8 +19,10 @@ type FormValues = {
 
 export default function SoilType({
   partialGeoJson,
+  state,
 }: {
   partialGeoJson: PartialSilvanusGeoJson | null;
+  state: string[];
 }) {
   const { watch, handleSubmit, register, ...rest } = useForm<FormValues>({
     defaultValues: {
@@ -25,8 +30,9 @@ export default function SoilType({
       soil_description: "",
     },
   });
-  // const [date, setDate] = useState<Dayjs | null>(dayjs());
+  const [date, setDate] = useState<Dayjs | null>(dayjs());
   const { mutate, isPending, isError, isSuccess } = usePostSoilType();
+  const pilot_id = null; //TODO
 
   const onSubmit = (data: FormValues) => {
     if (partialGeoJson?.type) {
@@ -42,11 +48,28 @@ export default function SoilType({
           soil_description: data.soil_description,
         },
       });
-    } else {
+    } else if (state[state.length - 1]) {
       const form = new FormData();
+      form.set("entity_code", state[state.length - 1]);
       form.set("soil_type", data.soil_type);
       form.set("soil_description", data.soil_description);
+      form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
+
+      mutate(form);
+    } else if (pilot_id) {
+      const form = new FormData();
+      form.set("pilot_id", pilot_id);
+      form.set("soil_type", data.soil_type);
+      form.set("soil_description", data.soil_description);
+      form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
+
+      mutate(form);
+    } else {
+      const form = new FormData();
       form.set("shapefile", data.shapefile[0]);
+      form.set("soil_type", data.soil_type);
+      form.set("soil_description", data.soil_description);
+      form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
 
       mutate(form);
     }
@@ -88,13 +111,13 @@ export default function SoilType({
               labelClass={labelClass}
               inputClass={textInputClass}
             />
-            {/* <Box>
+            <Box>
               Observation Date
               <DatePicker
                 value={date}
                 onChange={(value) => setDate(value)}
               />
-            </Box> */}
+            </Box>
             <button
               className="bg-green-500 py-2 px-1 mt-6"
               type="submit"

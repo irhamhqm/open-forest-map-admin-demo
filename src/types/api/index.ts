@@ -27,8 +27,9 @@ type FEPayloadJSON = {
   type: string;
   properties: {
     daterange: string;
-    fire_severity: "low" | "medium" | "high";
+    fire_intensity: "low" | "moderate" | "high";
     fire_size: number;
+    fire_type: string;
   };
   geometry: {
     type: string;
