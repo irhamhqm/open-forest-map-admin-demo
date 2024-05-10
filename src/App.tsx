@@ -7,6 +7,9 @@ import { useGetLocationServiceById } from "./hooks/api";
 import GeoJsonLayer from "./components/GeoJsonLayer";
 import { parseStringToSilvanusCoord, sivalnusCoordToSilvanusGeo } from "./util";
 import { Map } from "leaflet";
+import { useLocation } from 'react-router-dom';
+import Alert from '@mui/material/Alert';
+
 
 function App() {
   const [activeTab, setActiveTab] = useState(1);
@@ -15,6 +18,8 @@ function App() {
   const [selectedLocation, setSelectedLocation] = useState<string>("");
   const [showGeo, setShowGeo] = useState(false);
   const mapRef = useRef<Map | null>(null);
+
+  const location = useLocation();
 
   const serviceById = useGetLocationServiceById({ id: selectedLocation });
 
@@ -52,44 +57,51 @@ function App() {
 
   return (
     <>
-      <MapContainer
-        center={[51.505, -0.09]}
-        zoom={13}
-        scrollWheelZoom={true}
-        style={{ height: "100vh" }}
-        ref={mapRef}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        {serviceById.data && showGeo && drawerOpen && (
-          <GeoJsonLayer data={serviceById.data} />
+      <div>
+        {location?.state?.signedUp && (
+          <Alert severity="success">{location?.state?.message}</Alert>
         )}
-        {activeTab === 0 && (
-          <FeatureGroup>
-            <Drawing
-              onCreate={(val) => setDrawnObj(val)}
-              activeTab={activeTab}
-            />
-          </FeatureGroup>
+      </div>
+      <div>
+        <MapContainer
+          center={[51.505, -0.09]}
+          zoom={13}
+          scrollWheelZoom={true}
+          style={{ height: "100vh" }}
+          ref={mapRef}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          {serviceById.data && showGeo && drawerOpen && (
+            <GeoJsonLayer data={serviceById.data} />
+          )}
+          {activeTab === 0 && (
+            <FeatureGroup>
+              <Drawing
+                onCreate={(val) => setDrawnObj(val)}
+                activeTab={activeTab}
+              />
+            </FeatureGroup>
+          )}
+        </MapContainer>
+        <button
+          className="bg-white p-2 rounded-full fixed z-[1002] top-4 right-4"
+          onClick={() => setDrawerOpen((prev) => !prev)}
+        >
+          {drawerOpen ? <Close /> : <Menu />}
+        </button>
+        {drawerOpen && (
+          <SideDrawer
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            setSelectedLocation={setSelectedLocation}
+            loading={serviceById.isLoading}
+            partialGeoJson={partialFormattedSilvanusGeoJson}
+          />
         )}
-      </MapContainer>
-      <button
-        className="bg-white p-2 rounded-full fixed z-[1002] top-4 right-4"
-        onClick={() => setDrawerOpen((prev) => !prev)}
-      >
-        {drawerOpen ? <Close /> : <Menu />}
-      </button>
-      {drawerOpen && (
-        <SideDrawer
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          setSelectedLocation={setSelectedLocation}
-          loading={serviceById.isLoading}
-          partialGeoJson={partialFormattedSilvanusGeoJson}
-        />
-      )}
+      </div>    
     </>
   );
 }
