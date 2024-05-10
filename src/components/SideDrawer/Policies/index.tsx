@@ -2,7 +2,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { usePostPolicies } from "../../../hooks/api";
 import { Box, Snackbar } from "@mui/material";
 import FormTextInput from "../../common/form/TextInput";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers";
 
@@ -10,7 +10,8 @@ type FormValues = {
   regulation_file: File[];
   regulation_file_translate: File[];
   regulation_name: string;
-  regulation_brief: string;
+  regulation_description: string;
+  shapefile: File[];
 };
 
 const containerClass = "mb-4";
@@ -19,22 +20,50 @@ const textInputClass = "p-2 text-[#8898aa] border border-gray-400";
 
 export default function Policies({ state }: { state: string[] }) {
   const { handleSubmit, watch, register, ...rest } = useForm<FormValues>();
-  const [date, setDate] = useState<Dayjs | null>(dayjs());
   const { mutate, isPending, isError, isSuccess } = usePostPolicies();
+  // const [start, setStart] = useState<Dayjs | null>(dayjs());
+  // const [end, setEnd] = useState<Dayjs | null>(dayjs());
+  const [date, setDate] = useState<Dayjs | null>(dayjs());
+  const pilot_id = null; // TODO: get pilot id
+
+  // const formattedStart = useMemo(() => {
+  //   return dayjs(start).format("YYYY-MM-DD");
+  // }, [start]);
+
+  // const formattedEnd = useMemo(() => {
+  //   return dayjs(end).format("YYYY-MM-DD");
+  // }, [end]);
 
   const onSubmit = (data: FormValues) => {
-    const formData = new FormData();
-    formData.append("entity_code", state[state.length - 1]);
-    formData.append("regulation_file", data.regulation_file[0]);
-    formData.append(
-      "regulation_file_translate",
-      data.regulation_file_translate[0]
-    );
-    formData.append("regulation_name", data.regulation_name);
-    formData.append("regulation_brief", data.regulation_brief);
-    formData.append("datetime", dayjs(date).format("YYYY-MM-DD"));
+    const form = new FormData();
+    if (pilot_id) {
+      form.set("pilot_id", pilot_id);
+      form.set("regulation_file", data.regulation_file[0]);
+      form.set("regulation_engfile", data.regulation_file_translate[0]);
+      form.set("regulation_name", data.regulation_name);
+      form.set("regulation_description", data.regulation_description);
+      // form.set("daterange", `${formattedStart}/${formattedEnd}`);
+      form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
+    } else if (state[state.length - 1]) {
+      form.set("entity_code", state[state.length - 1]);
+      form.set("regulation_file", data.regulation_file[0]);
+      form.set("regulation_engfile", data.regulation_file_translate[0]);
+      form.set("regulation_name", data.regulation_name);
+      form.set("regulation_description", data.regulation_description);
+      // form.set("daterange", `${formattedStart}/${formattedEnd}`);
+      form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
+    } else {
+      form.set("shapefile", data.shapefile[0]);
+      form.set("regulation_file", data.regulation_file[0]);
+      form.set("regulation_engfile", data.regulation_file_translate[0]);
+      form.set("regulation_name", data.regulation_name);
+      form.set("regulation_description", data.regulation_description);
+      // form.set("daterange", `${formattedStart}/${formattedEnd}`);
+      form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
+    }
+    mutate(form);
 
-    mutate(formData);
+    // }
   };
 
   return (
@@ -49,6 +78,13 @@ export default function Policies({ state }: { state: string[] }) {
           {...rest}
         >
           <form onSubmit={handleSubmit(onSubmit)}>
+            SHP File
+            <input
+              {...register("shapefile")}
+              type="file"
+              accept=".zip"
+              disabled={Boolean(state[state.length - 1])}
+            />
             <FormTextInput
               name="regulation_name"
               label="Regulation's Name"
@@ -57,8 +93,8 @@ export default function Policies({ state }: { state: string[] }) {
               inputClass={textInputClass}
             />
             <FormTextInput
-              name="regulation_bref"
-              label="Regulation's Brief"
+              name="regulation_description"
+              label="Regulation's Description"
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
@@ -80,11 +116,22 @@ export default function Policies({ state }: { state: string[] }) {
               accept=".pdf"
             />
             <Box marginTop="16px">
-              Regulation Effective Date
+              Regulation effective date <br />
               <DatePicker
                 value={date}
                 onChange={(value) => setDate(value)}
               />
+              {/* Regulation start date
+              <DatePicker
+                value={start}
+                onChange={(value) => setStart(value)}
+              />
+              <br />
+              Regulation end date
+              <DatePicker
+                value={end}
+                onChange={(value) => setEnd(value)}
+              /> */}
             </Box>
             <button
               className="bg-green-500 py-2 px-1 mt-6"
