@@ -25,7 +25,7 @@ const validationSchema = Yup.object({
     user_display_name: Yup.string().required('Required'),
     user_affiliation: Yup.string().required('Required'),
     // user_role: Yup.string().required('Required'),
-    pilot_id: Yup.string().required('Required'),
+    // pilot_id: Yup.string().required('Required'),
   });
   
 
@@ -45,6 +45,7 @@ const SignUp = () => {
         payload["user_role"] = selectedRole;
         if(selectedRole === 'client') {
             payload["feature_ids"] = feature_ids.join(', ');
+            delete payload.pilot_id
         } else {
             const allFeaturesId = dataGetAllFeatures?.data.map((item) => (item.feature_id))
             payload["feature_ids"] = allFeaturesId?.join(', ');
@@ -143,7 +144,9 @@ const SignUp = () => {
                             </div>
                             )}
 
-                            <div className="w-full px-3 mb-6 md:mb-4">
+                            
+                            {!isFeaturesListActive && (
+                                <div className="w-full px-3 mb-6 md:mb-4">
                                 <label className="text-grey-darker mb-2 font-bold" htmlFor="pilot_id">
                                     Pilot
                                 </label>
@@ -160,6 +163,7 @@ const SignUp = () => {
                                 </Field>
                                 <ErrorMessage name="pilot_id" component="div" className="text-red-500 text-xs italic" />
                             </div>
+                            )}
 
                             <div className="w-full px-3 mb-6 md:mb-2">
                                 <div className="w-full">
