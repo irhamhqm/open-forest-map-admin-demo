@@ -14,24 +14,29 @@ const selectInputClass =
   "border border-gray-400 mt-1 text-sm font-medium p-2 w-full";
 
 type FormValues = {
-  fire_severity: "low" | "medium" | "high";
+  fire_intensity: "low" | "moderate" | "high";
   fire_size: string;
+  fire_type: string;
   shapefile: File[];
 };
 
 export default function FireEvents({
   partialGeoJson,
+  state,
 }: {
   partialGeoJson: PartialSilvanusGeoJson | null;
+  state: string[];
 }) {
   const { watch, handleSubmit, register, ...rest } = useForm<FormValues>({
     defaultValues: {
-      fire_severity: "low",
+      fire_intensity: "low",
+      fire_type: "",
       fire_size: "",
     },
   });
   const [start, setStart] = useState<Dayjs | null>(dayjs());
   const [end, setEnd] = useState<Dayjs | null>(dayjs());
+  const pilot_id = null; // TODO: get pilot id
 
   const formattedStart = useMemo(() => {
     return dayjs(start).format("YYYY-MM-DD");
@@ -53,17 +58,34 @@ export default function FireEvents({
         },
         properties: {
           daterange: `${formattedStart}/${formattedEnd}`,
-          fire_severity: data.fire_severity,
+          fire_intensity: data.fire_intensity,
+          fire_type: data.fire_type,
           fire_size: Number(data.fire_size),
         },
       });
+    } else if (pilot_id) {
+      const form = new FormData();
+      form.set("pilot_id", pilot_id);
+      form.set("daterange", `${formattedStart}/${formattedEnd}`);
+      form.set("fire_intensity", data.fire_intensity);
+      form.set("fire_size", data.fire_size);
+      form.set("fire_type", data.fire_type);
+      mutate(form);
+    } else if (state[state.length - 1]) {
+      const form = new FormData();
+      form.set("entity_code", state[state.length - 1]);
+      form.set("daterange", `${formattedStart}/${formattedEnd}`);
+      form.set("fire_intensity", data.fire_intensity);
+      form.set("fire_size", data.fire_size);
+      form.set("fire_type", data.fire_type);
+      mutate(form);
     } else {
       const form = new FormData();
-      form.set("daterange", `${formattedStart}/${formattedEnd}`);
-      form.set("fire_severity", data.fire_severity);
-      form.set("fire_size", data.fire_size);
       form.set("shapefile", data.shapefile[0]);
-
+      form.set("daterange", `${formattedStart}/${formattedEnd}`);
+      form.set("fire_intensity", data.fire_intensity);
+      form.set("fire_size", data.fire_size);
+      form.set("fire_type", data.fire_type);
       mutate(form);
     }
   };
@@ -98,15 +120,22 @@ export default function FireEvents({
               inputClass={textInputClass}
               type="number"
             />
+            <FormTextInput
+              name="fire_type"
+              label="Fire Type"
+              containerClass={containerClass}
+              labelClass={labelClass}
+              inputClass={textInputClass}
+            />
             <div className={`${containerClass} flex flex-col`}>
               <label
                 className={labelClass}
-                htmlFor="fire_severity"
+                htmlFor="fire_intensity"
               >
-                Fire Severity
+                Fire Intensity
               </label>
               <select
-                id="fire_severity"
+                id="fire_intensity"
                 className={`${selectInputClass} disabled:bg-[#f2f2f2]`}
                 {...register}
               >
@@ -118,7 +147,7 @@ export default function FireEvents({
                   Select
                 </option>
                 <option value="low">Low Intensity</option>
-                <option value="medium">Medium Intensity</option>
+                <option value="moderate">Moderate Intensity</option>
                 <option value="high">High Intensity</option>
               </select>
             </div>

@@ -1,17 +1,18 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { usePostPrograms } from "../../../hooks/api";
 import { Box, Snackbar } from "@mui/material";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import FormTextInput from "../../common/form/TextInput";
 import { DatePicker } from "@mui/x-date-pickers";
 
 type FormValues = {
   program_file: File[];
-  program_file_translate: File[];
+  program_engfile: File[];
   program_name: string;
-  program_scope: string;
-  program_budget: string;
+  program_description: string;
+  program_size: string;
+  shapefile: File[];
 };
 
 const containerClass = "mb-4";
@@ -20,20 +21,47 @@ const textInputClass = "p-2 text-[#8898aa] border border-gray-400";
 
 export default function Programs({ state }: { state: string[] }) {
   const { handleSubmit, watch, register, ...rest } = useForm<FormValues>();
-  const [date, setDate] = useState<Dayjs | null>(dayjs());
   const { mutate, isPending, isError, isSuccess } = usePostPrograms();
+  const [start, setStart] = useState<Dayjs | null>(dayjs());
+  const [end, setEnd] = useState<Dayjs | null>(dayjs());
+  const pilot_id = null; // TODO: get pilot id
+
+  const formattedStart = useMemo(() => {
+    return dayjs(start).format("YYYY-MM-DD");
+  }, [start]);
+
+  const formattedEnd = useMemo(() => {
+    return dayjs(end).format("YYYY-MM-DD");
+  }, [end]);
 
   const onSubmit = (data: FormValues) => {
-    const formData = new FormData();
-    formData.append("entity_code", state[state.length - 1]);
-    formData.append("program_file", data.program_file[0]);
-    formData.append("program_file_translate", data.program_file_translate[0]);
-    formData.append("program_name", data.program_name);
-    formData.append("program_scope", data.program_scope);
-    formData.append("program_budget", data.program_budget);
-    formData.append("datetime", dayjs(date).format("YYYY-MM-DD"));
-    // formData.append("pilot", "indonesia");
-    mutate(formData);
+    const form = new FormData();
+    if (pilot_id) {
+      form.set("pilot_id", pilot_id);
+      form.set("program_file", data.program_file[0]);
+      form.set("program_engfile", data.program_engfile[0]);
+      form.set("program_name", data.program_name);
+      form.set("program_description", data.program_description);
+      form.set("program_size", data.program_size);
+      form.set("daterange", `${formattedStart}/${formattedEnd}`);
+    } else if (state[state.length - 1]) {
+      form.set("entity_code", state[state.length - 1]);
+      form.set("program_file", data.program_file[0]);
+      form.set("program_engfile", data.program_engfile[0]);
+      form.set("program_name", data.program_name);
+      form.set("program_description", data.program_description);
+      form.set("program_size", data.program_size);
+      form.set("daterange", `${formattedStart}/${formattedEnd}`);
+    } else {
+      form.set("shapefile", data.shapefile[0]);
+      form.set("program_file", data.program_file[0]);
+      form.set("program_engfile", data.program_engfile[0]);
+      form.set("program_name", data.program_name);
+      form.set("program_description", data.program_description);
+      form.set("program_size", data.program_size);
+      form.set("daterange", `${formattedStart}/${formattedEnd}`);
+    }
+    mutate(form);
   };
 
   return (
@@ -48,23 +76,30 @@ export default function Programs({ state }: { state: string[] }) {
           {...rest}
         >
           <form onSubmit={handleSubmit(onSubmit)}>
+            SHP File
+            <input
+              {...register("shapefile")}
+              type="file"
+              accept=".zip"
+              disabled={Boolean(state[state.length - 1])}
+            />
             <FormTextInput
               name="program_name"
-              label="Program's Name"
+              label="Programme Name"
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
             />
             <FormTextInput
-              name="program_scope"
-              label="Program's Scope"
+              name="program_description"
+              label="Programme Description"
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
             />
             <FormTextInput
-              name="program_budget"
-              label="Program's Budget"
+              name="program_size"
+              label="Programme Size"
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
@@ -80,17 +115,24 @@ export default function Programs({ state }: { state: string[] }) {
             />
             Document(English Version)
             <input
-              {...register("program_file_translate", {
+              {...register("program_engfile", {
                 required: "Document file is required",
               })}
               type="file"
               accept=".pdf"
             />
             <Box marginTop="16px">
-              Program's effective date
+              Programme effective date <br />
+              Programme start date
               <DatePicker
-                value={date}
-                onChange={(value) => setDate(value)}
+                value={start}
+                onChange={(value) => setStart(value)}
+              />
+              <br />
+              Programme end date
+              <DatePicker
+                value={end}
+                onChange={(value) => setEnd(value)}
               />
             </Box>
             <button
