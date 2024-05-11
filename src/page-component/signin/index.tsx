@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom'
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { useSignIn } from "../../hooks/api/auth";
+import { useSignIn, useGetIsMe } from "../../hooks/api/auth";
 import * as Yup from 'yup';
 import Alert from '@mui/material/Alert';
 import store from 'store2'
@@ -29,6 +29,7 @@ const SignIn = () => {
     };
 
     const { mutate, isSuccess, isError, data, error } = useSignIn();
+    const { isSuccess: isSuccessGetIsMe, data: dataSuccessGetIsMe } = useGetIsMe(isSuccess);
 
     const onButtonClick = (values: any) => {
         if(values){
@@ -40,8 +41,12 @@ const SignIn = () => {
     }
 
     if (isSuccess) {
-        store.set('token', data.data)
-        navigate('/main-map', { state: { signedUp: true, message: data.meta } })
+        store.set('token', data?.data)
+        navigate('/main-map', { state: { signedUp: true, message: data?.meta } })
+    }
+
+    if (isSuccessGetIsMe) {
+        store.set('user_data', dataSuccessGetIsMe?.data)
     }
 
     return (
