@@ -99,17 +99,23 @@ export default function SoilType({
             />
             <FormTextInput
               name="soil_type"
-              label="Soil Type"
+              label="Soil Type* (Required)"
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
+              registerOption={{
+                required: "Soil type name is required",
+              }}
             />
             <FormTextInput
               name="soil_description"
-              label="Soil Texture"
+              label="Soil Texture* (Required)"
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
+              registerOption={{
+                required: "Soil texture name is required",
+              }}
             />
             <Box>
               Observation Date

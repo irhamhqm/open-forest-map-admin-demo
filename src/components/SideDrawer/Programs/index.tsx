@@ -85,17 +85,23 @@ export default function Programs({ state }: { state: string[] }) {
             />
             <FormTextInput
               name="program_name"
-              label="Programme Name"
+              label="Programme Name* (Required)"
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
+              registerOption={{
+                required: "Programme name is required",
+              }}
             />
             <FormTextInput
               name="program_description"
-              label="Programme Description"
+              label="Programme Description* (Required)"
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
+              registerOption={{
+                required: "Programme description is required",
+              }}
             />
             <FormTextInput
               name="program_size"
@@ -107,17 +113,13 @@ export default function Programs({ state }: { state: string[] }) {
             />
             Document
             <input
-              {...register("program_file", {
-                required: "Document file is required",
-              })}
+              {...register("program_file")}
               type="file"
               accept=".pdf"
             />
             Document(English Version)
             <input
-              {...register("program_engfile", {
-                required: "Document file is required",
-              })}
+              {...register("program_engfile")}
               type="file"
               accept=".pdf"
             />
