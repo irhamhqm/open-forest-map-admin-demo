@@ -9,6 +9,7 @@ import { parseStringToSilvanusCoord, sivalnusCoordToSilvanusGeo } from "./util";
 import { Map } from "leaflet";
 import { useLocation } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
+import store from 'store2'
 
 
 function App() {
@@ -59,7 +60,7 @@ function App() {
     <>
       <div>
         {location?.state?.signedUp && (
-          <Alert severity="success">{location?.state?.message}</Alert>
+          <Alert severity="success">Hello, {store.get("user_data").user_display_name}</Alert>
         )}
       </div>
       <div>

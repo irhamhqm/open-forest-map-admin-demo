@@ -36,3 +36,15 @@ export type PartialSilvanusGeoJson = {
     coordinates: SilvanusCoord[][];
   };
 };
+
+export interface IsMeData {
+  created_at: string;
+  pilot_id: number | undefined;
+  updated_at: string;
+  user_affiliation: string;
+  user_display_name: string;
+  user_email: string;
+  user_id: number;
+  user_name: string;
+  user_role: string;
+}
