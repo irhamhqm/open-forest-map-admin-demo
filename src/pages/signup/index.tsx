@@ -59,7 +59,7 @@ const SignUp = () => {
 
   const { data: dataGetAllPilots } = useGetAllPilots();
   const { data: dataGetAllFeatures } = useGetAllFeatures();
-  const { mutate, isSuccess, isError, data: dataSignUp, error } = useSignUp();
+  const { mutate, isSuccess, isError, data: dataSignUp } = useSignUp();
 
   return (
     <div className="flex-col flex justify-center items-center overflow-y-auto">
