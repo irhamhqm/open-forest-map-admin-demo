@@ -9,15 +9,20 @@ import { parseStringToSilvanusCoord, sivalnusCoordToSilvanusGeo } from "./util";
 import { Map } from "leaflet";
 import { useLocation } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
-import store from 'store2'
+import store from 'store2';
+import { useNavigate } from "react-router-dom";
 
+const admin_role = import.meta.env.VITE_NIMDA_ELOR.toLowerCase();
+const sa_admin_role = import.meta.env.VITE_NIMDA_AS_ELOR.toLowerCase();
 
 function App() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(1);
   const [drawnObj, setDrawnObj] = useState({ type: "", coordinates: "" });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<string>("");
   const [showGeo, setShowGeo] = useState(false);
+  const [isAnAdmin, setIsAnAdmin] = useState(false);
   const mapRef = useRef<Map | null>(null);
 
   const location = useLocation();
@@ -56,53 +61,93 @@ function App() {
     }
   }, [activeTab]);
 
+  useEffect(()=>{
+    const currentRole = store.get('user_data')?.user_role?.toLowerCase();
+
+    if(currentRole === admin_role || currentRole === sa_admin_role) {
+      setIsAnAdmin(true);
+    } else {
+      setIsAnAdmin(false);
+    }
+  },
+  [location?.state?.signedUp])
+
   return (
     <>
-      <div>
-        {location?.state?.signedUp && (
-          <Alert severity="success">Hello, {store.get("user_data").user_display_name}</Alert>
-        )}
-      </div>
-      <div>
-        <MapContainer
-          center={[51.505, -0.09]}
-          zoom={13}
-          scrollWheelZoom={true}
-          style={{ height: "100vh" }}
-          ref={mapRef}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          {serviceById.data && showGeo && drawerOpen && (
-            <GeoJsonLayer data={serviceById.data} />
-          )}
-          {activeTab === 0 && (
-            <FeatureGroup>
-              <Drawing
-                onCreate={(val) => setDrawnObj(val)}
-                activeTab={activeTab}
-              />
-            </FeatureGroup>
-          )}
-        </MapContainer>
-        <button
-          className="bg-white p-2 rounded-full fixed z-[1002] top-4 right-4"
-          onClick={() => setDrawerOpen((prev) => !prev)}
-        >
-          {drawerOpen ? <Close /> : <Menu />}
-        </button>
-        {drawerOpen && (
-          <SideDrawer
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            setSelectedLocation={setSelectedLocation}
-            loading={serviceById.isLoading}
-            partialGeoJson={partialFormattedSilvanusGeoJson}
-          />
-        )}
-      </div>    
+      {
+        isAnAdmin ? (
+          <>
+            <div>
+              {location?.state?.signedUp && (
+                <Alert severity="success">Hello, <b>{store.get("user_data").user_display_name} </b> {' (Admin on '} {store.get('user_data').pilot_name} {' Pilot) '} 
+                  <button 
+                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-4 rounded-full"
+                    onClick={() => {
+                      store.clear();
+                      navigate('/');
+                    }}
+                  >
+                    Sign Out
+                  </button>
+                </Alert>
+              )}
+            </div>
+            <div>
+              <MapContainer
+                center={[51.505, -0.09]}
+                zoom={13}
+                scrollWheelZoom={true}
+                style={{ height: "100vh" }}
+                ref={mapRef}
+              >
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                {serviceById.data && showGeo && drawerOpen && (
+                  <GeoJsonLayer data={serviceById.data} />
+                )}
+                {activeTab === 0 && (
+                  <FeatureGroup>
+                    <Drawing
+                      onCreate={(val) => setDrawnObj(val)}
+                      activeTab={activeTab}
+                    />
+                  </FeatureGroup>
+                )}
+              </MapContainer>
+              <button
+                className="bg-white p-2 rounded-full fixed z-[1002] top-4 right-4"
+                onClick={() => setDrawerOpen((prev) => !prev)}
+              >
+                {drawerOpen ? <Close /> : <Menu />}
+              </button>
+              {drawerOpen && (
+                <SideDrawer
+                  activeTab={activeTab}
+                  setActiveTab={setActiveTab}
+                  setSelectedLocation={setSelectedLocation}
+                  loading={serviceById.isLoading}
+                  partialGeoJson={partialFormattedSilvanusGeoJson}
+                />
+              )}
+            </div>
+          </>
+        ):(
+          <div className="h-screen flex-col flex justify-center items-center mt-[-60px]">
+          <img src={"/silvanus_icon.jpg"}/>
+          <Alert
+            variant="filled"
+            severity="error"
+            className="w-1/8 rounded-lg mt-[-60px]"
+          >
+            Sorry, you are a client. <br />
+            You have no right for accessing this page.<br />
+            Please use OFM Client Version.
+          </Alert>
+        </div>
+        )
+      }
     </>
   );
 }
