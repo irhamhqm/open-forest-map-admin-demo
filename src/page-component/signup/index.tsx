@@ -129,7 +129,7 @@ const SignUp = () => {
                             
                             {isFeaturesListActive && (
                             <div className="w-full px-3 mb-6 md:mb-4">
-                                <label className="text-grey-darker mb-2 font-bold" htmlFor="feature_ids">Select Services</label>
+                                <label className="text-grey-darker mb-2 font-bold" htmlFor="feature_ids">Select Services {'[You can choose more than one feature]'}</label>
                                 <Field as="select" multiple id="feature_ids" name="feature_ids" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                                     {dataGetAllFeatures?.data?.map((feature) => (
                                         <option 
@@ -206,7 +206,8 @@ const SignUp = () => {
                             {
                                 isError && (
                                     <Alert variant="filled" severity="error" className="mt-6 w-full mt-10 rounded-lg">
-                                        {error?.response.data.meta}
+                                        {/* {error?.response.data.meta} */}
+                                        Unexpected error occured
                                     </Alert>
                                 )
                             }
