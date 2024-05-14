@@ -87,19 +87,25 @@ export default function Policies({ state }: { state: string[] }) {
             />
             <FormTextInput
               name="regulation_name"
-              label="Regulation's Name"
+              label="Regulation's Name* (Required)"
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
+              registerOption={{
+                required: "Regulation's name is required",
+              }}
             />
             <FormTextInput
               name="regulation_description"
-              label="Regulation's Description"
+              label="Regulation's Description* (Required)"
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
+              registerOption={{
+                required: "Regulation's description is required",
+              }}
             />
-            Document
+            Document* (Required)
             <input
               {...register("regulation_file", {
                 required: "Document file is required",
@@ -109,9 +115,7 @@ export default function Policies({ state }: { state: string[] }) {
             />
             Document(English Version)
             <input
-              {...register("regulation_file_translate", {
-                required: "Document file is required",
-              })}
+              {...register("regulation_file_translate")}
               type="file"
               accept=".pdf"
             />
