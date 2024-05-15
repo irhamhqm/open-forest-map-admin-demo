@@ -1,12 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage, FieldProps } from "formik";
 import * as Yup from "yup";
 import { useGetAllPilots } from "../../hooks/api/pilot";
 import { useGetAllFeatures } from "../../hooks/api/feature";
 import { useSignUp } from "../../hooks/api/auth";
 import Alert from "@mui/material/Alert";
 import axios from 'axios';
+import Select, {ActionMeta,  MultiValue} from 'react-select';
+import makeAnimated from 'react-select/animated';
+
+const animatedComponents = makeAnimated();
+
 
 const initialValues = {
   user_name: "",
@@ -30,11 +35,28 @@ const validationSchema = Yup.object({
   // pilot_id: Yup.string().required('Required'),
 });
 
+interface Option {
+  label: string;
+  value: number;
+}
+
+interface FormValues {
+  selectedOption: string;
+}
+
 const SignUp = () => {
+  const [selectedServices, setSelectedServices] = useState<Option[]>([]);
+  const [availableServices, setAvaliableServices] = useState<Option[]>([]);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isFeaturesListActive, setIsFeaturesListActive] =
     useState<boolean>(false);
   const [selectedRole, setSelectedRole] = useState("");
+  const occupations = [
+    {value:"firefighter", label: "Firefighter"},
+    {value:"police", label: "Police"},
+    {value:"major", label: "Major"},
+    {value:"citizen", label: "Citizen"},
+  ]
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -58,9 +80,23 @@ const SignUp = () => {
     }
   };
 
+  const handleServiceSelection = (newValue: MultiValue<Option>, actionMeta: ActionMeta<Option>) => {
+    setSelectedServices(newValue as Option[])
+  };
+
   const { data: dataGetAllPilots } = useGetAllPilots();
-  const { data: dataGetAllFeatures } = useGetAllFeatures();
+  const { data: dataGetAllFeatures, isSuccess: successGetAllFeatures } = useGetAllFeatures();
   const { mutate, isSuccess, isError, data: dataSignUp, error } = useSignUp();
+
+  useEffect(()=>{
+    const features: Option[] | undefined = dataGetAllFeatures?.data.map((item) => {
+      return ({label:item.feature_name, value: item.feature_id})
+    }) ?? []
+    setAvaliableServices(features)
+  },[
+    successGetAllFeatures
+  ])
+
 
   return (
     <div className="flex-col flex justify-center items-center overflow-y-auto">
@@ -71,7 +107,7 @@ const SignUp = () => {
       <div>
         <div className="font-bold text-4xl mb-4 mt-[-60px]">Sign Up</div>
       </div>
-      <div className="pb-4">
+      <div className="pb-4 w-1/2">
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -79,6 +115,8 @@ const SignUp = () => {
         >
           <Form>
             <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col my-2">
+              
+              {/* USERNAME */}
               <div className="w-full px-3 mb-6 md:mb-4">
                 <label
                   className="text-grey-darker mb-2 font-bold"
@@ -99,6 +137,7 @@ const SignUp = () => {
                 />
               </div>
 
+              {/* EMAIL */}
               <div className="w-full px-3 mb-6 md:mb-2">
                 <label
                   className="text-grey-darker mb-2 font-bold"
@@ -119,6 +158,7 @@ const SignUp = () => {
                 />
               </div>
 
+              {/* DISPLAY NAME */}
               <div className="w-full px-3 mb-6 md:mb-4">
                 <label
                   className="text-grey-darker mb-2 font-bold"
@@ -139,6 +179,7 @@ const SignUp = () => {
                 />
               </div>
 
+              {/* USER AFFILIATION */}
               <div className="w-full px-3 mb-6 md:mb-4">
                 <label
                   className="text-grey-darker mb-2 font-bold"
@@ -159,6 +200,7 @@ const SignUp = () => {
                 />
               </div>
 
+              {/* USER ROLE */}
               <div className="w-full px-3 mb-6 md:mb-4">
                 <label
                   className="text-grey-darker mb-2 font-bold"
@@ -202,30 +244,23 @@ const SignUp = () => {
                 />
               </div>
 
+              {/* LAYANAN YANG DITAWARKAN */}
               {isFeaturesListActive && (
                 <div className="w-full px-3 mb-6 md:mb-4">
                   <label
                     className="text-grey-darker mb-2 font-bold"
                     htmlFor="feature_ids"
                   >
-                    Select Services {'[You can choose more than one]'}
+                    Select Services
                   </label>
-                  <Field
-                    as="select"
-                    multiple
-                    id="feature_ids"
+                  <Select
+                    closeMenuOnSelect={false}
+                    components={animatedComponents}
+                    isMulti
+                    options={availableServices}
+                    onChange={handleServiceSelection}
                     name="feature_ids"
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  >
-                    {dataGetAllFeatures?.data?.map((feature) => (
-                      <option
-                        key={feature.feature_id}
-                        value={feature.feature_id}
-                      >
-                        {feature.feature_name}
-                      </option>
-                    ))}
-                  </Field>
+                  />             
                   <ErrorMessage
                     name="feature_ids"
                     component="div"
@@ -235,41 +270,91 @@ const SignUp = () => {
               )}
 
               {!isFeaturesListActive && (
-                <div className="w-full px-3 mb-6 md:mb-4">
-                  <label
-                    className="text-grey-darker mb-2 font-bold"
-                    htmlFor="pilot_id"
-                  >
-                    Pilot
-                  </label>
-                  <Field
-                    name="pilot_id"
-                    as="select"
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  >
-                    <option
-                      disabled={true}
-                      value=""
+                <>
+                  {/* LAYANAN MULTILINGUAL */}
+                  <div className="w-full px-3 mb-6 md:mb-4">
+                    <label className="flex items-center space-x-2">
+                      <Field 
+                        // checked={true} 
+                        className="form-checkbox h-5 w-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" 
+                        name="is_subscribe_mas" 
+                        type="checkbox" />
+                      <span 
+                        className="ml-2 text-gray-700">
+                          I would like to subscribe <b>Multilingual Alert System</b> service
+                      </span>
+                    </label>
+                  </div>
+
+                  {/* PILOT AREA */}
+                  <div className="w-full px-3 mb-6 md:mb-4">
+                    <label
+                      className="text-grey-darker mb-2 font-bold"
+                      htmlFor="pilot_id"
                     >
-                      Select A Pilot
-                    </option>
-                    {dataGetAllPilots?.data?.map((pilot) => (
+                      Pilot
+                    </label>
+                    <Field
+                      name="pilot_id"
+                      as="select"
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    >
                       <option
-                        key={pilot.pilot_id}
-                        value={pilot.pilot_id}
+                        disabled={true}
+                        value=""
                       >
-                        {pilot.pilot_name}
+                        Select A Pilot
                       </option>
-                    ))}
-                  </Field>
-                  <ErrorMessage
-                    name="pilot_id"
-                    component="div"
-                    className="text-red-500 text-xs italic"
-                  />
-                </div>
+                      {dataGetAllPilots?.data?.map((pilot) => (
+                        <option
+                          key={pilot.pilot_id}
+                          value={pilot.pilot_id}
+                        >
+                          {pilot.pilot_name}
+                        </option>
+                      ))}
+                    </Field>
+                    <ErrorMessage
+                      name="pilot_id"
+                      component="div"
+                      className="text-red-500 text-xs italic"
+                    />
+                  </div>
+                </>
               )}
 
+              {/* OCUPATION */}
+              <div className="px-3 mb-6 md:mb-4">
+                <label className="text-grey-darker mb-2 font-bold">
+                  Occupation
+                </label>
+                <div className="grid grid-cols-2 gap-4 w-full">
+                  {occupations.map((item) => (
+                    <Field name="selectedOption" key={'Field'+item.value}>
+                    {(fieldProps: FieldProps<FormValues['selectedOption']>) => (
+                      <label 
+                        className="flex items-center p-4 bg-gray-200 rounded-lg cursor-pointer"
+                        key={'label'+item.value}
+                      >
+                        <input
+                          key={'radio' + item.value}
+                          type="radio"
+                          {...fieldProps.field}
+                          value={item.value}
+                          checked={fieldProps.field.value === item.value}
+                          className="form-radio h-4 w-4 text-indigo-600 cursor-pointer"
+                        />
+                        <span className="ml-2" key={'span'+item.value}>{item.label}</span>
+                      </label>
+                      )}
+                      </Field>
+                    )
+                  )}
+                </div>
+              </div>
+
+
+              {/* PASSWORD */}
               <div className="w-full px-3 mb-6 md:mb-2">
                 <div className="w-full">
                   <label
