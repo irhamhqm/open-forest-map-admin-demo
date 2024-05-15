@@ -6,6 +6,7 @@ import { useGetAllPilots } from "../../hooks/api/pilot";
 import { useGetAllFeatures } from "../../hooks/api/feature";
 import { useSignUp } from "../../hooks/api/auth";
 import Alert from "@mui/material/Alert";
+import axios from 'axios';
 
 const initialValues = {
   user_name: "",
@@ -59,7 +60,7 @@ const SignUp = () => {
 
   const { data: dataGetAllPilots } = useGetAllPilots();
   const { data: dataGetAllFeatures } = useGetAllFeatures();
-  const { mutate, isSuccess, isError, data: dataSignUp } = useSignUp();
+  const { mutate, isSuccess, isError, data: dataSignUp, error } = useSignUp();
 
   return (
     <div className="flex-col flex justify-center items-center overflow-y-auto">
@@ -330,15 +331,22 @@ const SignUp = () => {
                 </Alert>
               )}
               {isError && (
-                <Alert
-                  variant="filled"
-                  severity="error"
-                  className="mt-6 w-full mt-10 rounded-lg"
-                >
-                  {/* {error?.response.data.meta} */}
-                  Unexpected error occured
-                </Alert>
-              )}
+              <Alert
+                variant="filled"
+                severity="error"
+                className="w-full mt-10 rounded-lg"
+              >
+                {(axios.isAxiosError(error) && error.response) ?  (
+                <div>
+                  <p>{error.response.data.meta}</p>
+                </div>
+                ) : (
+                  <>
+                    Unexpected error occured
+                  </>
+                )}
+              </Alert>
+            )}
             </div>
           </Form>
         </Formik>

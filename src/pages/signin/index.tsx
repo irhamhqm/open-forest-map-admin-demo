@@ -6,7 +6,7 @@ import { useSignIn, useGetIsMe } from "../../hooks/api/auth";
 import * as Yup from "yup";
 import Alert from "@mui/material/Alert";
 import store from "store2";
-import { AxiosError } from 'axios'
+import axios from 'axios';
 
 const initialValues = {
   username: "",
@@ -55,10 +55,10 @@ const SignIn = () => {
     store.set("token", data?.data);
   }
 
-  console.log('error: ', error)
-
+  
   return (
     <div className="h-screen flex-col flex justify-center items-center mt-[-60px]">
+      
       <img src={"/silvanus_icon.jpg"} />
       <div>
         <div className="font-bold text-4xl mb-4 mt-[-60px]">Sign In</div>
@@ -127,12 +127,15 @@ const SignIn = () => {
                 severity="error"
                 className="w-full mt-10 rounded-lg"
               >
-                {/* {
-                  
-                  error
-                
-                } */}
-                Unexpected error occured
+                {(axios.isAxiosError(error) && error.response) ?  (
+                <div>
+                  <p>{error.response.data.meta}</p>
+                </div>
+                ) : (
+                  <>
+                    Unexpected error occured
+                  </>
+                )}
               </Alert>
             )}
           </Form>
