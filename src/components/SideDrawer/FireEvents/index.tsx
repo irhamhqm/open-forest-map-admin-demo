@@ -6,6 +6,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { PartialSilvanusGeoJson } from "../../../types";
 import { usePostFireEvent } from "../../../hooks/api";
 import { Box, Snackbar } from "@mui/material";
+import store from "store2";
 
 const containerClass = "mb-4";
 const labelClass = "mb-2 text-[#212529]";
@@ -36,7 +37,8 @@ export default function FireEvents({
   });
   const [start, setStart] = useState<Dayjs | null>(dayjs());
   const [end, setEnd] = useState<Dayjs | null>(dayjs());
-  const pilot_id = null; // TODO: get pilot id
+  const userData = store.get("user_data");
+  const pilot_id = userData?.pilot_id;
 
   const formattedStart = useMemo(() => {
     return dayjs(start).format("YYYY-MM-DD");
@@ -61,18 +63,21 @@ export default function FireEvents({
           fire_intensity: data.fire_intensity,
           fire_type: data.fire_type,
           fire_size: Number(data.fire_size),
+          pilot_id,
         },
       });
-    } else if (pilot_id) {
-      const form = new FormData();
-      form.set("pilot_id", pilot_id);
-      form.set("daterange", `${formattedStart}/${formattedEnd}`);
-      form.set("fire_intensity", data.fire_intensity);
-      form.set("fire_size", data.fire_size);
-      form.set("fire_type", data.fire_type);
-      mutate(form);
+      // } else if (pilot_id) {
+      //   const form = new FormData();
+      //   form.set("pilot_id", pilot_id);
+      //   form.set("daterange", `${formattedStart}/${formattedEnd}`);
+      //   form.set("fire_intensity", data.fire_intensity);
+      //   form.set("fire_size", data.fire_size);
+      //   form.set("fire_type", data.fire_type);
+      //   mutate(form);
     } else if (state[state.length - 1]) {
       const form = new FormData();
+
+      form.set("pilot_id", pilot_id);
       form.set("entity_code", state[state.length - 1]);
       form.set("daterange", `${formattedStart}/${formattedEnd}`);
       form.set("fire_intensity", data.fire_intensity);
@@ -81,6 +86,7 @@ export default function FireEvents({
       mutate(form);
     } else {
       const form = new FormData();
+      form.set("pilot_id", pilot_id);
       form.set("shapefile", data.shapefile[0]);
       form.set("daterange", `${formattedStart}/${formattedEnd}`);
       form.set("fire_intensity", data.fire_intensity);

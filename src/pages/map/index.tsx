@@ -1,16 +1,18 @@
 import { FeatureGroup, MapContainer, TileLayer } from "react-leaflet";
 import { useEffect, useMemo, useRef, useState } from "react";
-import SideDrawer from "./components/SideDrawer";
-import Drawing from "./components/Drawing";
-import { Close, Menu } from "@mui/icons-material";
-import { useGetLocationServiceById } from "./hooks/api";
-import GeoJsonLayer from "./components/GeoJsonLayer";
-import { parseStringToSilvanusCoord, sivalnusCoordToSilvanusGeo } from "./util";
+import SideDrawer from "../../components/SideDrawer";
+import Drawing from "../../components/Drawing";
+import { useGetLocationServiceById } from "../../hooks/api";
+import GeoJsonLayer from "../../components/GeoJsonLayer";
+import {
+  parseStringToSilvanusCoord,
+  sivalnusCoordToSilvanusGeo,
+} from "../../util";
 import { Map } from "leaflet";
-import { useLocation } from 'react-router-dom';
-import Alert from '@mui/material/Alert';
-import store from 'store2'
-
+// import { useLocation } from "react-router-dom";
+import store from "store2";
+import { useGetPilotDetails } from "../../hooks/api/pilot";
+import { GeoJSONGeometry, parse } from "wellknown";
 
 function App() {
   const [activeTab, setActiveTab] = useState(1);
@@ -19,8 +21,7 @@ function App() {
   const [selectedLocation, setSelectedLocation] = useState<string>("");
   const [showGeo, setShowGeo] = useState(false);
   const mapRef = useRef<Map | null>(null);
-
-  const location = useLocation();
+  const userData = store.get("user_data");
 
   const serviceById = useGetLocationServiceById({ id: selectedLocation });
 
@@ -37,6 +38,28 @@ function App() {
 
     return null;
   }, [drawnObj.coordinates, drawnObj.type]);
+
+  // useEffect(() => {
+  //   if (userData.user_id) {
+  //     console.log(userData.pilot_id);
+  //   }
+  // }, [userData.user_id, userData.pilot_id]);
+
+  const { data: pilotData, isLoading: pilotLoading } = useGetPilotDetails(
+    userData?.pilot_id
+  );
+  if (pilotData) {
+    console.log({
+      type: "Feature",
+      geometry: parse(pilotData?.pilot_geom),
+    });
+  }
+
+  useEffect(() => {
+    if (pilotData?.centroid) {
+      mapRef.current?.panTo([pilotData.centroid.lat, pilotData.centroid.lon]);
+    }
+  }, [pilotData?.centroid]);
 
   useEffect(() => {
     if (serviceById.data?.properties.centroid) {
@@ -58,23 +81,44 @@ function App() {
 
   return (
     <>
-      <div>
-        {location?.state?.signedUp && (
-          <Alert severity="success">Hello, {store.get("user_data").user_display_name}</Alert>
-        )}
+      <div className="flex w-full p-4 h-16 bg-white">
+        <div>
+          Hello, {store.get("user_data").user_display_name},{" Pilot "}
+          {pilotData?.pilot_name}
+        </div>
+        <button className="ml-auto border border-solid border-gray-600 p-1">
+          View Data
+        </button>
+        <button
+          onClick={() => setDrawerOpen((prev) => !prev)}
+          className="ml-2 border border-solid border-gray-600 p-1"
+        >
+          {drawerOpen ? "Close" : "Input Data"}
+        </button>
       </div>
       <div>
         <MapContainer
           center={[51.505, -0.09]}
           zoom={13}
           scrollWheelZoom={true}
-          style={{ height: "100vh" }}
+          style={{ height: "calc(100vh - 4rem)" }}
           ref={mapRef}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
+          {pilotData && !pilotLoading && (
+            <GeoJsonLayer
+              data={{
+                type: "Feature",
+                geometry: parse(pilotData.pilot_geom) as GeoJSONGeometry,
+              }}
+              style={{
+                color: "yellow",
+              }}
+            />
+          )}
           {serviceById.data && showGeo && drawerOpen && (
             <GeoJsonLayer data={serviceById.data} />
           )}
@@ -87,12 +131,12 @@ function App() {
             </FeatureGroup>
           )}
         </MapContainer>
-        <button
+        {/* <button
           className="bg-white p-2 rounded-full fixed z-[1002] top-4 right-4"
           onClick={() => setDrawerOpen((prev) => !prev)}
         >
           {drawerOpen ? <Close /> : <Menu />}
-        </button>
+        </button> */}
         {drawerOpen && (
           <SideDrawer
             activeTab={activeTab}
@@ -102,7 +146,7 @@ function App() {
             partialGeoJson={partialFormattedSilvanusGeoJson}
           />
         )}
-      </div>    
+      </div>
     </>
   );
 }

@@ -30,6 +30,7 @@ type FEPayloadJSON = {
     fire_intensity: "low" | "moderate" | "high";
     fire_size: number;
     fire_type: string;
+    pilot_id: number;
   };
   geometry: {
     type: string;
@@ -53,6 +54,7 @@ type STPayloadJSON = {
   properties: {
     soil_type: string;
     soil_description: string;
+    pilot_id: number;
   };
   geometry: {
     type: string;

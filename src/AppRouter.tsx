@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/home";
 import SignIn from "./pages/signin";
 import SignUp from "./pages/signup";
-import App from "./App";
+import App from "./pages/map";
 // import { useState } from 'react'
 
 function AppRouter() {
@@ -25,7 +25,7 @@ function AppRouter() {
             element={<SignUp />}
           />
           <Route
-            path="/main-map"
+            path="/map"
             element={<App />}
           />
         </Routes>

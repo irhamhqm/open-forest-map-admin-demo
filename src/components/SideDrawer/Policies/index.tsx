@@ -5,6 +5,7 @@ import FormTextInput from "../../common/form/TextInput";
 import { useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers";
+import store from "store2";
 
 type FormValues = {
   regulation_file: File[];
@@ -24,7 +25,8 @@ export default function Policies({ state }: { state: string[] }) {
   // const [start, setStart] = useState<Dayjs | null>(dayjs());
   // const [end, setEnd] = useState<Dayjs | null>(dayjs());
   const [date, setDate] = useState<Dayjs | null>(dayjs());
-  const pilot_id = null; // TODO: get pilot id
+  const userData = store.get("user_data");
+  const pilot_id = userData?.pilot_id;
 
   // const formattedStart = useMemo(() => {
   //   return dayjs(start).format("YYYY-MM-DD");
@@ -36,15 +38,17 @@ export default function Policies({ state }: { state: string[] }) {
 
   const onSubmit = (data: FormValues) => {
     const form = new FormData();
-    if (pilot_id) {
+    // if (pilot_id) {
+    //   form.set("pilot_id", pilot_id);
+    //   form.set("regulation_file", data.regulation_file[0]);
+    //   form.set("regulation_engfile", data.regulation_file_translate[0]);
+    //   form.set("regulation_name", data.regulation_name);
+    //   form.set("regulation_description", data.regulation_description);
+    //   // form.set("daterange", `${formattedStart}/${formattedEnd}`);
+    //   form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
+    // } else
+    if (state[state.length - 1]) {
       form.set("pilot_id", pilot_id);
-      form.set("regulation_file", data.regulation_file[0]);
-      form.set("regulation_engfile", data.regulation_file_translate[0]);
-      form.set("regulation_name", data.regulation_name);
-      form.set("regulation_description", data.regulation_description);
-      // form.set("daterange", `${formattedStart}/${formattedEnd}`);
-      form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
-    } else if (state[state.length - 1]) {
       form.set("entity_code", state[state.length - 1]);
       form.set("regulation_file", data.regulation_file[0]);
       form.set("regulation_engfile", data.regulation_file_translate[0]);
@@ -53,6 +57,7 @@ export default function Policies({ state }: { state: string[] }) {
       // form.set("daterange", `${formattedStart}/${formattedEnd}`);
       form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
     } else {
+      form.set("pilot_id", pilot_id);
       form.set("shapefile", data.shapefile[0]);
       form.set("regulation_file", data.regulation_file[0]);
       form.set("regulation_engfile", data.regulation_file_translate[0]);

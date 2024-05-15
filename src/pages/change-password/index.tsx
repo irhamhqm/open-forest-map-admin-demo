@@ -1,57 +1,5 @@
-import { useEffect, useState } from "react";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import { useSignIn, useGetIsMe } from "../../hooks/api/auth";
-import * as Yup from "yup";
-import Alert from "@mui/material/Alert";
-import store from "store2";
 
-const initialValues = {
-  username: "",
-
-  password: "",
-};
-
-const validationSchema = Yup.object({
-  username: Yup.string().required("Required"),
-  password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Required"),
-});
-
-const SignIn = () => {
-  const navigate = useNavigate();
-  const [passwordVisible, setPasswordVisible] = useState(false);
-
-  const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
-
-  const { mutate, isSuccess, isError } = useSignIn();
-  const { isSuccess: isSuccessGetIsMe, data: dataSuccessGetIsMe } =
-    useGetIsMe(isSuccess);
-
-  const onButtonClick = (values: any) => {
-    if (values) {
-      mutate({
-        user_name: values.username,
-        user_password: values.password,
-      });
-    }
-  };
-
-  useEffect(() => {
-    store.clear();
-  }, []);
-
-  useEffect(() => {
-    if (isSuccessGetIsMe) {
-      store.set("user_data", dataSuccessGetIsMe?.data);
-      navigate("/map", { state: { signedUp: true } });
-    }
-  }, [isSuccessGetIsMe]);
-
+export default ChangePassword() {
   return (
     <div className="h-screen flex-col flex justify-center items-center mt-[-60px]">
       <img src={"/silvanus_icon.jpg"} />
@@ -130,7 +78,5 @@ const SignIn = () => {
         </Formik>
       </div>
     </div>
-  );
-};
-
-export default SignIn;
+  )
+}

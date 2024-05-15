@@ -98,7 +98,7 @@ export default function SideDrawer({
   }, [state, setSelectedLocation]);
 
   return (
-    <div className="bg-white w-80 h-[100vh] fixed z-[1001] top-0 right-0 overflow-y-auto">
+    <div className="bg-white w-80 h-[calc(100vh-4rem)] fixed z-[1001] top-16 right-0 overflow-y-auto">
       <div className="text-lg font-semibold mt-4 px-4">Input Data</div>
       {loading ? (
         <img src={"/spinner.svg"} />

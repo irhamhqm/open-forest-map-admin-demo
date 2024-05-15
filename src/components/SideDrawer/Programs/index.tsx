@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import FormTextInput from "../../common/form/TextInput";
 import { DatePicker } from "@mui/x-date-pickers";
+import store from "store2";
 
 type FormValues = {
   program_file: File[];
@@ -12,6 +13,7 @@ type FormValues = {
   program_name: string;
   program_description: string;
   program_size: string;
+  program_budget?: string;
   shapefile: File[];
 };
 
@@ -24,7 +26,8 @@ export default function Programs({ state }: { state: string[] }) {
   const { mutate, isPending, isError, isSuccess } = usePostPrograms();
   const [start, setStart] = useState<Dayjs | null>(dayjs());
   const [end, setEnd] = useState<Dayjs | null>(dayjs());
-  const pilot_id = null; // TODO: get pilot id
+  const userData = store.get("user_data");
+  const pilot_id = userData?.pilot_id;
 
   const formattedStart = useMemo(() => {
     return dayjs(start).format("YYYY-MM-DD");
@@ -36,29 +39,35 @@ export default function Programs({ state }: { state: string[] }) {
 
   const onSubmit = (data: FormValues) => {
     const form = new FormData();
-    if (pilot_id) {
+    // if (pilot_id) {
+    //   form.set("pilot_id", pilot_id);
+    //   form.set("program_file", data.program_file[0]);
+    //   form.set("program_engfile", data.program_engfile[0]);
+    //   form.set("program_name", data.program_name);
+    //   form.set("program_description", data.program_description);
+    //   form.set("program_size", data.program_size);
+    //   form.set("program_budget", data.program_budget || "");
+    //   form.set("daterange", `${formattedStart}/${formattedEnd}`);
+    // } else
+    if (state[state.length - 1]) {
       form.set("pilot_id", pilot_id);
-      form.set("program_file", data.program_file[0]);
-      form.set("program_engfile", data.program_engfile[0]);
-      form.set("program_name", data.program_name);
-      form.set("program_description", data.program_description);
-      form.set("program_size", data.program_size);
-      form.set("daterange", `${formattedStart}/${formattedEnd}`);
-    } else if (state[state.length - 1]) {
       form.set("entity_code", state[state.length - 1]);
       form.set("program_file", data.program_file[0]);
       form.set("program_engfile", data.program_engfile[0]);
       form.set("program_name", data.program_name);
       form.set("program_description", data.program_description);
       form.set("program_size", data.program_size);
+      form.set("program_budget", data.program_budget || "");
       form.set("daterange", `${formattedStart}/${formattedEnd}`);
     } else {
+      form.set("pilot_id", pilot_id);
       form.set("shapefile", data.shapefile[0]);
       form.set("program_file", data.program_file[0]);
       form.set("program_engfile", data.program_engfile[0]);
       form.set("program_name", data.program_name);
       form.set("program_description", data.program_description);
       form.set("program_size", data.program_size);
+      form.set("program_budget", data.program_budget || "");
       form.set("daterange", `${formattedStart}/${formattedEnd}`);
     }
     mutate(form);
@@ -106,6 +115,14 @@ export default function Programs({ state }: { state: string[] }) {
             <FormTextInput
               name="program_size"
               label="Programme Size"
+              containerClass={containerClass}
+              labelClass={labelClass}
+              inputClass={textInputClass}
+              type="number"
+            />
+            <FormTextInput
+              name="program_budget"
+              label="Programme Budget"
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}

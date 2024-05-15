@@ -6,7 +6,7 @@ import {
   SignUpPayload,
   SignUpResponse,
 } from "../types/api/auth";
-import store from "store2";
+import axiosAuthInstance from "../util/axios";
 
 const baseUrl = import.meta.env.VITE_API_URL;
 
@@ -27,13 +27,7 @@ export const signUp: (
 };
 
 export const getIsMe: () => Promise<IsMeResponse> = async () => {
-  const token = store.get("token");
-
-  const response = await axios.get(`${baseUrl}/api/auth/me`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const response = await axiosAuthInstance().get(`${baseUrl}/api/auth/me`);
 
   return response.data;
 };
