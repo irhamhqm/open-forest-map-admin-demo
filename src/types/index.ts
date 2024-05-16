@@ -33,7 +33,7 @@ export type PartialSilvanusGeoJson = {
   type: "Feature";
   geometry: {
     type: string;
-    coordinates: SilvanusCoord[][];
+    coordinates: SilvanusCoord[][] | SilvanusCoord[] | SilvanusCoord;
   };
 };
 

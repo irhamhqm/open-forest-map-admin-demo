@@ -9,16 +9,16 @@ export const useSignIn = () => {
     });
   };
 
-  export const useSignUp = () => {
-    return useMutation({
-      // mutationKey: ["signup"],
-      mutationFn: (payload: SignUpPayload) => signUp(payload),
-    });
-  };
+export const useSignUp = () => {
+  return useMutation({
+    mutationKey: ["signup"],
+    mutationFn: (payload: SignUpPayload) => signUp(payload),
+  });
+};
 
 export const useGetIsMe = (isSignInSuccess: boolean, token: string) => {
   return useQuery({
-    queryKey:["useGetIsMe" + token],
+    queryKey: ["useGetIsMe" + token],
     queryFn: () => getIsMe(),
     select: (response) => response,
     enabled: isSignInSuccess,

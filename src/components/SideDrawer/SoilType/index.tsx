@@ -6,6 +6,7 @@ import { Box, Snackbar } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import { useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
+import store from "store2";
 
 const containerClass = "mb-4";
 const labelClass = "mb-2 text-[#212529]";
@@ -13,7 +14,7 @@ const textInputClass = "p-2 text-[#8898aa] border border-gray-400";
 
 type FormValues = {
   soil_type: string;
-  soil_description: string;
+  soil_texture: string;
   shapefile: File[];
 };
 
@@ -27,12 +28,13 @@ export default function SoilType({
   const { watch, handleSubmit, register, ...rest } = useForm<FormValues>({
     defaultValues: {
       soil_type: "",
-      soil_description: "",
+      soil_texture: "",
     },
   });
   const [date, setDate] = useState<Dayjs | null>(dayjs());
   const { mutate, isPending, isError, isSuccess } = usePostSoilType();
-  const pilot_id = null; //TODO
+  const userData = store.get("user_data");
+  const pilot_id = userData?.pilot_id;
 
   const onSubmit = (data: FormValues) => {
     if (partialGeoJson?.type) {
@@ -40,35 +42,39 @@ export default function SoilType({
         type: partialGeoJson.type,
         geometry: {
           ...partialGeoJson.geometry,
-          coordinates: partialGeoJson.geometry.coordinates.flat(),
+          coordinates: partialGeoJson.geometry.coordinates,
         },
         properties: {
           // daterange: `${formattedStart}/${formattedEnd}`,
           soil_type: data.soil_type,
-          soil_description: data.soil_description,
+          soil_texture: data.soil_texture,
+          datetime: dayjs(date).format("YYYY-MM-DD"),
+          // pilot_id,
         },
       });
     } else if (state[state.length - 1]) {
       const form = new FormData();
+      form.set("pilot_id", pilot_id);
       form.set("entity_code", state[state.length - 1]);
       form.set("soil_type", data.soil_type);
-      form.set("soil_description", data.soil_description);
+      form.set("soil_texture", data.soil_texture);
       form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
 
       mutate(form);
-    } else if (pilot_id) {
-      const form = new FormData();
-      form.set("pilot_id", pilot_id);
-      form.set("soil_type", data.soil_type);
-      form.set("soil_description", data.soil_description);
-      form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
+      // } else if (pilot_id) {
+      //   const form = new FormData();
+      //   form.set("pilot_id", pilot_id);
+      //   form.set("soil_type", data.soil_type);
+      //   form.set("soil_texture", data.soil_texture);
+      //   form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
 
-      mutate(form);
+      //   mutate(form);
     } else {
       const form = new FormData();
+      form.set("pilot_id", pilot_id);
       form.set("shapefile", data.shapefile[0]);
       form.set("soil_type", data.soil_type);
-      form.set("soil_description", data.soil_description);
+      form.set("soil_texture", data.soil_texture);
       form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
 
       mutate(form);
@@ -90,13 +96,13 @@ export default function SoilType({
             className="flex flex-col"
             onSubmit={handleSubmit(onSubmit)}
           >
-            SHP File
+            {/* SHP File
             <input
               {...register("shapefile")}
               type="file"
               accept=".zip"
               disabled={Boolean(partialGeoJson?.type)}
-            />
+            /> */}
             <FormTextInput
               name="soil_type"
               label="Soil Type* (Required)"
@@ -108,7 +114,7 @@ export default function SoilType({
               }}
             />
             <FormTextInput
-              name="soil_description"
+              name="soil_texture"
               label="Soil Texture* (Required)"
               containerClass={containerClass}
               labelClass={labelClass}

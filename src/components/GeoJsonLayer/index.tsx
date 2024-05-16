@@ -1,4 +1,5 @@
 // import { useEffect } from "react";
+import { StyleFunction } from "leaflet";
 import {
   GeoJSON,
   //  useMap
@@ -7,7 +8,13 @@ import {
 import { GeoJSONFeature } from "wellknown";
 // import * as L from "leaflet";
 
-export default function GeoJsonLayer({ data }: { data: GeoJSONFeature }) {
+export default function GeoJsonLayer({
+  data,
+  style,
+}: {
+  data: GeoJSONFeature;
+  style?: unknown;
+}) {
   // const map = useMap();
 
   // useEffect(() => {
@@ -23,5 +30,10 @@ export default function GeoJsonLayer({ data }: { data: GeoJSONFeature }) {
   //   );
   // }, [data.geometry.coordinates, map]);
 
-  return <GeoJSON data={data} />;
+  return (
+    <GeoJSON
+      data={data}
+      style={style as StyleFunction}
+    />
+  );
 }

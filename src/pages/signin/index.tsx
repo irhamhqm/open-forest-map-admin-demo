@@ -29,7 +29,10 @@ const SignIn = () => {
   };
 
   const { mutate, isSuccess, isError, data, error } = useSignIn();
-  const { isSuccess: isSuccessGetIsMe, data: dataSuccessGetIsMe } = useGetIsMe(isSuccess, store.get("token"));
+  const { isSuccess: isSuccessGetIsMe, data: dataSuccessGetIsMe } = useGetIsMe(
+    isSuccess,
+    store.get("token")
+  );
 
   const onButtonClick = (values: any) => {
     if (values) {
@@ -41,15 +44,15 @@ const SignIn = () => {
   };
 
   useEffect(() => {
-    store.clear()
-  },[])
+    store.clear();
+  }, []);
 
   useEffect(() => {
     if (isSuccessGetIsMe) {
-      store.set('user_data', dataSuccessGetIsMe?.data)
-      navigate("/main-map", { state: { signedUp: true } });
+      store.set("user_data", dataSuccessGetIsMe?.data);
+      navigate("/map", { state: { signedUp: true } });
     }
-  },[isSuccessGetIsMe])
+  }, [isSuccessGetIsMe]);
 
   if (isSuccess) {
     store.set("token", data?.data);
