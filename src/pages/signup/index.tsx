@@ -7,7 +7,8 @@ import { useGetAllFeatures } from "../../hooks/api/feature";
 import { useSignUp } from "../../hooks/api/auth";
 import Alert from "@mui/material/Alert";
 import axios from 'axios';
-import Select, {ActionMeta,  MultiValue} from 'react-select';
+import Select, {ActionMeta,  MultiValue, SingleValue} from 'react-select';
+import { Snackbar } from "@mui/material";
 import makeAnimated from 'react-select/animated';
 
 const animatedComponents = makeAnimated();
@@ -21,6 +22,7 @@ const initialValues = {
   user_affiliation: "",
   user_role: "",
   pilot_id: "",
+  selectedOccupation: 'citizen'
 };
 
 const validationSchema = Yup.object({
@@ -40,6 +42,11 @@ interface Option {
   value: number;
 }
 
+interface OptionRole {
+  label: string;
+  value: string;
+}
+
 interface FormValues {
   selectedOption: string;
 }
@@ -47,15 +54,31 @@ interface FormValues {
 const SignUp = () => {
   const [selectedServices, setSelectedServices] = useState<Option[]>([]);
   const [availableServices, setAvaliableServices] = useState<Option[]>([]);
+  const [selectedPilot, setSelectedPilot] = useState<Option | null>(null);
+  const [selectedRole, setSelectedRole] = useState<OptionRole | null>(null);
+  const [availablePilots, setAvaliablePilots] = useState<Option[]>([]);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isFeaturesListActive, setIsFeaturesListActive] =
     useState<boolean>(false);
-  const [selectedRole, setSelectedRole] = useState("");
+  const [openSnackBar, setOpenSnackBar] = useState(false);
+  const [messageAlert, setMessageAllert] = useState("");
+
+  const handleOpen = () => {
+    setOpenSnackBar(true);
+    setTimeout(() => {
+      setOpenSnackBar(false);
+    }, 3000); // Menutup snackbar setelah 3 detik
+  };
+
   const occupations = [
     {value:"firefighter", label: "Firefighter"},
     {value:"police", label: "Police"},
     {value:"major", label: "Major"},
     {value:"citizen", label: "Citizen"},
+  ]
+  const roles = [
+    {value:"client", label: "Client"},
+    {value:"pilot_admin", label: "Pilot Admin"}
   ]
 
   const togglePasswordVisibility = () => {
@@ -63,20 +86,73 @@ const SignUp = () => {
   };
 
   const onButtonClick = (values: any) => {
-    const { feature_ids, ...payload } = values;
-    payload["user_role"] = selectedRole;
-    if (selectedRole === "client") {
-      payload["feature_ids"] = feature_ids.join(", ");
-      delete payload.pilot_id;
+    // const { feature_ids, ...payload } = values;
+    // payload["user_role"] = selectedRole;
+    // if (selectedRole === "client") {
+    //   payload["feature_ids"] = feature_ids.join(", ");
+    //   delete payload.pilot_id;
+    // } else {
+    //   const allFeaturesId = dataGetAllFeatures?.data.map(
+    //     (item) => item.feature_id
+    //   );
+    //   payload["feature_ids"] = allFeaturesId?.join(", ");
+    // }
+
+    // if (payload) {
+    //   mutate(payload);
+    // }
+    const payload = {
+      "user_name": values.user_name,
+      "user_email": values.user_email,
+      "user_password": values.user_password,
+      "user_display_name": values.user_display_name,
+      "user_affiliation": values.user_affiliation,
+      "user_role": "",
+      "user_occupation": values.selectedOccupation,
+      "pilot_id": 0,
+      "feature_ids": ""
+    };
+
+    if(!selectedRole){
+      setMessageAllert("Please select a user role");
+      handleOpen();
+      return;
     } else {
-      const allFeaturesId = dataGetAllFeatures?.data.map(
-        (item) => item.feature_id
-      );
-      payload["feature_ids"] = allFeaturesId?.join(", ");
+      if(selectedRole.value === "client"){
+        if(selectedServices.length === 0){
+          setMessageAllert("Please select at least a service you wanted to subscribe");
+          handleOpen();
+          return;
+        }else{
+          payload.feature_ids = selectedServices.map((item) => (
+            item.value
+          )).join(", ")
+        }
+      } else {
+        let pilotAdminFeatures = dataGetAllFeatures?.data.filter((item) => item.feature_name.toLocaleLowerCase() !== "multilingual alert system")
+        if (values.is_subscribe_mas) {
+          const masFeature = dataGetAllFeatures?.data.filter((item) => item.feature_name.toLocaleLowerCase() === "multilingual alert system") ?? []
+          pilotAdminFeatures = pilotAdminFeatures?.concat(masFeature)
+        }
+        payload.feature_ids = pilotAdminFeatures?.map((item) => (
+          item.feature_id
+        )).join(", ") ?? ""
+      }
     }
 
-    if (payload) {
-      mutate(payload);
+
+    console.log('values: ', values)
+    console.log('values.is_subscribe_mas: ', values.is_subscribe_mas)
+    console.log('payload: ', payload)
+    console.log('selectedRole', selectedRole)
+  };
+
+  const handleRoleSelection = (newValue: SingleValue<OptionRole>, actionMeta: ActionMeta<OptionRole>) => {
+    setSelectedRole(newValue)
+    if(newValue?.value === "client") {
+      setIsFeaturesListActive(true)
+    } else {
+      setIsFeaturesListActive(false)
     }
   };
 
@@ -84,7 +160,11 @@ const SignUp = () => {
     setSelectedServices(newValue as Option[])
   };
 
-  const { data: dataGetAllPilots } = useGetAllPilots();
+  const handlePilotSelection = (newValue: SingleValue<Option>, actionMeta: ActionMeta<Option>) => {
+    setSelectedPilot(newValue)
+  };
+
+  const { data: dataGetAllPilots, isSuccess: successGetAllPilots } = useGetAllPilots();
   const { data: dataGetAllFeatures, isSuccess: successGetAllFeatures } = useGetAllFeatures();
   const { mutate, isSuccess, isError, data: dataSignUp, error } = useSignUp();
 
@@ -97,6 +177,17 @@ const SignUp = () => {
     successGetAllFeatures
   ])
 
+  useEffect(()=>{
+    const pilots: Option[] | undefined = dataGetAllPilots?.data?.map((item) => {
+      return ({label:item.pilot_name, value: item.pilot_id})
+    }) ?? []
+    setAvaliablePilots(pilots)
+  },[
+    successGetAllPilots
+  ])
+
+  console.log('role: ', selectedRole)
+  console.log('pesan: ', messageAlert)
 
   return (
     <div className="flex-col flex justify-center items-center overflow-y-auto">
@@ -208,35 +299,14 @@ const SignUp = () => {
                 >
                   User Role
                 </label>
-                <Field
-                  value={selectedRole}
-                  name="user_role"
-                  as="select"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  onChange={(event: any) => {
-                    setSelectedRole(event.target.value);
-                    setIsFeaturesListActive(event.target.value === "client");
-                  }}
-                >
-                  <option
-                    disabled={true}
-                    value=""
-                  >
-                    Select A Role
-                  </option>
-                  <option
-                    key="client"
-                    value="client"
-                  >
-                    Client
-                  </option>
-                  <option
-                    key="pilot_admin"
-                    value="pilot_admin"
-                  >
-                    Pilot Admin
-                  </option>
-                </Field>
+                <Select
+                      closeMenuOnSelect={true}
+                      components={animatedComponents}
+                      options={roles}
+                      onChange={handleRoleSelection as any}
+                      isClearable
+                      name="user_role"
+                    />
                 <ErrorMessage
                   name="user_role"
                   component="div"
@@ -281,47 +351,35 @@ const SignUp = () => {
                         type="checkbox" />
                       <span 
                         className="ml-2 text-gray-700">
-                          I would like to subscribe <b>Multilingual Alert System</b> service
+                          I would like to subscribe <b>Multilingual Forest Fire Alert System</b> service
                       </span>
                     </label>
                   </div>
-
-                  {/* PILOT AREA */}
-                  <div className="w-full px-3 mb-6 md:mb-4">
-                    <label
-                      className="text-grey-darker mb-2 font-bold"
-                      htmlFor="pilot_id"
-                    >
-                      Pilot
-                    </label>
-                    <Field
-                      name="pilot_id"
-                      as="select"
-                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    >
-                      <option
-                        disabled={true}
-                        value=""
-                      >
-                        Select A Pilot
-                      </option>
-                      {dataGetAllPilots?.data?.map((pilot) => (
-                        <option
-                          key={pilot.pilot_id}
-                          value={pilot.pilot_id}
-                        >
-                          {pilot.pilot_name}
-                        </option>
-                      ))}
-                    </Field>
-                    <ErrorMessage
-                      name="pilot_id"
-                      component="div"
-                      className="text-red-500 text-xs italic"
-                    />
-                  </div>
                 </>
               )}
+
+              {/* PILOT AREA */}
+              <div className="w-full px-3 mb-6 md:mb-4">
+                <label
+                  className="text-grey-darker mb-2 font-bold"
+                  htmlFor="pilot_id"
+                >
+                  Pilot
+                </label>
+                <Select
+                  closeMenuOnSelect={true}
+                  components={animatedComponents}
+                  options={availablePilots}
+                  onChange={handlePilotSelection as any}
+                  isClearable
+                  name="pilot_id"
+                />
+                <ErrorMessage
+                  name="pilot_id"
+                  component="div"
+                  className="text-red-500 text-xs italic"
+                />
+              </div>
 
               {/* OCUPATION */}
               <div className="px-3 mb-6 md:mb-4">
@@ -330,7 +388,7 @@ const SignUp = () => {
                 </label>
                 <div className="grid grid-cols-2 gap-4 w-full">
                   {occupations.map((item) => (
-                    <Field name="selectedOption" key={'Field'+item.value}>
+                    <Field name="selectedOccupation" key={'Field'+item.value}>
                     {(fieldProps: FieldProps<FormValues['selectedOption']>) => (
                       <label 
                         className="flex items-center p-4 bg-gray-200 rounded-lg cursor-pointer"
@@ -436,6 +494,13 @@ const SignUp = () => {
           </Form>
         </Formik>
       </div>
+      
+      <Snackbar open={openSnackBar} autoHideDuration={3000} onClose={() => setOpenSnackBar(false)}>
+        <Alert severity="error" onClose={() => setOpenSnackBar(false)}>
+          {messageAlert}
+        </Alert>
+      </Snackbar>
+    
     </div>
   );
 };
