@@ -56,7 +56,7 @@ export default function FireEvents({
         type: partialGeoJson.type,
         geometry: {
           ...partialGeoJson.geometry,
-          coordinates: partialGeoJson.geometry.coordinates.flat(),
+          coordinates: partialGeoJson.geometry.coordinates,
         },
         properties: {
           daterange: `${formattedStart}/${formattedEnd}`,

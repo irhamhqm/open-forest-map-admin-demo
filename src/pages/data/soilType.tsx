@@ -35,12 +35,6 @@ const columns: GridColDef[] = [
     sortable: false,
   },
   {
-    field: "fire_type",
-    headerName: "Fire Type",
-    width: 120,
-    sortable: false,
-  },
-  {
     field: "entity_name",
     headerName: "Entity Name",
     width: 120,
@@ -92,6 +86,7 @@ const DeleteCell = ({ id }: { id: string }) => {
         setOpen(false);
       },
     });
+    location.reload();
   };
 
   return (
@@ -118,12 +113,7 @@ const DeleteCell = ({ id }: { id: string }) => {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>No</Button>
-            <Button
-              onClick={handleDelete}
-              autoFocus
-            >
-              Yes
-            </Button>
+            <Button onClick={handleDelete}>Yes</Button>
           </DialogActions>
         </Dialog>
       </div>
@@ -145,7 +135,7 @@ export default function SoilTypePage() {
           columns={columns}
           initialState={{
             pagination: {
-              paginationModel: { page: 0, pageSize: 15 },
+              paginationModel: { page: 0, pageSize: 10 },
             },
           }}
           getRowId={(row) => row.soil_type_id}

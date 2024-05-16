@@ -34,7 +34,7 @@ type FEPayloadJSON = {
   };
   geometry: {
     type: string;
-    coordinates: SilvanusCoord[];
+    coordinates: SilvanusCoord[][] | SilvanusCoord[] | SilvanusCoord;
     // pilot: string;
   };
 };
@@ -53,12 +53,13 @@ type STPayloadJSON = {
   // shapefile: File;
   properties: {
     soil_type: string;
-    soil_description: string;
+    soil_texture: string;
+    datetime: string;
     // pilot_id: number;
   };
   geometry: {
     type: string;
-    coordinates: SilvanusCoord[];
+    coordinates: SilvanusCoord[][] | SilvanusCoord[] | SilvanusCoord;
     // pilot: string;
   };
   type: string;

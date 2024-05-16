@@ -14,7 +14,7 @@ const textInputClass = "p-2 text-[#8898aa] border border-gray-400";
 
 type FormValues = {
   soil_type: string;
-  soil_description: string;
+  soil_texture: string;
   shapefile: File[];
 };
 
@@ -28,7 +28,7 @@ export default function SoilType({
   const { watch, handleSubmit, register, ...rest } = useForm<FormValues>({
     defaultValues: {
       soil_type: "",
-      soil_description: "",
+      soil_texture: "",
     },
   });
   const [date, setDate] = useState<Dayjs | null>(dayjs());
@@ -42,13 +42,14 @@ export default function SoilType({
         type: partialGeoJson.type,
         geometry: {
           ...partialGeoJson.geometry,
-          coordinates: partialGeoJson.geometry.coordinates.flat(),
+          coordinates: partialGeoJson.geometry.coordinates,
         },
         properties: {
           // daterange: `${formattedStart}/${formattedEnd}`,
           soil_type: data.soil_type,
-          soil_description: data.soil_description,
-          pilot_id,
+          soil_texture: data.soil_texture,
+          datetime: dayjs(date).format("YYYY-MM-DD"),
+          // pilot_id,
         },
       });
     } else if (state[state.length - 1]) {
@@ -56,7 +57,7 @@ export default function SoilType({
       form.set("pilot_id", pilot_id);
       form.set("entity_code", state[state.length - 1]);
       form.set("soil_type", data.soil_type);
-      form.set("soil_description", data.soil_description);
+      form.set("soil_texture", data.soil_texture);
       form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
 
       mutate(form);
@@ -64,7 +65,7 @@ export default function SoilType({
       //   const form = new FormData();
       //   form.set("pilot_id", pilot_id);
       //   form.set("soil_type", data.soil_type);
-      //   form.set("soil_description", data.soil_description);
+      //   form.set("soil_texture", data.soil_texture);
       //   form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
 
       //   mutate(form);
@@ -73,7 +74,7 @@ export default function SoilType({
       form.set("pilot_id", pilot_id);
       form.set("shapefile", data.shapefile[0]);
       form.set("soil_type", data.soil_type);
-      form.set("soil_description", data.soil_description);
+      form.set("soil_texture", data.soil_texture);
       form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
 
       mutate(form);
@@ -113,7 +114,7 @@ export default function SoilType({
               }}
             />
             <FormTextInput
-              name="soil_description"
+              name="soil_texture"
               label="Soil Texture* (Required)"
               containerClass={containerClass}
               labelClass={labelClass}

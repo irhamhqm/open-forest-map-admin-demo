@@ -55,7 +55,7 @@ export const sivalnusCoordToSilvanusGeo = ({
   coordinates,
   type,
 }: {
-  coordinates: SilvanusCoord[][] | SilvanusCoord;
+  coordinates: SilvanusCoord[][] | SilvanusCoord[] | SilvanusCoord;
   type: string;
 }): PartialSilvanusGeoJson => {
   return {
@@ -88,14 +88,15 @@ export const parseToSilvanusCoord = (
       }
       return { lat: 0, lon: 0 };
     });
+    res.push(res[0]);
     if (Object.values(res).length !== res.length) return [];
-    return [res];
+    return res;
   }
   if (payload instanceof LatLng) {
-    return { lat: payload.lat, lon: payload.lng };
+    return [{ lat: payload.lat, lon: payload.lng }];
   }
 
-  return { lat: 0, lon: 0 };
+  return [{ lat: 0, lon: 0 }];
   // const arr = payload.split("),");
   // const res = arr.map((str) => {
   //   const temp = str.match(/LatLng\((.*)/);

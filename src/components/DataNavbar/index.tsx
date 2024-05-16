@@ -1,10 +1,11 @@
 import store from "store2";
 import { useGetPilotDetails } from "../../hooks/api/pilot";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { ArrowBack } from "@mui/icons-material";
 
 export default function DataNavbar() {
   const userData = store.get("user_data");
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const { data: pilotData, isLoading: pilotLoading } = useGetPilotDetails(
     userData?.pilot_id
@@ -14,6 +15,9 @@ export default function DataNavbar() {
 
   return (
     <div className="flex w-full p-4 h-16 bg-white gap-2 shadow-md">
+      <button onClick={() => navigate(-1)}>
+        <ArrowBack />
+      </button>
       <div>
         Hello, {store.get("user_data").user_display_name},{" Pilot "}
         {pilotData?.pilot_name}

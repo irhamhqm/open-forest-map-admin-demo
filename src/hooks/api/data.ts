@@ -62,7 +62,7 @@ export function useDeleteSoilType() {
   });
 }
 
-export function useGetRegulation() {
+export function useGetRegulationList() {
   return useQuery({
     queryKey: ["regulation_list"],
     queryFn: () => getRegulation(),
@@ -86,7 +86,7 @@ export function useDeleteRegulation() {
   });
 }
 
-export function useGetProgram() {
+export function useGetProgramList() {
   return useQuery({
     queryKey: ["program_list"],
     queryFn: () => getProgram(),

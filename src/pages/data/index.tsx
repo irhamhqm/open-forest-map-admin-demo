@@ -98,6 +98,7 @@ const DeleteCell = ({ id }: { id: string }) => {
         setOpen(false);
       },
     });
+    location.reload();
   };
 
   return (
@@ -124,12 +125,7 @@ const DeleteCell = ({ id }: { id: string }) => {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>No</Button>
-            <Button
-              onClick={handleDelete}
-              autoFocus
-            >
-              Yes
-            </Button>
+            <Button onClick={handleDelete}>Yes</Button>
           </DialogActions>
         </Dialog>
       </div>
@@ -152,7 +148,7 @@ export default function DataPage() {
           columns={columns}
           initialState={{
             pagination: {
-              paginationModel: { page: 0, pageSize: 15 },
+              paginationModel: { page: 0, pageSize: 10 },
             },
           }}
           getRowId={(row) => row.fire_event_id}
