@@ -27,23 +27,29 @@ export default function ProgramDetailPage() {
         <div>Programme End Date: {data?.temporal.to_date}</div>
         <div>
           Programme File:{" "}
-          <a
-            className="text-blue-700"
-            download
-            href={data?.program_file_path}
-          >
-            Download
-          </a>
+          {data?.program_file_path && (
+            <a
+              className="text-blue-700"
+              download
+              href={data?.program_file_path}
+              target="_blank"
+            >
+              Download
+            </a>
+          )}
         </div>
         <div>
           Programme English File:{" "}
-          <a
-            className="text-blue-700"
-            download
-            href={data?.program_engfile_path}
-          >
-            Download
-          </a>
+          {data?.program_engfile_path && (
+            <a
+              className="text-blue-700"
+              download
+              href={data?.program_engfile_path}
+              target="_blank"
+            >
+              Download
+            </a>
+          )}
         </div>
       </div>
       Location{" : "}

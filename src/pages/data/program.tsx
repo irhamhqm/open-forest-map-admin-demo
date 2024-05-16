@@ -63,15 +63,19 @@ const columns: GridColDef[] = [
     field: "program_file_path",
     headerName: "Programme File",
     width: 170,
-    renderCell: (params) => (
-      <a
-        className="text-blue-700"
-        href={`${params.row.program_file_path}`}
-        download
-      >
-        Download
-      </a>
-    ),
+    renderCell: (params) =>
+      params.row.program_file_path ? (
+        <a
+          className="text-blue-700"
+          href={`${params.row.program_file_path}`}
+          target="_blank"
+          download
+        >
+          Download
+        </a>
+      ) : (
+        <></>
+      ),
   },
   {
     field: "program_engfile_path",
@@ -82,6 +86,7 @@ const columns: GridColDef[] = [
         <a
           className="text-blue-700"
           href={`${params.row.program_engfile_path}`}
+          target="_blank"
           download
         >
           Download
