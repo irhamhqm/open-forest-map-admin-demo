@@ -38,18 +38,19 @@ export default function Policies({ state }: { state: string[] }) {
 
   const onSubmit = (data: FormValues) => {
     const form = new FormData();
-    // if (pilot_id) {
-    //   form.set("pilot_id", pilot_id);
-    //   form.set("regulation_file", data.regulation_file[0]);
-    //   form.set("regulation_engfile", data.regulation_file_translate[0]);
-    //   form.set("regulation_name", data.regulation_name);
-    //   form.set("regulation_description", data.regulation_description);
-    //   // form.set("daterange", `${formattedStart}/${formattedEnd}`);
-    //   form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
-    // } else
+
     if (state[state.length - 1]) {
-      form.set("pilot_id", pilot_id);
+      // form.set("pilot_id", pilot_id);
       form.set("entity_code", state[state.length - 1]);
+      form.set("regulation_file", data.regulation_file[0]);
+      form.set("regulation_engfile", data.regulation_file_translate[0]);
+      form.set("regulation_name", data.regulation_name);
+      form.set("regulation_description", data.regulation_description);
+      // form.set("daterange", `${formattedStart}/${formattedEnd}`);
+      form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
+    } else if (data.shapefile[0]) {
+      // form.set("pilot_id", pilot_id);
+      form.set("shapefile", data.shapefile[0]);
       form.set("regulation_file", data.regulation_file[0]);
       form.set("regulation_engfile", data.regulation_file_translate[0]);
       form.set("regulation_name", data.regulation_name);
@@ -58,7 +59,6 @@ export default function Policies({ state }: { state: string[] }) {
       form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
     } else {
       form.set("pilot_id", pilot_id);
-      form.set("shapefile", data.shapefile[0]);
       form.set("regulation_file", data.regulation_file[0]);
       form.set("regulation_engfile", data.regulation_file_translate[0]);
       form.set("regulation_name", data.regulation_name);
@@ -83,13 +83,13 @@ export default function Policies({ state }: { state: string[] }) {
           {...rest}
         >
           <form onSubmit={handleSubmit(onSubmit)}>
-            SHP File
+            {/* SHP File
             <input
               {...register("shapefile")}
               type="file"
               accept=".zip"
               disabled={Boolean(state[state.length - 1])}
-            />
+            /> */}
             <FormTextInput
               name="regulation_name"
               label="Regulation's Name* (Required)"

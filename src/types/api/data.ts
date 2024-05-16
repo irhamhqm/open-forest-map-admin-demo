@@ -4,15 +4,19 @@ export interface FireEventDetail {
   status: boolean;
 }
 
-type FireEvent = {
+export type FireEvent = {
+  centroid: {
+    lat: number;
+    lon: number;
+  };
   fire_event_id: number;
   fire_intensity: string; //| "moderate";
   fire_size: number;
   fire_type: string;
   spatial: {
-    entity_code: string | null;
+    entity_name: string | null;
     geom: string;
-    pilot_id: number | null;
+    pilot_name: number | null;
   };
   temporal: {
     from_date: string;
@@ -26,14 +30,18 @@ export interface FireEventList {
   status: boolean;
 }
 
-type SoilType = {
+export type SoilType = {
+  centroid: {
+    lat: number;
+    lon: number;
+  };
   soil_texture: string;
   soil_type: string;
   soil_type_id: number;
   spatial: {
-    entity_code: string | null;
+    entity_name: string | null;
     geom: string;
-    pilot_id: number | null;
+    pilot_name: number | null;
   };
   temporal: {
     acquired_date: string;
@@ -52,7 +60,11 @@ export interface SoilTypeList {
   status: boolean;
 }
 
-type Program = {
+export type Program = {
+  centroid: {
+    lat: number;
+    lon: number;
+  };
   program_budget: number | null;
   program_description: string;
   program_engfile_path: string;
@@ -61,9 +73,9 @@ type Program = {
   program_name: string;
   program_size: number;
   spatial: {
-    entity_code: string | null;
+    entity_name: string | null;
     geom: string | null;
-    pilot_id: number | null;
+    pilot_name: number | null;
   };
   temporal: {
     from_date: string;
@@ -83,16 +95,20 @@ export interface ProgramList {
   status: boolean;
 }
 
-type Regulation = {
+export type Regulation = {
+  centroid: {
+    lat: number;
+    lon: number;
+  };
   regulation_description: string;
   regulation_engfile_path: string;
   regulation_file_path: string;
   regulation_id: number;
   regulation_name: string;
   spatial: {
-    entity_code: string | null;
+    entity_name: string | null;
     geom: string | null;
-    pilot_id: number | null;
+    pilot_name: number | null;
   };
   temporal: {
     acquired_date: string;

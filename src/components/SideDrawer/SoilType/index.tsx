@@ -95,13 +95,13 @@ export default function SoilType({
             className="flex flex-col"
             onSubmit={handleSubmit(onSubmit)}
           >
-            SHP File
+            {/* SHP File
             <input
               {...register("shapefile")}
               type="file"
               accept=".zip"
               disabled={Boolean(partialGeoJson?.type)}
-            />
+            /> */}
             <FormTextInput
               name="soil_type"
               label="Soil Type* (Required)"

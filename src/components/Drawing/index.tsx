@@ -1,5 +1,5 @@
 import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
-import { Circle, Marker, Polygon, Rectangle } from "leaflet";
+import { LatLng, Marker, Polygon } from "leaflet";
 import { useGeomanControls } from "react-leaflet-geoman-v2";
 
 export default function Drawing({
@@ -10,7 +10,7 @@ export default function Drawing({
     coordinates,
   }: {
     type: string;
-    coordinates: string;
+    coordinates: LatLng | LatLng[] | LatLng[][] | LatLng[][][];
   }) => void;
   activeTab: number;
 }) {
@@ -34,58 +34,64 @@ export default function Drawing({
         }
         layer = (e.layer as Polygon).getElement();
         onCreate({
-          coordinates: (e.layer as Polygon).getLatLngs().toString(),
+          coordinates: (e.layer as Polygon).getLatLngs(),
           type: "Polygon",
         });
-      } else if (e.shape === "Rectangle") {
-        if (layer) {
-          layer.remove();
-        }
-        layer = (e.layer as Rectangle).getElement();
-        onCreate({
-          coordinates: (e.layer as Rectangle).getLatLngs().toString(),
-          type: "Rectangle",
-        });
-      } else if (e.shape === "Circle") {
-        if (layer) {
-          layer.remove();
-        }
-        layer = (e.layer as Circle).getElement();
-        onCreate({
-          coordinates: (e.layer as Circle).getLatLng().toString(),
-          type: "Circle",
-        });
+        // } else if (e.shape === "Rectangle") {
+        //   if (layer) {
+        //     layer.remove();
+        //   }
+        //   layer = (e.layer as Rectangle).getElement();
+        //   onCreate({
+        //     coordinates: (e.layer as Rectangle).getLatLngs(),
+        //     type: "Rectangle",
+        //   });
+        // } else if (e.shape === "Circle") {
+        //   if (layer) {
+        //     layer.remove();
+        //   }
+        //   layer = (e.layer as Circle).getElement();
+        //   onCreate({
+        //     coordinates: (e.layer as Circle).getLatLng(),
+        //     type: "Circle",
+        //   });
       } else if (e.shape === "Marker") {
         if (layer) {
           layer.remove();
         }
         layer = (e.layer as Marker).getElement();
         onCreate({
-          coordinates: (e.layer as Marker).getLatLng().toString(),
-          type: "Circle",
+          coordinates: (e.layer as Marker).getLatLng(),
+          type: "Point",
         });
       }
     },
     onEdit: (e) => {
       if (e.shape === "Polygon") {
         onCreate({
-          coordinates: (e.layer as Polygon).getLatLngs().toString(),
+          coordinates: (e.layer as Polygon).getLatLngs(),
           type: "Polygon",
         });
-      } else if (e.shape === "Rectangle") {
+      } else if (e.shape === "Marker") {
         onCreate({
-          coordinates: (e.layer as Rectangle).getLatLngs().toString(),
-          type: "Rectangle",
-        });
-      } else if (e.shape === "Circle") {
-        onCreate({
-          coordinates: (e.layer as Circle).getLatLng().toString(),
-          type: "Circle",
+          coordinates: (e.layer as Marker).getLatLng(),
+          type: "Point",
         });
       }
+      // } else if (e.shape === "Rectangle") {
+      //   onCreate({
+      //     coordinates: (e.layer as Rectangle).getLatLngs(),
+      //     type: "Rectangle",
+      //   });
+      // } else if (e.shape === "Circle") {
+      //   onCreate({
+      //     coordinates: (e.layer as Circle).getLatLng(),
+      //     type: "Circle",
+      //   });
+      // }
     },
     onLayerRemove: () => {
-      onCreate({ type: "", coordinates: "" });
+      onCreate({ type: "", coordinates: [] });
     },
     // eventDebugFn: console.log,
   });

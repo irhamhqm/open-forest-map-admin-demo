@@ -50,8 +50,6 @@ export const usePostFireEvent = () => {
   return useMutation({
     mutationKey: ["fire_event"],
     mutationFn: (payload: FireEventPayload) => {
-      // console.log(payload);
-
       return addFireEvent(payload);
     },
   });

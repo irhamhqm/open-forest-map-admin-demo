@@ -4,36 +4,43 @@ import SideDrawer from "../../components/SideDrawer";
 import Drawing from "../../components/Drawing";
 import { useGetLocationServiceById } from "../../hooks/api";
 import GeoJsonLayer from "../../components/GeoJsonLayer";
-import {
-  parseStringToSilvanusCoord,
-  sivalnusCoordToSilvanusGeo,
-} from "../../util";
-import { Map } from "leaflet";
+import { parseToSilvanusCoord, sivalnusCoordToSilvanusGeo } from "../../util";
+import { LatLng, Map } from "leaflet";
 // import { useLocation } from "react-router-dom";
 import store from "store2";
 import { useGetPilotDetails } from "../../hooks/api/pilot";
 import { GeoJSONGeometry, parse } from "wellknown";
+import { useNavigate } from "react-router-dom";
 
 function App() {
-  const [activeTab, setActiveTab] = useState(1);
-  const [drawnObj, setDrawnObj] = useState({ type: "", coordinates: "" });
+  const [activeTab, setActiveTab] = useState(0);
+  const [drawnObj, setDrawnObj] = useState<{
+    type: string;
+    coordinates: LatLng | LatLng[] | LatLng[][] | LatLng[][][];
+  }>({ type: "", coordinates: [] });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<string>("");
   const [showGeo, setShowGeo] = useState(false);
   const mapRef = useRef<Map | null>(null);
   const userData = store.get("user_data");
+  const navigate = useNavigate();
 
   const serviceById = useGetLocationServiceById({ id: selectedLocation });
 
   const partialFormattedSilvanusGeoJson = useMemo(() => {
-    let val = { coordinates: [[{ lat: 0, lon: 0 }]], type: "" };
+    // let val = { coordinates: [[{ lat: 0, lon: 0 }]], type: "" };
 
     if (drawnObj.coordinates) {
-      val = {
-        coordinates: parseStringToSilvanusCoord(drawnObj.coordinates),
+      // val = {
+      //   coordinates: parseToSilvanusCoord(drawnObj.coordinates),
+      //   type: drawnObj.type,
+      // };
+      // console.log(val);
+
+      return sivalnusCoordToSilvanusGeo({
+        coordinates: parseToSilvanusCoord(drawnObj.coordinates),
         type: drawnObj.type,
-      };
-      return sivalnusCoordToSilvanusGeo(val);
+      });
     }
 
     return null;
@@ -48,12 +55,12 @@ function App() {
   const { data: pilotData, isLoading: pilotLoading } = useGetPilotDetails(
     userData?.pilot_id
   );
-  if (pilotData) {
-    console.log({
-      type: "Feature",
-      geometry: parse(pilotData?.pilot_geom),
-    });
-  }
+  // if (pilotData) {
+  //   console.log({
+  //     type: "Feature",
+  //     geometry: parse(pilotData?.pilot_geom),
+  //   });
+  // }
 
   useEffect(() => {
     if (pilotData?.centroid) {
@@ -71,11 +78,11 @@ function App() {
   }, [serviceById.data?.properties.centroid]);
 
   useEffect(() => {
-    if (activeTab === 0) {
+    if (activeTab !== 0) {
       setShowGeo(false);
-    } else if (activeTab === 1) {
+    } else if (activeTab === 0) {
       setShowGeo(true);
-      setDrawnObj({ type: "", coordinates: "" });
+      setDrawnObj({ type: "", coordinates: [] });
     }
   }, [activeTab]);
 
@@ -86,7 +93,10 @@ function App() {
           Hello, {store.get("user_data").user_display_name},{" Pilot "}
           {pilotData?.pilot_name}
         </div>
-        <button className="ml-auto border border-solid border-gray-600 p-1">
+        <button
+          className="ml-auto border border-solid border-gray-600 p-1"
+          onClick={() => navigate("/data")}
+        >
           View Data
         </button>
         <button
@@ -99,7 +109,7 @@ function App() {
       <div>
         <MapContainer
           center={[51.505, -0.09]}
-          zoom={13}
+          zoom={10}
           scrollWheelZoom={true}
           style={{ height: "calc(100vh - 4rem)" }}
           ref={mapRef}
@@ -122,7 +132,7 @@ function App() {
           {serviceById.data && showGeo && drawerOpen && (
             <GeoJsonLayer data={serviceById.data} />
           )}
-          {activeTab === 0 && (
+          {activeTab === 1 && (
             <FeatureGroup>
               <Drawing
                 onCreate={(val) => setDrawnObj(val)}

@@ -63,22 +63,22 @@ export default function FireEvents({
           fire_intensity: data.fire_intensity,
           fire_type: data.fire_type,
           fire_size: Number(data.fire_size),
-          pilot_id,
+          // pilot_id,
         },
       });
-      // } else if (pilot_id) {
-      //   const form = new FormData();
-      //   form.set("pilot_id", pilot_id);
-      //   form.set("daterange", `${formattedStart}/${formattedEnd}`);
-      //   form.set("fire_intensity", data.fire_intensity);
-      //   form.set("fire_size", data.fire_size);
-      //   form.set("fire_type", data.fire_type);
-      //   mutate(form);
     } else if (state[state.length - 1]) {
       const form = new FormData();
-
-      form.set("pilot_id", pilot_id);
+      // form.set("pilot_id", pilot_id);
       form.set("entity_code", state[state.length - 1]);
+      form.set("daterange", `${formattedStart}/${formattedEnd}`);
+      form.set("fire_intensity", data.fire_intensity);
+      form.set("fire_size", data.fire_size);
+      form.set("fire_type", data.fire_type);
+      mutate(form);
+    } else if (data.shapefile[0]) {
+      const form = new FormData();
+      // form.set("pilot_id", pilot_id);
+      form.set("shapefile", data.shapefile[0]);
       form.set("daterange", `${formattedStart}/${formattedEnd}`);
       form.set("fire_intensity", data.fire_intensity);
       form.set("fire_size", data.fire_size);
@@ -87,7 +87,6 @@ export default function FireEvents({
     } else {
       const form = new FormData();
       form.set("pilot_id", pilot_id);
-      form.set("shapefile", data.shapefile[0]);
       form.set("daterange", `${formattedStart}/${formattedEnd}`);
       form.set("fire_intensity", data.fire_intensity);
       form.set("fire_size", data.fire_size);
@@ -111,13 +110,13 @@ export default function FireEvents({
             className="flex flex-col"
             onSubmit={handleSubmit(onSubmit)}
           >
-            SHP File
+            {/* SHP File
             <input
               {...register("shapefile")}
               type="file"
               accept=".zip"
               disabled={Boolean(partialGeoJson?.type)}
-            />
+            /> */}
             <FormTextInput
               name="fire_size"
               label="Fire Size (km²)"

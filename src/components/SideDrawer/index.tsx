@@ -13,7 +13,13 @@ import {
   useGetLocationServicesByLevel,
   useGetLocationServicesLevel0,
 } from "../../hooks/api";
-import { Dispatch, SetStateAction, useEffect, useReducer } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useReducer,
+  // useState,
+} from "react";
 import SoilType from "./SoilType";
 import Policies from "./Policies";
 import Programs from "./Programs";
@@ -98,7 +104,7 @@ export default function SideDrawer({
   }, [state, setSelectedLocation]);
 
   return (
-    <div className="bg-white w-80 h-[calc(100vh-4rem)] fixed z-[1001] top-16 right-0 overflow-y-auto">
+    <div className="bg-white w-96 h-[calc(100vh-4rem)] fixed z-[1001] top-16 right-0 overflow-y-auto">
       <div className="text-lg font-semibold mt-4 px-4">Input Data</div>
       {loading ? (
         <img src={"/spinner.svg"} />
@@ -111,26 +117,21 @@ export default function SideDrawer({
               onChange={(_, value) => setActiveTab(value)}
             >
               <Tab
-                label="Draw"
+                label="Administrative"
                 value={0}
               />
               <Tab
-                label="Administrative"
+                label="Draw"
                 value={1}
               />
+              {/* <Tab
+                label="Shape File"
+                value={2}
+              /> */}
             </Tabs>
             <CustomTabPanel
               value={activeTab}
               index={0}
-            >
-              <div className="bg-green-500 text-sm font-medium p-4 mb-4 text-center">
-                Use the drawing tools on the left OR .zip files. Be sure to
-                remove the drawing before using .zip files.
-              </div>
-            </CustomTabPanel>
-            <CustomTabPanel
-              value={activeTab}
-              index={1}
             >
               <div className="p-4">
                 <FormSelectInput
@@ -256,6 +257,37 @@ export default function SideDrawer({
                   )}
               </div>
             </CustomTabPanel>
+            <CustomTabPanel
+              value={activeTab}
+              index={1}
+            >
+              <div className="bg-green-500 text-sm font-medium p-4 mb-4 text-center">
+                Use the drawing tools on the left.
+              </div>
+            </CustomTabPanel>
+            {/* <CustomTabPanel
+              value={activeTab}
+              index={2}
+            >
+              <div className="bg-green-500 text-sm font-medium p-4 mb-4 text-center">
+                Use a{" "}
+                <a
+                  href="https://en.wikipedia.org/wiki/Shapefile"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-700"
+                >
+                  Shape file
+                </a>
+                . CRS 4326
+              </div>
+              <div className="p-4">
+                <input
+                  type="file"
+                  accept=".zip"
+                />
+              </div>
+            </CustomTabPanel> */}
           </div>
           <Accordion
             slotProps={{ transition: { unmountOnExit: true } }}
@@ -293,42 +325,46 @@ export default function SideDrawer({
               />
             </AccordionDetails>
           </Accordion>
-          {activeTab === 1 && (
-            <>
-              <Accordion
-                slotProps={{ transition: { unmountOnExit: true } }}
-                disableGutters
-              >
-                <AccordionSummary
-                  expandIcon={<ArrowDropDownIcon />}
-                  aria-controls="panel3-content"
-                  id="panel3-header"
-                >
-                  <span className="text-base font-semibold">Regulation</span>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Policies state={state} />
-                </AccordionDetails>
-              </Accordion>
-              <Accordion
-                slotProps={{ transition: { unmountOnExit: true } }}
-                disableGutters
-              >
-                <AccordionSummary
-                  expandIcon={<ArrowDropDownIcon />}
-                  aria-controls="panel4-content"
-                  id="panel4-header"
-                >
-                  <span className="text-base font-semibold">
-                    Rehabilitation and Restoration Programs
-                  </span>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Programs state={state} />
-                </AccordionDetails>
-              </Accordion>
-            </>
-          )}
+          <Accordion
+            slotProps={{ transition: { unmountOnExit: true } }}
+            disableGutters
+          >
+            <AccordionSummary
+              expandIcon={<ArrowDropDownIcon />}
+              aria-controls="panel3-content"
+              id="panel3-header"
+            >
+              <span className="text-base font-semibold">Regulation</span>
+            </AccordionSummary>
+            <AccordionDetails>
+              {activeTab === 1 ? (
+                "This input is not available with the current location selection method."
+              ) : (
+                <Policies state={state} />
+              )}
+            </AccordionDetails>
+          </Accordion>
+          <Accordion
+            slotProps={{ transition: { unmountOnExit: true } }}
+            disableGutters
+          >
+            <AccordionSummary
+              expandIcon={<ArrowDropDownIcon />}
+              aria-controls="panel4-content"
+              id="panel4-header"
+            >
+              <span className="text-base font-semibold">
+                Rehabilitation and Restoration Programs
+              </span>
+            </AccordionSummary>
+            <AccordionDetails>
+              {activeTab === 1 ? (
+                "This input is not available with the current location selection method."
+              ) : (
+                <Programs state={state} />
+              )}
+            </AccordionDetails>
+          </Accordion>
         </>
       )}
     </div>
