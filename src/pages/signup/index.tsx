@@ -207,7 +207,7 @@ const SignUp = () => {
                     className="text-grey-darker mb-2 font-bold"
                     htmlFor="feature_ids"
                   >
-                    Select Services
+                    Select Services {'[You can choose more than one]'}
                   </label>
                   <Field
                     as="select"

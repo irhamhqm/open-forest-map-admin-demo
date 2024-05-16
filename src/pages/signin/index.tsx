@@ -9,7 +9,6 @@ import store from "store2";
 
 const initialValues = {
   username: "",
-
   password: "",
 };
 
@@ -28,9 +27,11 @@ const SignIn = () => {
     setPasswordVisible(!passwordVisible);
   };
 
-  const { mutate, isSuccess, isError } = useSignIn();
-  const { isSuccess: isSuccessGetIsMe, data: dataSuccessGetIsMe } =
-    useGetIsMe(isSuccess);
+  const { mutate, isSuccess, isError, data, error } = useSignIn();
+  const { isSuccess: isSuccessGetIsMe, data: dataSuccessGetIsMe } = useGetIsMe(
+    isSuccess,
+    store.get("token")
+  );
 
   const onButtonClick = (values: any) => {
     if (values) {
@@ -51,6 +52,12 @@ const SignIn = () => {
       navigate("/map", { state: { signedUp: true } });
     }
   }, [isSuccessGetIsMe]);
+
+  if (isSuccess) {
+    store.set("token", data?.data);
+  }
+
+  console.log("error: ", error);
 
   return (
     <div className="h-screen flex-col flex justify-center items-center mt-[-60px]">
@@ -122,7 +129,11 @@ const SignIn = () => {
                 severity="error"
                 className="w-full mt-10 rounded-lg"
               >
-                {/* {error?.data?.meta} */}
+                {/* {
+                  
+                  error
+                
+                } */}
                 Unexpected error occured
               </Alert>
             )}
