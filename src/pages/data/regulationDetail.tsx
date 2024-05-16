@@ -12,7 +12,7 @@ export default function RegulationDetailpage() {
   // const mapRef = useRef<Map | null>(null);
   const { data, isLoading, isError } = useGetRegulationDetail(id);
 
-  if (isLoading || isError) return <></>;
+  if (isLoading || isError) return <img src={"/spinner.svg"} />;
 
   return (
     <div style={{ padding: "2rem" }}>

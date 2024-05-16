@@ -163,7 +163,8 @@ const DeleteCell = ({ id }: { id: string }) => {
 export default function RegulationPage() {
   const { data, isLoading, isError } = useGetRegulationList();
 
-  if (isLoading || isError) return <></>;
+  if (isLoading || isError) return <img src={"/spinner.svg"} />;
+
   return (
     <div style={{ padding: "2rem" }}>
       <DataNavbar />

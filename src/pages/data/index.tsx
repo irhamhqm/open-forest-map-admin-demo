@@ -136,7 +136,7 @@ const DeleteCell = ({ id }: { id: string }) => {
 export default function DataPage() {
   const { data, isLoading, isError } = useGetFireEventList();
 
-  if (isLoading || isError) return <></>;
+  if (isLoading || isError) return <img src={"/spinner.svg"} />;
 
   return (
     <div style={{ padding: "2rem" }}>

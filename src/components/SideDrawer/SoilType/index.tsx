@@ -37,7 +37,7 @@ export default function SoilType({
   const pilot_id = userData?.pilot_id;
 
   const onSubmit = (data: FormValues) => {
-    if (partialGeoJson?.type) {
+    if (partialGeoJson?.geometry.type) {
       mutate({
         type: partialGeoJson.type,
         geometry: {

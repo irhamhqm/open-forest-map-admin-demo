@@ -172,7 +172,8 @@ const DeleteCell = ({ id }: { id: string }) => {
 export default function ProgramPage() {
   const { data, isLoading, isError } = useGetProgramList();
 
-  if (isLoading || isError) return <></>;
+  if (isLoading || isError) return <img src={"/spinner.svg"} />;
+
   return (
     <div style={{ padding: "2rem" }}>
       <DataNavbar />

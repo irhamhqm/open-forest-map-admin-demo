@@ -51,7 +51,7 @@ export default function FireEvents({
   const { mutate, isPending, isSuccess, isError } = usePostFireEvent();
 
   const onSubmit = (data: FormValues) => {
-    if (partialGeoJson?.type) {
+    if (partialGeoJson?.geometry.type) {
       mutate({
         type: partialGeoJson.type,
         geometry: {
