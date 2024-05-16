@@ -1,11 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage, FieldProps } from "formik";
 import * as Yup from "yup";
 import { useGetAllPilots } from "../../hooks/api/pilot";
 import { useGetAllFeatures } from "../../hooks/api/feature";
 import { useSignUp } from "../../hooks/api/auth";
 import Alert from "@mui/material/Alert";
+import axios from 'axios';
+import Select, {ActionMeta,  MultiValue, SingleValue} from 'react-select';
+import { Snackbar } from "@mui/material";
+import makeAnimated from 'react-select/animated';
+
+const animatedComponents = makeAnimated();
+
 
 const initialValues = {
   user_name: "",
@@ -15,6 +22,7 @@ const initialValues = {
   user_affiliation: "",
   user_role: "",
   pilot_id: "",
+  selectedOccupation: 'citizen'
 };
 
 const validationSchema = Yup.object({
@@ -29,37 +37,145 @@ const validationSchema = Yup.object({
   // pilot_id: Yup.string().required('Required'),
 });
 
+interface Option {
+  label: string;
+  value: number;
+}
+
+interface OptionRole {
+  label: string;
+  value: string;
+}
+
+interface FormValues {
+  selectedOption: string;
+}
+
 const SignUp = () => {
+  const [selectedServices, setSelectedServices] = useState<Option[]>([]);
+  const [availableServices, setAvaliableServices] = useState<Option[]>([]);
+  const [selectedPilot, setSelectedPilot] = useState<Option | null>(null);
+  const [selectedRole, setSelectedRole] = useState<OptionRole | null>(null);
+  const [availablePilots, setAvaliablePilots] = useState<Option[]>([]);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isFeaturesListActive, setIsFeaturesListActive] =
     useState<boolean>(false);
-  const [selectedRole, setSelectedRole] = useState("");
+  const [openSnackBar, setOpenSnackBar] = useState(false);
+  const [messageAlert, setMessageAllert] = useState("");
+
+  const handleOpen = () => {
+    setOpenSnackBar(true);
+    setTimeout(() => {
+      setOpenSnackBar(false);
+    }, 3000); // Menutup snackbar setelah 3 detik
+  };
+
+  const occupations = [
+    {value:"firefighter", label: "Firefighter"},
+    {value:"police", label: "Police"},
+    {value:"major", label: "Major"},
+    {value:"citizen", label: "Citizen"},
+  ]
+  const roles = [
+    {value:"client", label: "Client"},
+    {value:"pilot_admin", label: "Pilot Admin"}
+  ]
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
 
   const onButtonClick = (values: any) => {
-    const { feature_ids, ...payload } = values;
-    payload["user_role"] = selectedRole;
-    if (selectedRole === "client") {
-      payload["feature_ids"] = feature_ids.join(", ");
-      delete payload.pilot_id;
+    const payload = {
+      "user_name": values.user_name,
+      "user_email": values.user_email,
+      "user_password": values.user_password,
+      "user_display_name": values.user_display_name,
+      "user_affiliation": values.user_affiliation,
+      "user_role": "",
+      "user_occupation": values.selectedOccupation,
+      "pilot_id": "",
+      "feature_ids": ""
+    };
+
+    if(!selectedRole){
+      setMessageAllert("Please select a user role");
+      handleOpen();
+      return;
     } else {
-      const allFeaturesId = dataGetAllFeatures?.data.map(
-        (item) => item.feature_id
-      );
-      payload["feature_ids"] = allFeaturesId?.join(", ");
+      payload.user_role = selectedRole.value;
+      if(selectedRole.value === "client"){
+        if(selectedServices.length === 0){
+          setMessageAllert("Please select at least a service you wanted to subscribe");
+          handleOpen();
+          return;
+        }else{
+          payload.feature_ids = selectedServices.map((item) => (
+            item.value
+          )).join(", ")
+        }
+      } else {
+        let pilotAdminFeatures = dataGetAllFeatures?.data.filter((item) => item.feature_name.toLocaleLowerCase() !== "multilingual alert system")
+        if (values.is_subscribe_mas) {
+          const masFeature = dataGetAllFeatures?.data.filter((item) => item.feature_name.toLocaleLowerCase() === "multilingual alert system") ?? []
+          pilotAdminFeatures = pilotAdminFeatures?.concat(masFeature)
+        }
+        payload.feature_ids = pilotAdminFeatures?.map((item) => (
+          item.feature_id
+        )).join(", ") ?? ""
+      }
     }
 
-    if (payload) {
-      mutate(payload);
+    if(!selectedPilot){
+      setMessageAllert("Please select a pilot area");
+      handleOpen();
+      return;
+    }else{
+      payload.pilot_id = selectedPilot.value + ''
+    }
+
+    //LET'S GO....
+    mutate(payload)
+  };
+
+  const handleRoleSelection = (newValue: SingleValue<OptionRole>, actionMeta: ActionMeta<OptionRole>) => {
+    setSelectedRole(newValue)
+    if(newValue?.value === "client") {
+      setIsFeaturesListActive(true)
+    } else {
+      setIsFeaturesListActive(false)
     }
   };
 
-  const { data: dataGetAllPilots } = useGetAllPilots();
-  const { data: dataGetAllFeatures } = useGetAllFeatures();
-  const { mutate, isSuccess, isError, data: dataSignUp } = useSignUp();
+  const handleServiceSelection = (newValue: MultiValue<Option>, actionMeta: ActionMeta<Option>) => {
+    setSelectedServices(newValue as Option[])
+  };
+
+  const handlePilotSelection = (newValue: SingleValue<Option>, actionMeta: ActionMeta<Option>) => {
+    setSelectedPilot(newValue)
+  };
+
+  const { data: dataGetAllPilots, isSuccess: successGetAllPilots } = useGetAllPilots();
+  const { data: dataGetAllFeatures, isSuccess: successGetAllFeatures } = useGetAllFeatures();
+  const { mutate, isSuccess, isError, data: dataSignUp, error } = useSignUp();
+
+  useEffect(()=>{
+    const features: Option[] | undefined = dataGetAllFeatures?.data.map((item) => {
+      return ({label:item.feature_name, value: item.feature_id})
+    }) ?? []
+    setAvaliableServices(features)
+  },[
+    successGetAllFeatures
+  ])
+
+  useEffect(()=>{
+    const pilots: Option[] | undefined = dataGetAllPilots?.data?.map((item) => {
+      return ({label:item.pilot_name, value: item.pilot_id})
+    }) ?? []
+    setAvaliablePilots(pilots)
+  },[
+    successGetAllPilots
+  ])
 
   return (
     <div className="flex-col flex justify-center items-center overflow-y-auto">
@@ -70,7 +186,7 @@ const SignUp = () => {
       <div>
         <div className="font-bold text-4xl mb-4 mt-[-60px]">Sign Up</div>
       </div>
-      <div className="pb-4">
+      <div className="pb-4 w-1/2">
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -78,6 +194,8 @@ const SignUp = () => {
         >
           <Form>
             <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col my-2">
+              
+              {/* USERNAME */}
               <div className="w-full px-3 mb-6 md:mb-4">
                 <label
                   className="text-grey-darker mb-2 font-bold"
@@ -98,6 +216,7 @@ const SignUp = () => {
                 />
               </div>
 
+              {/* EMAIL */}
               <div className="w-full px-3 mb-6 md:mb-2">
                 <label
                   className="text-grey-darker mb-2 font-bold"
@@ -118,6 +237,7 @@ const SignUp = () => {
                 />
               </div>
 
+              {/* DISPLAY NAME */}
               <div className="w-full px-3 mb-6 md:mb-4">
                 <label
                   className="text-grey-darker mb-2 font-bold"
@@ -138,6 +258,7 @@ const SignUp = () => {
                 />
               </div>
 
+              {/* USER AFFILIATION */}
               <div className="w-full px-3 mb-6 md:mb-4">
                 <label
                   className="text-grey-darker mb-2 font-bold"
@@ -158,6 +279,7 @@ const SignUp = () => {
                 />
               </div>
 
+              {/* USER ROLE */}
               <div className="w-full px-3 mb-6 md:mb-4">
                 <label
                   className="text-grey-darker mb-2 font-bold"
@@ -165,35 +287,14 @@ const SignUp = () => {
                 >
                   User Role
                 </label>
-                <Field
-                  value={selectedRole}
-                  name="user_role"
-                  as="select"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  onChange={(event: any) => {
-                    setSelectedRole(event.target.value);
-                    setIsFeaturesListActive(event.target.value === "client");
-                  }}
-                >
-                  <option
-                    disabled={true}
-                    value=""
-                  >
-                    Select A Role
-                  </option>
-                  <option
-                    key="client"
-                    value="client"
-                  >
-                    Client
-                  </option>
-                  <option
-                    key="pilot_admin"
-                    value="pilot_admin"
-                  >
-                    Pilot Admin
-                  </option>
-                </Field>
+                <Select
+                      closeMenuOnSelect={true}
+                      components={animatedComponents}
+                      options={roles}
+                      onChange={handleRoleSelection as any}
+                      isClearable
+                      name="user_role"
+                    />
                 <ErrorMessage
                   name="user_role"
                   component="div"
@@ -201,30 +302,23 @@ const SignUp = () => {
                 />
               </div>
 
+              {/* LAYANAN YANG DITAWARKAN */}
               {isFeaturesListActive && (
                 <div className="w-full px-3 mb-6 md:mb-4">
                   <label
                     className="text-grey-darker mb-2 font-bold"
                     htmlFor="feature_ids"
                   >
-                    Select Services {'[You can choose more than one]'}
+                    Select Services
                   </label>
-                  <Field
-                    as="select"
-                    multiple
-                    id="feature_ids"
+                  <Select
+                    closeMenuOnSelect={false}
+                    components={animatedComponents}
+                    isMulti
+                    options={availableServices}
+                    onChange={handleServiceSelection}
                     name="feature_ids"
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  >
-                    {dataGetAllFeatures?.data?.map((feature) => (
-                      <option
-                        key={feature.feature_id}
-                        value={feature.feature_id}
-                      >
-                        {feature.feature_name}
-                      </option>
-                    ))}
-                  </Field>
+                  />             
                   <ErrorMessage
                     name="feature_ids"
                     component="div"
@@ -234,41 +328,79 @@ const SignUp = () => {
               )}
 
               {!isFeaturesListActive && (
-                <div className="w-full px-3 mb-6 md:mb-4">
-                  <label
-                    className="text-grey-darker mb-2 font-bold"
-                    htmlFor="pilot_id"
-                  >
-                    Pilot
-                  </label>
-                  <Field
-                    name="pilot_id"
-                    as="select"
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  >
-                    <option
-                      disabled={true}
-                      value=""
-                    >
-                      Select A Pilot
-                    </option>
-                    {dataGetAllPilots?.data?.map((pilot) => (
-                      <option
-                        key={pilot.pilot_id}
-                        value={pilot.pilot_id}
-                      >
-                        {pilot.pilot_name}
-                      </option>
-                    ))}
-                  </Field>
-                  <ErrorMessage
-                    name="pilot_id"
-                    component="div"
-                    className="text-red-500 text-xs italic"
-                  />
-                </div>
+                <>
+                  {/* LAYANAN MULTILINGUAL */}
+                  <div className="w-full px-3 mb-6 md:mb-4">
+                    <label className="flex items-center space-x-2">
+                      <Field 
+                        // checked={true} 
+                        className="form-checkbox h-5 w-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" 
+                        name="is_subscribe_mas" 
+                        type="checkbox" />
+                      <span 
+                        className="ml-2 text-gray-700">
+                          I would like to subscribe <b>Multilingual Forest Fire Alert System</b> service
+                      </span>
+                    </label>
+                  </div>
+                </>
               )}
 
+              {/* PILOT AREA */}
+              <div className="w-full px-3 mb-6 md:mb-4">
+                <label
+                  className="text-grey-darker mb-2 font-bold"
+                  htmlFor="pilot_id"
+                >
+                  Pilot
+                </label>
+                <Select
+                  closeMenuOnSelect={true}
+                  components={animatedComponents}
+                  options={availablePilots}
+                  onChange={handlePilotSelection as any}
+                  isClearable
+                  name="pilot_id"
+                />
+                <ErrorMessage
+                  name="pilot_id"
+                  component="div"
+                  className="text-red-500 text-xs italic"
+                />
+              </div>
+
+              {/* OCUPATION */}
+              <div className="px-3 mb-6 md:mb-4">
+                <label className="text-grey-darker mb-2 font-bold">
+                  Occupation
+                </label>
+                <div className="grid grid-cols-2 gap-4 w-full">
+                  {occupations.map((item) => (
+                    <Field name="selectedOccupation" key={'Field'+item.value}>
+                    {(fieldProps: FieldProps<FormValues['selectedOption']>) => (
+                      <label 
+                        className="flex items-center p-4 bg-gray-200 rounded-lg cursor-pointer"
+                        key={'label'+item.value}
+                      >
+                        <input
+                          key={'radio' + item.value}
+                          type="radio"
+                          {...fieldProps.field}
+                          value={item.value}
+                          checked={fieldProps.field.value === item.value}
+                          className="form-radio h-4 w-4 text-indigo-600 cursor-pointer"
+                        />
+                        <span className="ml-2" key={'span'+item.value}>{item.label}</span>
+                      </label>
+                      )}
+                      </Field>
+                    )
+                  )}
+                </div>
+              </div>
+
+
+              {/* PASSWORD */}
               <div className="w-full px-3 mb-6 md:mb-2">
                 <div className="w-full">
                   <label
@@ -330,19 +462,33 @@ const SignUp = () => {
                 </Alert>
               )}
               {isError && (
-                <Alert
-                  variant="filled"
-                  severity="error"
-                  className="mt-6 w-full mt-10 rounded-lg"
-                >
-                  {/* {error?.response.data.meta} */}
-                  Unexpected error occured
-                </Alert>
-              )}
+              <Alert
+                variant="filled"
+                severity="error"
+                className="w-full mt-10 rounded-lg"
+              >
+                {(axios.isAxiosError(error) && error.response) ?  (
+                <div>
+                  <p>{error.response.data.meta}</p>
+                </div>
+                ) : (
+                  <>
+                    Unexpected error occured
+                  </>
+                )}
+              </Alert>
+            )}
             </div>
           </Form>
         </Formik>
       </div>
+      
+      <Snackbar open={openSnackBar} autoHideDuration={3000} onClose={() => setOpenSnackBar(false)}>
+        <Alert severity="error" onClose={() => setOpenSnackBar(false)}>
+          {messageAlert}
+        </Alert>
+      </Snackbar>
+    
     </div>
   );
 };
