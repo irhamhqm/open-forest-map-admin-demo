@@ -109,7 +109,7 @@ const SignUp = () => {
       "user_affiliation": values.user_affiliation,
       "user_role": "",
       "user_occupation": values.selectedOccupation,
-      "pilot_id": 0,
+      "pilot_id": "",
       "feature_ids": ""
     };
 
@@ -118,6 +118,7 @@ const SignUp = () => {
       handleOpen();
       return;
     } else {
+      payload.user_role = selectedRole.value;
       if(selectedRole.value === "client"){
         if(selectedServices.length === 0){
           setMessageAllert("Please select at least a service you wanted to subscribe");
@@ -140,11 +141,16 @@ const SignUp = () => {
       }
     }
 
+    if(!selectedPilot){
+      setMessageAllert("Please select a pilot area");
+      handleOpen();
+      return;
+    }else{
+      payload.pilot_id = selectedPilot.value + ''
+    }
 
-    console.log('values: ', values)
-    console.log('values.is_subscribe_mas: ', values.is_subscribe_mas)
-    console.log('payload: ', payload)
-    console.log('selectedRole', selectedRole)
+    //LET'S GO....
+    mutate(payload)
   };
 
   const handleRoleSelection = (newValue: SingleValue<OptionRole>, actionMeta: ActionMeta<OptionRole>) => {
@@ -185,9 +191,6 @@ const SignUp = () => {
   },[
     successGetAllPilots
   ])
-
-  console.log('role: ', selectedRole)
-  console.log('pesan: ', messageAlert)
 
   return (
     <div className="flex-col flex justify-center items-center overflow-y-auto">
