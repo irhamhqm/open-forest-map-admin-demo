@@ -86,21 +86,6 @@ const SignUp = () => {
   };
 
   const onButtonClick = (values: any) => {
-    // const { feature_ids, ...payload } = values;
-    // payload["user_role"] = selectedRole;
-    // if (selectedRole === "client") {
-    //   payload["feature_ids"] = feature_ids.join(", ");
-    //   delete payload.pilot_id;
-    // } else {
-    //   const allFeaturesId = dataGetAllFeatures?.data.map(
-    //     (item) => item.feature_id
-    //   );
-    //   payload["feature_ids"] = allFeaturesId?.join(", ");
-    // }
-
-    // if (payload) {
-    //   mutate(payload);
-    // }
     const payload = {
       "user_name": values.user_name,
       "user_email": values.user_email,
