@@ -50,6 +50,8 @@ function reducer(state: string[], action: { type: string; value: string }) {
       if (action.value === "")
         return [state[0], state[1], state[2], state[3], state[4]];
       return [state[0], state[1], state[2], state[3], state[4], action.value];
+    case "clear":
+      return [""];
   }
   return state;
 }
@@ -98,6 +100,12 @@ export default function SideDrawer({
   //   //     ?.name || ""
   //   // );
   // }, [state, servicesLevel0.data]);
+
+  useEffect(() => {
+    if (activeTab === 1) {
+      dispatch({ type: "clear", value: "" });
+    }
+  }, [activeTab]);
 
   useEffect(() => {
     setSelectedLocation(state[state.length - 1]);

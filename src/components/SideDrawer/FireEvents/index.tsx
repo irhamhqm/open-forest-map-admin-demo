@@ -6,7 +6,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { PartialSilvanusGeoJson } from "../../../types";
 import { usePostFireEvent } from "../../../hooks/api";
 import { Box, Snackbar } from "@mui/material";
-import store from "store2";
+// import store from "store2";
 
 const containerClass = "mb-4";
 const labelClass = "mb-2 text-[#212529]";
@@ -37,8 +37,8 @@ export default function FireEvents({
   });
   const [start, setStart] = useState<Dayjs | null>(dayjs());
   const [end, setEnd] = useState<Dayjs | null>(dayjs());
-  const userData = store.get("user_data");
-  const pilot_id = userData?.pilot_id;
+  // const userData = store.get("user_data");
+  // const pilot_id = userData?.pilot_id;
 
   const formattedStart = useMemo(() => {
     return dayjs(start).format("YYYY-MM-DD");
@@ -84,15 +84,16 @@ export default function FireEvents({
       //   form.set("fire_size", data.fire_size);
       //   form.set("fire_type", data.fire_type);
       //   mutate(form);
-    } else {
-      const form = new FormData();
-      form.set("pilot_id", pilot_id);
-      form.set("daterange", `${formattedStart}/${formattedEnd}`);
-      form.set("fire_intensity", data.fire_intensity);
-      form.set("fire_size", data.fire_size || "0");
-      form.set("fire_type", data.fire_type);
-      mutate(form);
     }
+    // } else {
+    //   const form = new FormData();
+    //   form.set("pilot_id", pilot_id);
+    //   form.set("daterange", `${formattedStart}/${formattedEnd}`);
+    //   form.set("fire_intensity", data.fire_intensity);
+    //   form.set("fire_size", data.fire_size || "0");
+    //   form.set("fire_type", data.fire_type);
+    //   mutate(form);
+    // }
   };
 
   return (
@@ -171,9 +172,12 @@ export default function FireEvents({
               />
             </Box>
             <button
-              className="bg-green-500 py-2 px-1 mt-6"
+              className="bg-green-500 py-2 px-1 mt-6 disabled:bg-gray-300"
               type="submit"
               value="submit"
+              disabled={
+                !partialGeoJson?.geometry.type && !state[state.length - 1]
+              }
             >
               Add data
             </button>

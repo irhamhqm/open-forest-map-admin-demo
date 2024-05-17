@@ -178,9 +178,10 @@ export default function Programs({ state }: { state: string[] }) {
               />
             </Box>
             <button
-              className="bg-green-500 py-2 px-1 mt-6"
+              className="bg-green-500 py-2 px-1 mt-6 disabled:bg-gray-300"
               type="submit"
               value="submit"
+              disabled={!state[state.length - 1]}
             >
               Add data
             </button>
