@@ -3,7 +3,7 @@ import { useFormContext } from "react-hook-form";
 
 type FormTextInputProps = {
   name: string;
-  label: string;
+  label: ReactNode;
   type?: "text" | "password" | "number";
   icon?: ReactNode;
   placeholder?: string;

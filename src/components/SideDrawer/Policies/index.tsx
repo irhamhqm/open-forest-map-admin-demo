@@ -92,7 +92,12 @@ export default function Policies({ state }: { state: string[] }) {
             /> */}
             <FormTextInput
               name="regulation_name"
-              label="Regulation's Name* (Required)"
+              label={
+                <>
+                  Regulation's Name
+                  <span className="text-red-500">* (Required)</span>
+                </>
+              }
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
@@ -102,7 +107,12 @@ export default function Policies({ state }: { state: string[] }) {
             />
             <FormTextInput
               name="regulation_description"
-              label="Regulation's Description* (Required)"
+              label={
+                <>
+                  Regulation's Description
+                  <span className="text-red-500">* (Required)</span>
+                </>
+              }
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
@@ -110,7 +120,8 @@ export default function Policies({ state }: { state: string[] }) {
                 required: "Regulation's description is required",
               }}
             />
-            Document* (Required)
+            Document
+            <span className="text-red-500">* (Required)</span>
             <input
               {...register("regulation_file", {
                 required: "Document file is required",
@@ -125,7 +136,9 @@ export default function Policies({ state }: { state: string[] }) {
               accept=".pdf"
             />
             <Box marginTop="16px">
-              Regulation effective date <br />
+              Regulation effective date
+              <span className="text-red-500">* (Required)</span>
+              <br />
               <DatePicker
                 value={date}
                 onChange={(value) => setDate(value)}

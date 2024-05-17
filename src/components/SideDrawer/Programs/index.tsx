@@ -103,7 +103,12 @@ export default function Programs({ state }: { state: string[] }) {
             /> */}
             <FormTextInput
               name="program_name"
-              label="Programme Name* (Required)"
+              label={
+                <>
+                  Programme Name{" "}
+                  <span className="text-red-500">* (Required)</span>
+                </>
+              }
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
@@ -113,7 +118,12 @@ export default function Programs({ state }: { state: string[] }) {
             />
             <FormTextInput
               name="program_description"
-              label="Programme Description* (Required)"
+              label={
+                <>
+                  Programme Description{" "}
+                  <span className="text-red-500">* (Required)</span>
+                </>
+              }
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
@@ -150,7 +160,11 @@ export default function Programs({ state }: { state: string[] }) {
               accept=".pdf"
             />
             <Box marginTop="16px">
-              Programme effective date <br />
+              Programme effective date
+              <>
+                <span className="text-red-500">* (Required)</span>
+              </>{" "}
+              <br />
               Programme start date
               <DatePicker
                 value={start}

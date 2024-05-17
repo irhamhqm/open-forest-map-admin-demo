@@ -106,7 +106,11 @@ export default function SoilType({
             /> */}
             <FormTextInput
               name="soil_type"
-              label="Soil Type* (Required)"
+              label={
+                <>
+                  Soil Type <span className="text-red-500">* (Required)</span>
+                </>
+              }
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
@@ -116,7 +120,11 @@ export default function SoilType({
             />
             <FormTextInput
               name="soil_texture"
-              label="Soil Texture* (Required)"
+              label={
+                <>
+                  Soil Texture<span className="text-red-500">* (Required)</span>
+                </>
+              }
               containerClass={containerClass}
               labelClass={labelClass}
               inputClass={textInputClass}
@@ -125,7 +133,10 @@ export default function SoilType({
               }}
             />
             <Box>
-              Observation Date
+              Observation Date{" "}
+              <>
+                <span className="text-red-500">* (Required)</span>
+              </>
               <DatePicker
                 value={date}
                 onChange={(value) => setDate(value)}

@@ -151,19 +151,20 @@ export default function FireEvents({
                 >
                   Select
                 </option>
+                <option value="">--</option>
                 <option value="low">Low Intensity</option>
                 <option value="moderate">Moderate Intensity</option>
                 <option value="high">High Intensity</option>
               </select>
             </div>
             <Box>
-              Fire start date
+              Fire start date <span className="text-red-500">* (Required)</span>
               <DatePicker
                 value={start}
                 onChange={(value) => setStart(value)}
               />
               <br />
-              Fire end date
+              Fire end date <span className="text-red-500">* (Required)</span>
               <DatePicker
                 value={end}
                 onChange={(value) => setEnd(value)}
