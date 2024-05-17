@@ -12,6 +12,7 @@ import { useGetPilotDetails } from "../../hooks/api/pilot";
 import { GeoJSONGeometry, parse } from "wellknown";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Alert } from "@mui/material";
+import ReportBugButton from './components/ReportBugButton';
 
 const admin_role = import.meta.env.VITE_NIMDA_ELOR.toLowerCase();
 const sa_admin_role = import.meta.env.VITE_NIMDA_AS_ELOR.toLowerCase();
@@ -132,7 +133,8 @@ function App() {
         </button>
       </div>
       {isAnAdmin ? (
-        <div>
+        <>
+          <div className="relative">
           <MapContainer
             center={[51.505, -0.09]}
             zoom={10}
@@ -167,6 +169,7 @@ function App() {
               </FeatureGroup>
             )}
           </MapContainer>
+          
           {/* <button
           className="bg-white p-2 rounded-full fixed z-[1002] top-4 right-4"
           onClick={() => setDrawerOpen((prev) => !prev)}
@@ -183,6 +186,8 @@ function App() {
             />
           )}
         </div>
+        <ReportBugButton/>
+        </>
       ) : (
         <div className="h-screen flex-col flex justify-center items-center mt-[-60px]">
           <img src={"/silvanus_icon.jpg"} />
