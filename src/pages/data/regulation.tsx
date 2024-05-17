@@ -24,7 +24,7 @@ const columns: GridColDef[] = [
     headerName: "Pilot Name",
     width: 120,
     valueGetter: (_: unknown, row: Regulation) =>
-      row.spatial.pilot_name || "Super admin",
+      row.spatial.pilot_name,
   },
   {
     field: "regulation_name",
