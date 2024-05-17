@@ -23,8 +23,7 @@ const columns: GridColDef[] = [
     field: "pilot_name",
     headerName: "Pilot Name",
     width: 120,
-    valueGetter: (_: unknown, row: Regulation) =>
-      row.spatial.pilot_name,
+    valueGetter: (_: unknown, row: Regulation) => row.spatial.pilot_name,
   },
   {
     field: "regulation_name",
@@ -126,7 +125,7 @@ const DeleteCell = ({ id }: { id: string }) => {
         setOpen(false);
       },
     });
-    location.reload();
+    // location.reload();
   };
 
   return (

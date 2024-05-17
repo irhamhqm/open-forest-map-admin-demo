@@ -98,7 +98,7 @@ const DeleteCell = ({ id }: { id: string }) => {
         setOpen(false);
       },
     });
-    location.reload();
+    // location.reload();
   };
 
   return (
