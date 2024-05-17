@@ -19,7 +19,6 @@ export function useGetFireEventList() {
     queryKey: ["fire_event_list"],
     queryFn: () => getFireEventList(),
     select: ({ data }) => data,
-    gcTime: 0,
   });
 }
 
@@ -43,7 +42,6 @@ export function useGetSoilTypeList() {
     queryKey: ["soil_type_list"],
     queryFn: () => getSoilTypeList(),
     select: ({ data }) => data,
-    gcTime: 0,
   });
 }
 
@@ -67,7 +65,6 @@ export function useGetRegulationList() {
     queryKey: ["regulation_list"],
     queryFn: () => getRegulation(),
     select: ({ data }) => data,
-    gcTime: 0,
   });
 }
 
@@ -91,7 +88,6 @@ export function useGetProgramList() {
     queryKey: ["program_list"],
     queryFn: () => getProgram(),
     select: ({ data }) => data,
-    gcTime: 0,
   });
 }
 

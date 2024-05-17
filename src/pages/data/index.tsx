@@ -9,10 +9,11 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  Snackbar,
+  // Snackbar,
 } from "@mui/material";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 const columns: GridColDef[] = [
   { field: "fire_event_id", headerName: "ID", width: 70, sortable: false },
@@ -85,8 +86,9 @@ const columns: GridColDef[] = [
 
 const DeleteCell = ({ id }: { id: string }) => {
   const [open, setOpen] = useState(false);
+  const client = useQueryClient();
 
-  const { mutate, isSuccess, isError } = useDeleteFireEvent();
+  const { mutate } = useDeleteFireEvent();
 
   const handleClose = () => {
     setOpen(false);
@@ -96,9 +98,9 @@ const DeleteCell = ({ id }: { id: string }) => {
     mutate(id, {
       onSuccess: () => {
         setOpen(false);
+        client.invalidateQueries();
       },
     });
-    // location.reload();
   };
 
   return (
@@ -129,16 +131,16 @@ const DeleteCell = ({ id }: { id: string }) => {
           </DialogActions>
         </Dialog>
       </div>
-      <Snackbar
+      {/* <Snackbar
         open={isSuccess}
         autoHideDuration={3000}
-        message="Succesfully added new data."
+        message="Succesfully deleted new data."
       />
       <Snackbar
         open={isError}
         autoHideDuration={3000}
         message="An error occured."
-      />
+      /> */}
     </>
   );
 };

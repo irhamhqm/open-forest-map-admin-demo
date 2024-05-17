@@ -11,8 +11,8 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  Snackbar,
 } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 
 const columns: GridColDef[] = [
   { field: "program_id", headerName: "ID", width: 70, sortable: false },
@@ -121,8 +121,9 @@ const columns: GridColDef[] = [
 
 const DeleteCell = ({ id }: { id: string }) => {
   const [open, setOpen] = useState(false);
+  const client = useQueryClient();
 
-  const { mutate, isSuccess, isError } = useDeleteProgram();
+  const { mutate } = useDeleteProgram();
 
   const handleClose = () => {
     setOpen(false);
@@ -132,6 +133,7 @@ const DeleteCell = ({ id }: { id: string }) => {
     mutate(id, {
       onSuccess: () => {
         setOpen(false);
+        client.invalidateQueries();
       },
     });
     // location.reload();
@@ -165,16 +167,16 @@ const DeleteCell = ({ id }: { id: string }) => {
           </DialogActions>
         </Dialog>
       </div>
-      <Snackbar
+      {/* <Snackbar
         open={isSuccess}
         autoHideDuration={3000}
-        message="Succesfully added new data."
+        message="Succesfully deleted new data."
       />
       <Snackbar
         open={isError}
         autoHideDuration={3000}
         message="An error occured."
-      />
+      /> */}
     </>
   );
 };
