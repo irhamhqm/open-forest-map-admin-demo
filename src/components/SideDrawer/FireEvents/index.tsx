@@ -75,15 +75,15 @@ export default function FireEvents({
       form.set("fire_size", data.fire_size);
       form.set("fire_type", data.fire_type);
       mutate(form);
-    } else if (data.shapefile[0]) {
-      const form = new FormData();
-      // form.set("pilot_id", pilot_id);
-      form.set("shapefile", data.shapefile[0]);
-      form.set("daterange", `${formattedStart}/${formattedEnd}`);
-      form.set("fire_intensity", data.fire_intensity);
-      form.set("fire_size", data.fire_size);
-      form.set("fire_type", data.fire_type);
-      mutate(form);
+      // } else if (data.shapefile && data.shapefile[0]) {
+      //   const form = new FormData();
+      //   // form.set("pilot_id", pilot_id);
+      //   form.set("shapefile", data.shapefile[0]);
+      //   form.set("daterange", `${formattedStart}/${formattedEnd}`);
+      //   form.set("fire_intensity", data.fire_intensity);
+      //   form.set("fire_size", data.fire_size);
+      //   form.set("fire_type", data.fire_type);
+      //   mutate(form);
     } else {
       const form = new FormData();
       form.set("pilot_id", pilot_id);

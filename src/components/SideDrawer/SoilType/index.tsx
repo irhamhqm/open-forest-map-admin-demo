@@ -61,24 +61,25 @@ export default function SoilType({
       form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
 
       mutate(form);
-      // } else if (pilot_id) {
-      //   const form = new FormData();
-      //   form.set("pilot_id", pilot_id);
-      //   form.set("soil_type", data.soil_type);
-      //   form.set("soil_texture", data.soil_texture);
-      //   form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
-
-      //   mutate(form);
-    } else {
-      const form = new FormData();
-      form.set("pilot_id", pilot_id);
-      form.set("shapefile", data.shapefile[0]);
-      form.set("soil_type", data.soil_type);
-      form.set("soil_texture", data.soil_texture);
-      form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
-
-      mutate(form);
     }
+    // } else if (pilot_id) {
+    //   const form = new FormData();
+    //   form.set("pilot_id", pilot_id);
+    //   form.set("soil_type", data.soil_type);
+    //   form.set("soil_texture", data.soil_texture);
+    //   form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
+
+    //   mutate(form);
+    // } else {
+    //   const form = new FormData();
+    //   form.set("pilot_id", pilot_id);
+    //   form.set("shapefile", data.shapefile[0]);
+    //   form.set("soil_type", data.soil_type);
+    //   form.set("soil_texture", data.soil_texture);
+    //   form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
+
+    //   mutate(form);
+    // }
   };
 
   return (

@@ -48,15 +48,15 @@ export default function Policies({ state }: { state: string[] }) {
       form.set("regulation_description", data.regulation_description);
       // form.set("daterange", `${formattedStart}/${formattedEnd}`);
       form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
-    } else if (data.shapefile[0]) {
-      // form.set("pilot_id", pilot_id);
-      form.set("shapefile", data.shapefile[0]);
-      form.set("regulation_file", data.regulation_file[0]);
-      form.set("regulation_engfile", data.regulation_file_translate[0]);
-      form.set("regulation_name", data.regulation_name);
-      form.set("regulation_description", data.regulation_description);
-      // form.set("daterange", `${formattedStart}/${formattedEnd}`);
-      form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
+      // } else if (data.shapefile && data.shapefile[0]) {
+      //   // form.set("pilot_id", pilot_id);
+      //   form.set("shapefile", data.shapefile[0]);
+      //   form.set("regulation_file", data.regulation_file[0]);
+      //   form.set("regulation_engfile", data.regulation_file_translate[0]);
+      //   form.set("regulation_name", data.regulation_name);
+      //   form.set("regulation_description", data.regulation_description);
+      //   // form.set("daterange", `${formattedStart}/${formattedEnd}`);
+      //   form.set("datetime", dayjs(date).format("YYYY-MM-DD"));
     } else {
       form.set("pilot_id", pilot_id);
       form.set("regulation_file", data.regulation_file[0]);

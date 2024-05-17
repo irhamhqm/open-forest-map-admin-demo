@@ -11,6 +11,7 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
+  Snackbar,
 } from "@mui/material";
 
 const columns: GridColDef[] = [
@@ -122,7 +123,7 @@ const columns: GridColDef[] = [
 const DeleteCell = ({ id }: { id: string }) => {
   const [open, setOpen] = useState(false);
 
-  const { mutate } = useDeleteProgram();
+  const { mutate, isSuccess, isError } = useDeleteProgram();
 
   const handleClose = () => {
     setOpen(false);
@@ -165,6 +166,16 @@ const DeleteCell = ({ id }: { id: string }) => {
           </DialogActions>
         </Dialog>
       </div>
+      <Snackbar
+        open={isSuccess}
+        autoHideDuration={3000}
+        message="Succesfully added new data."
+      />
+      <Snackbar
+        open={isError}
+        autoHideDuration={3000}
+        message="An error occured."
+      />
     </>
   );
 };
@@ -175,23 +186,25 @@ export default function ProgramPage() {
   if (isLoading || isError) return <img src={"/spinner.svg"} />;
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <DataNavbar />
-      <h3>Programme</h3>
-      <div style={{ height: 500 }}>
-        <DataGrid
-          rows={data}
-          columns={columns}
-          initialState={{
-            pagination: {
-              paginationModel: { page: 0, pageSize: 10 },
-            },
-          }}
-          getRowId={(row) => row.program_id}
-          pageSizeOptions={[5, 10]}
-          // checkboxSelection
-        />
+    <>
+      <div style={{ padding: "2rem" }}>
+        <DataNavbar />
+        <h3>Programme</h3>
+        <div style={{ height: 500 }}>
+          <DataGrid
+            rows={data}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 10 },
+              },
+            }}
+            getRowId={(row) => row.program_id}
+            pageSizeOptions={[5, 10]}
+            // checkboxSelection
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -59,16 +59,16 @@ export default function Programs({ state }: { state: string[] }) {
       form.set("program_size", data.program_size);
       form.set("program_budget", data.program_budget || "");
       form.set("daterange", `${formattedStart}/${formattedEnd}`);
-    } else if (data.shapefile[0]) {
-      // form.set("pilot_id", pilot_id);
-      form.set("shapefile", data.shapefile[0]);
-      form.set("program_file", data.program_file[0]);
-      form.set("program_engfile", data.program_engfile[0]);
-      form.set("program_name", data.program_name);
-      form.set("program_description", data.program_description);
-      form.set("program_size", data.program_size);
-      form.set("program_budget", data.program_budget || "");
-      form.set("daterange", `${formattedStart}/${formattedEnd}`);
+      // } else if (data.shapefile && data.shapefile[0]) {
+      //   // form.set("pilot_id", pilot_id);
+      //   form.set("shapefile", data.shapefile[0]);
+      //   form.set("program_file", data.program_file[0]);
+      //   form.set("program_engfile", data.program_engfile[0]);
+      //   form.set("program_name", data.program_name);
+      //   form.set("program_description", data.program_description);
+      //   form.set("program_size", data.program_size);
+      //   form.set("program_budget", data.program_budget || "");
+      //   form.set("daterange", `${formattedStart}/${formattedEnd}`);
     } else {
       form.set("pilot_id", pilot_id);
       form.set("program_file", data.program_file[0]);
