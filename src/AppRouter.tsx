@@ -11,6 +11,7 @@ import FireEventDetailPage from "./pages/data/fireEventDetail";
 import SoilTypeDetailPage from "./pages/data/soilTypeDetail";
 import RegulationDetailPage from "./pages/data/regulationDetail";
 import ProgramDetailPage from "./pages/data/programDetail";
+import ForgotPassword from "./pages/forgot_password";
 // import { useState } from 'react'
 
 function AppRouter() {
@@ -67,6 +68,10 @@ function AppRouter() {
           <Route
             path="/data/program/:id"
             element={<ProgramDetailPage />}
+          />
+          <Route
+            path="/forgot"
+            element={<ForgotPassword />}
           />
         </Routes>
       </BrowserRouter>
