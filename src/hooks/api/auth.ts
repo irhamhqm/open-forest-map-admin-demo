@@ -17,8 +17,13 @@ export const useSignUp = () => {
 };
 
 export const useGetIsMe = (isSignInSuccess: boolean, token: string) => {
+  const now = new Date();
+  const currentTime = now.toLocaleTimeString();
+
+  console.log('currentTime', currentTime)
+
   return useQuery({
-    queryKey: ["useGetIsMe" + token],
+    queryKey: ["useGetIsMe", token, currentTime],
     queryFn: () => getIsMe(),
     select: (response) => response,
     enabled: isSignInSuccess,
