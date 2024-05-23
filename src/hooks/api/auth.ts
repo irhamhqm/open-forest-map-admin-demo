@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { SignInPayload, SignUpPayload } from "../../types/api/auth";
-import { signIn, getIsMe, signUp } from "../../api/auth";
+import { SignInPayload, SignUpPayload, ForgotPasswordPayload } from "../../types/api/auth";
+import { signIn, getIsMe, signUp, forgotPassword } from "../../api/auth";
 
 export const useSignIn = () => {
     return useMutation({
@@ -25,5 +25,11 @@ export const useGetIsMe = (isSignInSuccess: boolean, token: string) => {
     queryFn: () => getIsMe(),
     select: (response) => response,
     enabled: isSignInSuccess,
+  });
+};
+
+export const useForgotPassword = () => {
+  return useMutation({
+    mutationFn: (payload: ForgotPasswordPayload) => forgotPassword(payload),
   });
 };

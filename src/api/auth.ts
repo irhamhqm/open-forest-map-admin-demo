@@ -5,6 +5,8 @@ import {
   IsMeResponse,
   SignUpPayload,
   SignUpResponse,
+  ForgotPasswordPayload,
+  ForgotPasswordResponse
 } from "../types/api/auth";
 import axiosAuthInstance from "../util/axios";
 
@@ -30,4 +32,12 @@ export const getIsMe: () => Promise<IsMeResponse> = async () => {
   const response = await axiosAuthInstance().get(`${baseUrl}/api/auth/me`);
 
   return response.data;
+};
+
+export const forgotPassword: (
+  payload: ForgotPasswordPayload
+) => Promise<ForgotPasswordResponse> = async (payload) => {
+  const res = await axios.post(`${baseUrl}/api/auth/forgot_password`, payload);
+
+  return res.data;
 };

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useSignIn, useGetIsMe } from "../../hooks/api/auth";
 import * as Yup from "yup";
@@ -29,7 +29,7 @@ const SignIn = () => {
   };
 
   const { mutate, isSuccess, isError, data, error } = useSignIn();
-  const { isSuccess: isSuccessGetIsMe, data: dataSuccessGetIsMe } = useGetIsMe(
+  const { isSuccess: isSuccessGetIsMe, data: dataSuccessGetIsMe, error: error2 } = useGetIsMe(
     isSuccess,
     store.get("token")
   );
@@ -57,7 +57,6 @@ const SignIn = () => {
   if (isSuccess) {
     store.set("token", data?.data);
   }
-
   
   return (
     <div className="h-screen flex-col flex justify-center items-center mt-[-60px]">
@@ -66,64 +65,82 @@ const SignIn = () => {
       <div>
         <div className="font-bold text-4xl mb-4 mt-[-60px]">Sign In</div>
       </div>
-      <div className="pb-4">
+      <div className="pb-4 w-1/4">
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={onButtonClick}
         >
           <Form>
-            <div>
-              <label htmlFor="username">Username</label>
-              <Field
-                type="text"
-                id="username"
-                name="username"
-                placeholder="Enter your username here"
-                className={
-                  "ml-10 py-2 px-4 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64 mb-2"
-                }
-              />
-              <ErrorMessage
-                name="username"
-                component="div"
-                className="ml-10 text-red-500 text-sm ml-auto"
-              />
-            </div>
-            <div>
-              <label htmlFor="password">Password </label>
-              <Field
-                type={passwordVisible ? "text" : "password"}
-                id="password"
-                name="password"
-                placeholder="Enter your password here"
-                className={
-                  "ml-10 py-2 px-4 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64 mb-8"
-                }
-              />
-              <button
-                type="button"
-                className="px-3 text-gray-600 ml-auto"
-                onClick={togglePasswordVisibility}
-              >
-                {passwordVisible ? <VisibilityOff /> : <Visibility />}
-              </button>
-              <ErrorMessage
-                name="password"
-                component="div"
-                className="ml-10 text-red-500 text-sm ml-auto"
-              />
-            </div>
+            <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col my-2">
+              {/* USERNAME */}
+              <div className="w-full px-3 mb-6 md:mb-4">
+                <label 
+                  htmlFor="username"
+                  className="text-grey-darker mb-2 font-bold"
+                >
+                  Username
+                </label>
+                <Field
+                  type="text"
+                  id="username"
+                  name="username"
+                  placeholder="Enter your username here"
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+                <ErrorMessage
+                  name="username"
+                  component="div"
+                  className="text-red-500 text-xs italic"
+                />
+              </div>
+              
+              {/* PASSWORD */}
+              <div className="w-full px-3 mb-6 md:mb-2">
+                <div className="w-full">
+                  <label 
+                    htmlFor="password"
+                    className="text-grey-darker mb-2 font-bold"
+                  >
+                    Password
+                  </label>
+                  <Field
+                    type={passwordVisible ? "text" : "password"}
+                    id="password"
+                    name="password"
+                    placeholder="Enter your password here"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                  <ErrorMessage
+                    name="password"
+                    component="div"
+                    className="text-red-500 text-xs italic"
+                  />
+                  <button
+                    type="button"
+                    className="px-3 text-gray-600 ml-auto"
+                    onClick={togglePasswordVisibility}
+                  >
+                    {passwordVisible ? <VisibilityOff /> : <Visibility />}
+                  </button>
+                </div>
 
-            <button
-              type="submit"
-              className={
-                "w-full justify-between bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-xl cursor-pointer"
-              }
-            >
-              Sign In
-            </button>
-
+                {/* Forgot Password */}
+                <div className="text-right italic text-gray-500 mb-4">
+                  <Link to="/forgot">oops, I forgot my password</Link>
+                </div>
+              </div>
+              
+              <div className="w-full px-3 mb-6 md:mb-2">
+                <button
+                    type="submit"
+                    className="w-full justify-between bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-xl cursor-pointer"
+                >
+                  Sign In
+                </button>
+              </div>
+            </div>
+            
             {isError && (
               <Alert
                 variant="filled"
