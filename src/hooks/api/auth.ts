@@ -20,8 +20,6 @@ export const useGetIsMe = (isSignInSuccess: boolean, token: string) => {
   const now = new Date();
   const currentTime = now.toLocaleTimeString();
 
-  console.log('currentTime', currentTime)
-
   return useQuery({
     queryKey: ["useGetIsMe", token, currentTime],
     queryFn: () => getIsMe(),
