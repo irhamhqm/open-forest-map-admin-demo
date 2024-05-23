@@ -33,6 +33,13 @@ function App() {
   const location = useLocation();
   const serviceById = useGetLocationServiceById({ id: selectedLocation });
 
+  // CEK APAKAH USER SUDAH LOGIN
+  useEffect(() => {
+    if(!location?.state?.signedUp) {
+      navigate('/signin')
+    }
+  }, [location?.state?.signedUp]);
+
   const partialFormattedSilvanusGeoJson = useMemo(() => {
     // let val = { coordinates: [[{ lat: 0, lon: 0 }]], type: "" };
 
@@ -104,70 +111,75 @@ function App() {
 
   return (
     <>
-      <div className="flex w-full p-4 h-16 bg-white">
-        <div>
-          Hello, {store.get("user_data").user_display_name},{" Pilot "}
-          {pilotData?.pilot_name || "Super admin"}
-        </div>
-        <button
-          className="ml-4 border border-solid border-gray-600 p-1"
-          onClick={() => {
-            store.clear();
-            navigate("/");
-          }}
-        >
-          Sign Out
-        </button>
-        <button
-          className="ml-auto border border-solid border-gray-600 p-1"
-          onClick={() => navigate("/data")}
-        >
-          View Data
-        </button>
-        <button
-          onClick={() => setDrawerOpen((prev) => !prev)}
-          className="ml-2 border border-solid border-gray-600 p-1"
-        >
-          {drawerOpen ? "Close" : "Input Data"}
-        </button>
-      </div>
       {isAnAdmin ? (
         <>
+          <div className="flex w-full bg-gray-800 py-4">
+            <div className="container mx-auto px-4 flex">
+              <p className="text-white text-xl font-semibold">
+                Hello, {store.get("user_data").user_display_name},{" Pilot "}
+                {pilotData?.pilot_name || "Super admin"}
+              </p>
+
+              <button className="ml-4 bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 rounded-md transition duration-300 ease-in-out"
+                onClick={() => {
+                  store.clear();
+                  navigate("/");
+                }}
+              >
+                Sign Out
+              </button>
+
+              <button
+                className="ml-auto bg-orange-500 hover:bg-orange-600 text-white font-bold px-4 rounded-md transition duration-300 ease-in-out"
+                onClick={() => navigate("/data")}
+              >
+                View Data
+              </button>
+
+              <button
+                onClick={() => setDrawerOpen((prev) => !prev)}
+                className="ml-4 bg-green-500 hover:bg-green-600 text-white font-bold px-4 rounded-md transition duration-300 ease-in-out"
+              >
+                {drawerOpen ? "Close" : "Input Data"}
+              </button>
+            </div>
+            
+          </div>
           <div className="relative">
-          <MapContainer
-            center={[51.505, -0.09]}
-            zoom={10}
-            scrollWheelZoom={true}
-            style={{ height: "calc(100vh - 4rem)" }}
-            ref={mapRef}
-          >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            {pilotData && !pilotLoading && (
-              <GeoJsonLayer
-                data={{
-                  type: "Feature",
-                  geometry: parse(pilotData.pilot_geom) as GeoJSONGeometry,
-                }}
-                style={{
-                  color: "yellow",
-                }}
+            <MapContainer
+              center={[51.505, -0.09]}
+              zoom={10}
+              scrollWheelZoom={true}
+              style={{ height: "calc(100vh - 4rem)" }}
+              ref={mapRef}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
-            )}
-            {serviceById.data && showGeo && drawerOpen && (
-              <GeoJsonLayer data={serviceById.data} />
-            )}
-            {activeTab === 1 && (
-              <FeatureGroup>
-                <Drawing
-                  onCreate={(val) => setDrawnObj(val)}
-                  activeTab={activeTab}
+              {pilotData && !pilotLoading && (
+                <GeoJsonLayer
+                  data={{
+                    type: "Feature",
+                    geometry: parse(pilotData.pilot_geom) as GeoJSONGeometry,
+                  }}
+                  style={{
+                    color: "yellow",
+                  }}
                 />
-              </FeatureGroup>
-            )}
-          </MapContainer>
+              )}
+              {serviceById.data && showGeo && drawerOpen && (
+                <GeoJsonLayer data={serviceById.data} />
+              )}
+              {activeTab === 1 && (
+                <FeatureGroup>
+                  <Drawing
+                    onCreate={(val) => setDrawnObj(val)}
+                    activeTab={activeTab}
+                  />
+                </FeatureGroup>
+              )}
+            </MapContainer>
           
           {/* <button
           className="bg-white p-2 rounded-full fixed z-[1002] top-4 right-4"
@@ -175,16 +187,16 @@ function App() {
         >
           {drawerOpen ? <Close /> : <Menu />}
         </button> */}
-          {drawerOpen && (
-            <SideDrawer
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-              setSelectedLocation={setSelectedLocation}
-              loading={serviceById.isLoading}
-              partialGeoJson={partialFormattedSilvanusGeoJson}
-            />
-          )}
-        </div>
+            {drawerOpen && (
+              <SideDrawer
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                setSelectedLocation={setSelectedLocation}
+                loading={serviceById.isLoading}
+                partialGeoJson={partialFormattedSilvanusGeoJson}
+              />
+            )}
+          </div>
         <ReportBugButton/>
         </>
       ) : (
