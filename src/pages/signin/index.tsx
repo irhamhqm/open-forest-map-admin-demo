@@ -29,7 +29,7 @@ const SignIn = () => {
   };
 
   const { mutate, isSuccess, isError, data, error } = useSignIn();
-  const { isSuccess: isSuccessGetIsMe, data: dataSuccessGetIsMe, error: error2 } = useGetIsMe(
+  const { isSuccess: isSuccessGetIsMe, data: dataSuccessGetIsMe } = useGetIsMe(
     isSuccess,
     store.get("token")
   );

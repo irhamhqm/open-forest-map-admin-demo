@@ -23,7 +23,6 @@ const ForgotPassword = () => {
     isSuccess: isSuccessForgotPassword, 
     isError: isErrorForgotPassword, 
     error: errorForgotPassword,
-    data: dataForgotPassword
   } = useForgotPassword();
 
   const handleOpenSnackBar = () => {
