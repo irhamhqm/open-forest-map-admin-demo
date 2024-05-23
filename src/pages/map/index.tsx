@@ -6,7 +6,6 @@ import { useGetLocationServiceById } from "../../hooks/api";
 import GeoJsonLayer from "../../components/GeoJsonLayer";
 import { parseToSilvanusCoord, sivalnusCoordToSilvanusGeo } from "../../util";
 import { LatLng, Map } from "leaflet";
-// import { useLocation } from "react-router-dom";
 import store from "store2";
 import { useGetPilotDetails } from "../../hooks/api/pilot";
 import { GeoJSONGeometry, parse } from "wellknown";

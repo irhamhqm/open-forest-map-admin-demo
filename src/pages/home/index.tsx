@@ -1,11 +1,22 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 
 const Home = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [prevLocation, setPrevLocation] = useState(location);
 
   const onButtonClick = (path: string) => {
     navigate(path)
   }
+
+  useEffect(() => {
+    if (location !== prevLocation) {
+      setPrevLocation(location);
+      window.location.reload();
+      console.log('reload...')
+    }
+  },[location, prevLocation])
 
   return (
     <div className="h-screen flex-col flex justify-center items-center mt-[-60px]">
