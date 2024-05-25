@@ -115,12 +115,12 @@ function App() {
         <>
           <div className="flex w-full bg-gray-800 py-4">
             <div className="container mx-auto px-4 flex">
-              <p className="text-white text-xl font-semibold">
+              <p className="text-white md:text-xl font-semibold">
                 Hello, {store.get("user_data").user_display_name},{" Pilot "}
                 {pilotData?.pilot_name || "Super admin"}
               </p>
 
-              <button className="ml-4 bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 rounded-md transition duration-300 ease-in-out"
+              <button className="md:text-lg text-xs md:ml-4 bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 rounded-md transition duration-300 ease-in-out"
                 onClick={() => {
                   store.clear();
                   navigate("/");
@@ -130,7 +130,7 @@ function App() {
               </button>
 
               <button
-                className="ml-auto bg-orange-500 hover:bg-orange-600 text-white font-bold px-4 rounded-md transition duration-300 ease-in-out"
+                className="md:text-lg text-xs md:ml-auto bg-orange-500 hover:bg-orange-600 text-white font-bold px-4 rounded-md transition duration-300 ease-in-out"
                 onClick={() => navigate("/data")}
               >
                 View Data
@@ -138,7 +138,7 @@ function App() {
 
               <button
                 onClick={() => setDrawerOpen((prev) => !prev)}
-                className="ml-4 bg-green-500 hover:bg-green-600 text-white font-bold px-4 rounded-md transition duration-300 ease-in-out"
+                className="md:text-lg text-xs md:ml-4 bg-green-500 hover:bg-green-600 text-white font-bold px-4 rounded-md transition duration-300 ease-in-out py-2"
               >
                 {drawerOpen ? "Close" : "Input Data"}
               </button>

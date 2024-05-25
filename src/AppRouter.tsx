@@ -12,6 +12,7 @@ import SoilTypeDetailPage from "./pages/data/soilTypeDetail";
 import RegulationDetailPage from "./pages/data/regulationDetail";
 import ProgramDetailPage from "./pages/data/programDetail";
 import ForgotPassword from "./pages/forgot_password";
+import ResetPassword from "./pages/reset_password";
 // import { useState } from 'react'
 
 function AppRouter() {
@@ -72,6 +73,10 @@ function AppRouter() {
           <Route
             path="/forgot"
             element={<ForgotPassword />}
+          />
+          <Route
+            path="/reset"
+            element={<ResetPassword />}
           />
         </Routes>
       </BrowserRouter>

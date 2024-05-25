@@ -59,13 +59,12 @@ const SignIn = () => {
   }
   
   return (
-    <div className="h-screen flex-col flex justify-center items-center mt-[-60px]">
-      
+    <div className="h-screen flex-col flex justify-center items-center md:mt-[-60px]">
       <img src={"/silvanus_icon.jpg"} />
       <div>
         <div className="font-bold text-4xl mb-4 mt-[-60px]">Sign In</div>
       </div>
-      <div className="pb-4 w-1/4">
+      <div className="pb-4 md:w-1/4">
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}

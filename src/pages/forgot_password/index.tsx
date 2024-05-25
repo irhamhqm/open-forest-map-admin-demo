@@ -51,13 +51,17 @@ const ForgotPassword = () => {
 
 
   return (
-    <div className="h-screen flex-col flex justify-center items-center mt-[-60px]">
+    <div className="h-screen flex-col flex justify-center items-center md:mt-[-60px]">
       
       <img src={"/silvanus_icon.jpg"} />
       <div>
-        <div className="font-bold text-4xl mb-4 mt-[-60px]">Password Reset Request</div>
+        <div className="font-bold text-4xl mb-4 mt-[-60px]">
+          <p className="text-center">
+          Password Reset Request
+          </p>
+        </div>
       </div>
-      <div className="pb-4 w-1/4">
+      <div className="pb-4 md:w-1/4">
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -137,7 +141,17 @@ const ForgotPassword = () => {
               >
                 {(axios.isAxiosError(errorForgotPassword) && errorForgotPassword.response) ?  (
                 <div>
-                  <p>{errorForgotPassword.response.data.meta}</p>
+                  <p>
+                    {errorForgotPassword.response.data.meta}{'!'}
+                    <br />
+                    I think it's better for you to&nbsp;
+                    <a
+                      href="/signup"
+                      className="text-blue-400 hover:text-orange-500 font-bold"
+                    >
+                    register
+                    </a>&nbsp;your new account
+                  </p>
                 </div>
                 ) : (
                   <>

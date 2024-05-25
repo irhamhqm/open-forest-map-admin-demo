@@ -195,7 +195,7 @@ const SignUp = () => {
       <div>
         <div className="font-bold text-4xl mb-4 mt-[-60px]">Sign Up</div>
       </div>
-      <div className="pb-4 w-1/2">
+      <div className="pb-4 md:w-1/2">
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -475,7 +475,7 @@ const SignUp = () => {
                   </a>
                   &nbsp;to redirect you to the
                   <br />
-                  Sign Up page
+                  Sign In page
                 </Alert>
               )}
               {isError && (
