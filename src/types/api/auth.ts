@@ -43,3 +43,8 @@ export interface ForgotPasswordResponse {
   meta: string;
   status: boolean;
 }
+
+export interface ResetPasswordPayload {
+  new_password: string;
+  token: string;
+}

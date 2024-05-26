@@ -2,9 +2,8 @@ import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Alert from "@mui/material/Alert";
-// import axios from 'axios';
-import { Snackbar } from "@mui/material";
-// import { useForgotPassword } from "../../hooks/api/auth";
+import axios from 'axios';
+import { useResetPassword } from "../../hooks/api/auth";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useSearchParams } from "react-router-dom";
 
@@ -23,20 +22,18 @@ const validationSchema = Yup.object({
 });
 
 const ResetPassword = () => {
-  const [openSnackBar, setOpenSnackBar] = useState(false);
-  const [messageAlert, setMessageAllert] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [retypePasswordVisible, setRetypePasswordVisible] = useState(false);
   const [searchParams] = useSearchParams();
 
   const token = searchParams.get('token');
 
-  // const { 
-  //   mutate: mutateForgotPassword, 
-  //   isSuccess: isSuccessForgotPassword, 
-  //   isError: isErrorForgotPassword, 
-  //   error: errorForgotPassword,
-  // } = useForgotPassword();
+  const { 
+    mutate: mutateResetPassword, 
+    isSuccess: isSuccessResetPassword, 
+    isError: isErrorResetPassword, 
+    error: errorResetPassword,
+  } = useResetPassword();
 
 
   const togglePasswordVisibility = () => {
@@ -48,22 +45,17 @@ const ResetPassword = () => {
   };
 
   const onButtonClick = (values: any) => {
-    if (values) {
-      console.log('values: ', values)
-
-      // DUMMY
-      setMessageAllert('Successfully reset password!');
+    if (values) {      
       // LET'S GOOO!
-      // mutateForgotPassword(
-      //   {
-      //     user_email: values.user_email
-      //   }
-      // );
+      mutateResetPassword(
+        {
+          token: token || '',
+          new_password: values.new_password
+        }
+      );
     }
   };
 
-  //TESTING TOKEN
-  console.log(token);
 
   return (
     <div className="h-screen flex-col flex justify-center items-center md:mt-[-60px]">
@@ -88,25 +80,29 @@ const ResetPassword = () => {
                 >
                   New Password
                 </label>
-                <Field
-                    type={passwordVisible ? "text" : "password"}
-                    id="new_password"
-                    name="new_password"
-                    placeholder="Type your new password here"
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
+                <div className="flex shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                  <Field
+                      type={passwordVisible ? "text" : "password"}
+                      id="new_password"
+                      name="new_password"
+                      placeholder="Type your new password here"
+                      className="w-full border-none p-2 bg-transparent focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    className="px-3 text-gray-600 ml-auto"
+                    onClick={togglePasswordVisibility}
+                  >
+                    {passwordVisible ? <VisibilityOff /> : <Visibility />}
+                  </button>
+                </div>
+                
                 <ErrorMessage
                   name="new_password"
                   component="div"
                   className="text-red-500 text-xs italic"
                 />
-                <button
-                  type="button"
-                  className="px-3 text-gray-600 ml-auto"
-                  onClick={togglePasswordVisibility}
-                >
-                  {passwordVisible ? <VisibilityOff /> : <Visibility />}
-                </button>
+                
               </div>
 
               {/* Retype Password */}
@@ -117,63 +113,73 @@ const ResetPassword = () => {
                 >
                   Retype New Password
                 </label>
-                <Field
-                    type={retypePasswordVisible ? "text" : "password"}
-                    id="retype_password"
-                    name="retype_password"
-                    placeholder="Retype your new password here"
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
+                <div className="flex shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                  <Field
+                      type={retypePasswordVisible ? "text" : "password"}
+                      id="retype_password"
+                      name="retype_password"
+                      placeholder="Retype your new password here"
+                      className="w-full border-none p-2 bg-transparent focus:outline-none"
+                  />
+
+                  <button
+                    type="button"
+                    className="px-3 text-gray-600 ml-auto"
+                    onClick={toggleRetypePasswordVisibility}
+                  >
+                    {retypePasswordVisible ? <VisibilityOff /> : <Visibility />}
+                  </button>
+                </div>
+                
                 <ErrorMessage
                   name="retype_password"
                   component="div"
                   className="text-red-500 text-xs italic"
                 />
-                <button
-                  type="button"
-                  className="px-3 text-gray-600 ml-auto"
-                  onClick={toggleRetypePasswordVisibility}
-                >
-                  {retypePasswordVisible ? <VisibilityOff /> : <Visibility />}
-                </button>
               </div>
 
               <div className="w-full px-3 mb-6 md:mb-2">
                 <button
                     type="submit"
-                    // className=
-                    // {isSuccessForgotPassword? 
-                    //   "w-full justify-between bg-blue-500 text-white font-bold py-2 px-4 rounded-lg text-xl":
-                    //   "w-full justify-between bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-xl cursor-pointer"
-                    // }
-                    // disabled={isSuccessForgotPassword}
+                    className=
+                    {isSuccessResetPassword? 
+                      "w-full justify-between bg-blue-500 text-white font-bold py-2 px-4 rounded-lg text-xl":
+                      "w-full justify-between bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-xl cursor-pointer"
+                    }
+                    disabled={isSuccessResetPassword}
                 >
                   Reset My Password
                 </button>
               </div>
             </div>
 
-            {/* {isSuccessForgotPassword && (
+            {isSuccessResetPassword && (
               <Alert
                 variant="filled"
                 severity="success"
                 className="mt-6 w-full mt-10 rounded-lg"
               >
-                Password Reset Token has been sent to your email.
-                <br />
-                Please check it.
+                <p>
+                Your password has been successfully reset. Please go to the&nbsp; 
+                <a
+                  href="/signin"
+                  className="text-blue-400 hover:text-orange-500 font-bold"
+                >
+                  Sign In
+                </a>&nbsp;page
+                </p>
               </Alert>
-            )} */}
+            )}
             
-            {/* {isErrorForgotPassword && (
+            {isErrorResetPassword && (
               <Alert
                 variant="filled"
                 severity="error"
                 className="w-full mt-10 rounded-lg"
               >
-                {(axios.isAxiosError(errorForgotPassword) && errorForgotPassword.response) ?  (
+                {(axios.isAxiosError(errorResetPassword) && errorResetPassword.response) ?  (
                 <div>
-                  <p>{errorForgotPassword.response.data.meta}</p>
+                  <p>{errorResetPassword.response.data.meta}</p>
                 </div>
                 ) : (
                   <>
@@ -181,20 +187,7 @@ const ResetPassword = () => {
                   </>
                 )}
               </Alert>
-            )} */}
-
-            <Snackbar
-              open={openSnackBar}
-              autoHideDuration={3000}
-              onClose={() => setOpenSnackBar(false)}
-            >
-              <Alert
-                severity="error"
-                onClose={() => setOpenSnackBar(false)}
-              >
-                {messageAlert}
-              </Alert>
-            </Snackbar>
+            )}
           </Form>
         </Formik>
       </div>

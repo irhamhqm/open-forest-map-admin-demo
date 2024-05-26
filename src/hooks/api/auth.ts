@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { SignInPayload, SignUpPayload, ForgotPasswordPayload } from "../../types/api/auth";
-import { signIn, getIsMe, signUp, forgotPassword } from "../../api/auth";
+import { SignInPayload, SignUpPayload, ForgotPasswordPayload, ResetPasswordPayload } from "../../types/api/auth";
+import { signIn, getIsMe, signUp, forgotPassword, resetPassword } from "../../api/auth";
 
 export const useSignIn = () => {
     return useMutation({
@@ -31,5 +31,11 @@ export const useGetIsMe = (isSignInSuccess: boolean, token: string) => {
 export const useForgotPassword = () => {
   return useMutation({
     mutationFn: (payload: ForgotPasswordPayload) => forgotPassword(payload),
+  });
+};
+
+export const useResetPassword = () => {
+  return useMutation({
+    mutationFn: (payload: ResetPasswordPayload) => resetPassword(payload),
   });
 };
