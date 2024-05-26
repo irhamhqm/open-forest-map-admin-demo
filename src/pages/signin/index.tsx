@@ -103,25 +103,31 @@ const SignIn = () => {
                   >
                     Password
                   </label>
-                  <Field
-                    type={passwordVisible ? "text" : "password"}
-                    id="password"
-                    name="password"
-                    placeholder="Enter your password here"
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  />
+                  <div className="flex shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <Field
+                      type={passwordVisible ? "text" : "password"}
+                      id="password"
+                      name="password"
+                      placeholder="Enter your password here"
+                      className="w-full border-none p-2 bg-transparent focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      className="px-3 text-gray-600 ml-auto"
+                      onClick={togglePasswordVisibility}
+                    >
+                      {passwordVisible ? <VisibilityOff /> : <Visibility />}
+                    </button>
+                  </div>
+
+                  
+                  
                   <ErrorMessage
                     name="password"
                     component="div"
                     className="text-red-500 text-xs italic"
                   />
-                  <button
-                    type="button"
-                    className="px-3 text-gray-600 ml-auto"
-                    onClick={togglePasswordVisibility}
-                  >
-                    {passwordVisible ? <VisibilityOff /> : <Visibility />}
-                  </button>
+                  
                 </div>
 
                 {/* Forgot Password */}

@@ -6,7 +6,8 @@ import {
   SignUpPayload,
   SignUpResponse,
   ForgotPasswordPayload,
-  ForgotPasswordResponse
+  ForgotPasswordResponse,
+  ResetPasswordPayload
 } from "../types/api/auth";
 import axiosAuthInstance from "../util/axios";
 
@@ -38,6 +39,20 @@ export const forgotPassword: (
   payload: ForgotPasswordPayload
 ) => Promise<ForgotPasswordResponse> = async (payload) => {
   const res = await axios.post(`${baseUrl}/api/auth/forgot_password`, payload);
+
+  return res.data;
+};
+
+export const resetPassword: (
+  payload: ResetPasswordPayload
+) => Promise<ForgotPasswordResponse> = async (payload) => {
+  const {token, ...NewPassword} = payload
+
+  const res = await axios.post(`${baseUrl}/api/auth/reset_password`, NewPassword, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
 
   return res.data;
 };
