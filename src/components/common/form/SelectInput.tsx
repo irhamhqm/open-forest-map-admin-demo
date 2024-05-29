@@ -23,7 +23,7 @@ export default function FormSelectInput(props: FormSelectInputProps) {
         {props.label}
       </label>
       <select
-        className={`${props.inputClass} disabled:bg-[#f2f2f2]`}
+        className={`${props.inputClass} disabled:bg-[#f2f2f2] text-black`}
         id={props.name}
         disabled={props.disabled}
         value={props.value}
