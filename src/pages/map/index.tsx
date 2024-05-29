@@ -12,6 +12,8 @@ import { GeoJSONGeometry, parse } from "wellknown";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Alert } from "@mui/material";
 import ReportBugButton from './components/ReportBugButton';
+import Sidebar from "./components/SidebarMenu";
+import Header from "./components/Header";
 
 const admin_role = import.meta.env.VITE_NIMDA_ELOR.toLowerCase();
 const sa_admin_role = import.meta.env.VITE_NIMDA_AS_ELOR.toLowerCase();
@@ -26,12 +28,18 @@ function App() {
   const [selectedLocation, setSelectedLocation] = useState<string>("");
   const [showGeo, setShowGeo] = useState(false);
   const [isAnAdmin, setIsAnAdmin] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [enableDrawingTools, setEnableDrawingTools] = useState(false);
   const mapRef = useRef<Map | null>(null);
   const userData = store.get("user_data");
   const navigate = useNavigate();
 
   const location = useLocation();
   const serviceById = useGetLocationServiceById({ id: selectedLocation });
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
   // CEK APAKAH USER SUDAH LOGIN
   useEffect(() => {
@@ -109,95 +117,76 @@ function App() {
     }
   }, [activeTab]);
 
+  console.log('serviceById.data: ', serviceById.data)
+
   return (
     <>
       {isAnAdmin ? (
         <>
-          <div className="flex w-full bg-gray-800 py-4">
-            <div className="container mx-auto px-4 flex">
-              <p className="text-white md:text-xl font-semibold">
-                Hello, {store.get("user_data").user_display_name},{" Pilot "}
-                {pilotData?.pilot_name || "Super admin"}
-              </p>
-
-              <button className="md:text-lg text-xs md:ml-4 bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 rounded-md transition duration-300 ease-in-out"
-                onClick={() => {
-                  store.clear();
-                  navigate("/");
-                }}
-              >
-                Sign Out
-              </button>
-
-              <button
-                className="md:text-lg text-xs md:ml-auto bg-orange-500 hover:bg-orange-600 text-white font-bold px-4 rounded-md transition duration-300 ease-in-out"
-                onClick={() => navigate("/data")}
-              >
-                View Data
-              </button>
-
-              <button
-                onClick={() => setDrawerOpen((prev) => !prev)}
-                className="md:text-lg text-xs md:ml-4 bg-green-500 hover:bg-green-600 text-white font-bold px-4 rounded-md transition duration-300 ease-in-out py-2"
-              >
-                {drawerOpen ? "Close" : "Input Data"}
-              </button>
-            </div>
-            
-          </div>
-          <div className="relative">
-            <MapContainer
-              center={[51.505, -0.09]}
-              zoom={10}
-              scrollWheelZoom={true}
-              style={{ height: "calc(100vh - 4rem)" }}
-              ref={mapRef}
-            >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-              {pilotData && !pilotLoading && (
-                <GeoJsonLayer
-                  data={{
-                    type: "Feature",
-                    geometry: parse(pilotData.pilot_geom) as GeoJSONGeometry,
-                  }}
-                  style={{
-                    color: "yellow",
-                  }}
-                />
-              )}
-              {serviceById.data && showGeo && drawerOpen && (
-                <GeoJsonLayer data={serviceById.data} />
-              )}
-              {activeTab === 1 && (
-                <FeatureGroup>
-                  <Drawing
-                    onCreate={(val) => setDrawnObj(val)}
-                    activeTab={activeTab}
+          <div className="h-screen flex">
+            <Sidebar 
+              isOpen={isSidebarOpen} 
+              toggleSidebar={toggleSidebar}
+              setEnableDrawingTools={setEnableDrawingTools}
+              setSelectedLocation={setSelectedLocation}
+              setShowGeo={setShowGeo}
+            />
+            <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'ml-96' : 'ml-16'}`}>
+              <Header pilotData={pilotData} setDrawerOpen={setDrawerOpen} drawerOpen={drawerOpen}/>
+              <div className="w-full">
+                <MapContainer
+                  center={[51.505, -0.09]}
+                  zoom={10}
+                  scrollWheelZoom={true}
+                  style={{ height: "calc(100vh - 4rem)" }}
+                  ref={mapRef}
+                >
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   />
-                </FeatureGroup>
-              )}
-            </MapContainer>
+                  {pilotData && !pilotLoading && (
+                    <GeoJsonLayer
+                      data={{
+                        type: "Feature",
+                        geometry: parse(pilotData.pilot_geom) as GeoJSONGeometry,
+                      }}
+                      style={{
+                        color: "yellow",
+                      }}
+                    />
+                  )}
+                  {serviceById.data && showGeo && (
+                    <GeoJsonLayer 
+                      data={serviceById.data}
+                      style={{
+                        color: "orange",
+                      }}
+                    />
+                  )}
+                  {enableDrawingTools && (
+                    <FeatureGroup>
+                      <Drawing
+                        onCreate={(val) => setDrawnObj(val)}
+                        activeTab={activeTab}
+                      />
+                    </FeatureGroup>
+                  )}
+                </MapContainer>
           
-          {/* <button
-          className="bg-white p-2 rounded-full fixed z-[1002] top-4 right-4"
-          onClick={() => setDrawerOpen((prev) => !prev)}
-        >
-          {drawerOpen ? <Close /> : <Menu />}
-        </button> */}
-            {drawerOpen && (
-              <SideDrawer
-                activeTab={activeTab}
-                setActiveTab={setActiveTab}
-                setSelectedLocation={setSelectedLocation}
-                loading={serviceById.isLoading}
-                partialGeoJson={partialFormattedSilvanusGeoJson}
-              />
-            )}
+                {drawerOpen && (
+                  <SideDrawer
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
+                    setSelectedLocation={setSelectedLocation}
+                    loading={serviceById.isLoading}
+                    partialGeoJson={partialFormattedSilvanusGeoJson}
+                  />
+                )}
+              </div>
+              <ReportBugButton/>
+            </div>
           </div>
-        <ReportBugButton/>
         </>
       ) : (
         <div className="h-screen flex-col flex justify-center items-center mt-[-60px]">
