@@ -1,5 +1,5 @@
 import store from "store2";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 interface HeaderProps {

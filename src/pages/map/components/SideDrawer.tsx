@@ -1,4 +1,4 @@
-import { Tabs, Tab, Typography } from "@mui/material";
+import { Tabs, Tab } from "@mui/material";
 import { Dispatch, SetStateAction, useState } from "react";
 import TabPanel from "./TabPanel";
 import AdministrativeInput from "./inputLocation/AdministrativeInput";
