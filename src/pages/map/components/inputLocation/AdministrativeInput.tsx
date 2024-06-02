@@ -82,7 +82,6 @@ const AdministrativeInput = ({
       setAdministrativeAreaState(state);
     }, [state, setSelectedLocation]);
 
-    console.log('state: ', state)
 
     return (
         <div>
@@ -103,7 +102,6 @@ const AdministrativeInput = ({
                   value={state[0]}
                   onChange={(value) => 
                     {
-                      console.log('value level 0: ', value)
                       dispatch({ type: "level0", value });
                     }}
                 />
@@ -126,7 +124,6 @@ const AdministrativeInput = ({
                       data={servicesLevel1.data || []}
                       value={state[1]}
                       onChange={(value) => {
-                        console.log('value level 1: ', value)
                         dispatch({ type: "level1", value });
                       }}
                     />
@@ -150,7 +147,6 @@ const AdministrativeInput = ({
                       data={servicesLevel2.data || []}
                       value={state[2]}
                       onChange={(value) => {
-                        console.log('value level 2: ', value)
                         dispatch({ type: "level2", value });
                       }}
                     />
@@ -174,7 +170,6 @@ const AdministrativeInput = ({
                       data={servicesLevel3.data || []}
                       value={state[3]}
                       onChange={(value) => {
-                        console.log('value level 3: ', value)
                         dispatch({ type: "level3", value });
                       }}
                     />

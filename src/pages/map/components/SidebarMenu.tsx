@@ -1,5 +1,6 @@
 import React, {Dispatch, SetStateAction, useState} from 'react';
 import SideDrawer from './SideDrawer';
+import { PartialSilvanusGeoJson } from '../../../types';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -7,7 +8,8 @@ interface SidebarProps {
   // activeTab: number;
   setEnableDrawingTools: Dispatch<SetStateAction<boolean>>;
   setSelectedLocation: Dispatch<SetStateAction<string>>;
-  setShowGeo: Dispatch<SetStateAction<boolean>>
+  setShowGeo: Dispatch<SetStateAction<boolean>>;
+  partialGeoJson: PartialSilvanusGeoJson | null;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ 
@@ -15,7 +17,9 @@ const Sidebar: React.FC<SidebarProps> = ({
     toggleSidebar, 
     setEnableDrawingTools, 
     setSelectedLocation,
-    setShowGeo  }) => {
+    setShowGeo,
+    partialGeoJson
+    }) => {
   const [activeTab, setActiveTab] = useState(0);
   
   return (
@@ -52,6 +56,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           setEnableDrawingTools={setEnableDrawingTools}
           setSelectedLocation={setSelectedLocation}
           setShowGeo={setShowGeo}
+          partialGeoJson={partialGeoJson}
         />
       </nav>
     </div>

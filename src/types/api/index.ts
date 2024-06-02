@@ -27,8 +27,9 @@ type FEPayloadJSON = {
   type: string;
   properties: {
     daterange: string;
-    fire_intensity: "low" | "moderate" | "high";
-    fire_size: number;
+    fire_intensity: string;
+    fire_size: string;
+    fire_cause: string;
     fire_type: string;
     // pilot_id: number;
   };
