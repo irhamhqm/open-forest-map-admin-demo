@@ -1,99 +1,96 @@
 import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
-import { LatLng, Marker, Polygon } from "leaflet";
+import { LatLng, Marker, Polygon, Icon  } from "leaflet";
 import { useGeomanControls } from "react-leaflet-geoman-v2";
+import * as turf from "@turf/turf";
 
-export default function Drawing({
-  onCreate,
-}: {
-  onCreate: ({
-    type,
-    coordinates,
-  }: {
+const customFireIcon = new Icon({
+  iconUrl: '/Fire.png',
+  iconSize: [41, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+});
+
+
+export default function Drawing({onCreate}: {onCreate: ({type, coordinates, area}: {
     type: string;
     coordinates: LatLng | LatLng[] | LatLng[][] | LatLng[][][];
+    area: string;
   }) => void;
-  activeTab: number;
 }) {
   let layer: Element | undefined;
 
   useGeomanControls({
     options: {
-      drawText: false,
-      drawCircle: false,
-      drawCircleMarker: false,
+      // position: "topright",
+      drawMarker: true,
+      drawPolygon: true,
       drawPolyline: false,
       drawRectangle: false,
-      drawMarker: true,
+      drawCircle: false,
+      drawCircleMarker: false,
+      drawText: false
     },
     onCreate: (e) => {
+      // POLYGON
       if (e.shape === "Polygon") {
         if (layer) {
-          // pass LatLng as string, easier to work with because the data returned from leaflet-geom
-          // can vary
           layer.remove();
         }
-        layer = (e.layer as Polygon).getElement();
+        
+        layer = (e.layer as Polygon).setStyle({ color: "red" }).getElement();
+        
+        const markedArea = (e.layer as Polygon);
+        const markedAreaGeoJSON = markedArea.toGeoJSON();
+        const area = (turf.area(markedAreaGeoJSON)/1000000).toFixed(2);
+
         onCreate({
           coordinates: (e.layer as Polygon).getLatLngs(),
           type: "Polygon",
+          area: area,
         });
-        // } else if (e.shape === "Rectangle") {
-        //   if (layer) {
-        //     layer.remove();
-        //   }
-        //   layer = (e.layer as Rectangle).getElement();
-        //   onCreate({
-        //     coordinates: (e.layer as Rectangle).getLatLngs(),
-        //     type: "Rectangle",
-        //   });
-        // } else if (e.shape === "Circle") {
-        //   if (layer) {
-        //     layer.remove();
-        //   }
-        //   layer = (e.layer as Circle).getElement();
-        //   onCreate({
-        //     coordinates: (e.layer as Circle).getLatLng(),
-        //     type: "Circle",
-        //   });
-      } else if (e.shape === "Marker") {
+      } 
+      
+      // MARKER
+      if (e.shape === "Marker") {
         if (layer) {
           layer.remove();
         }
-        layer = (e.layer as Marker).getElement();
+        layer = (e.layer as Marker).setIcon(customFireIcon).getElement();
         onCreate({
           coordinates: (e.layer as Marker).getLatLng(),
           type: "Point",
+          area: "0.00",
         });
       }
     },
     onEdit: (e) => {
       if (e.shape === "Polygon") {
+        layer = (e.layer as Polygon).setStyle({ color: "red" }).getElement();
+        
+        const markedArea = (e.layer as Polygon);
+        const markedAreaGeoJSON = markedArea.toGeoJSON();
+        const area = (turf.area(markedAreaGeoJSON)/1000000).toFixed(2);
+
         onCreate({
           coordinates: (e.layer as Polygon).getLatLngs(),
           type: "Polygon",
+          area: area,
         });
-      } else if (e.shape === "Marker") {
+      } 
+      
+      // MARKER
+      if (e.shape === "Marker") {
+        layer = (e.layer as Marker).setIcon(customFireIcon).getElement();
         onCreate({
           coordinates: (e.layer as Marker).getLatLng(),
           type: "Point",
+          area: "0.00",
         });
       }
-      // } else if (e.shape === "Rectangle") {
-      //   onCreate({
-      //     coordinates: (e.layer as Rectangle).getLatLngs(),
-      //     type: "Rectangle",
-      //   });
-      // } else if (e.shape === "Circle") {
-      //   onCreate({
-      //     coordinates: (e.layer as Circle).getLatLng(),
-      //     type: "Circle",
-      //   });
-      // }
     },
     onLayerRemove: () => {
-      onCreate({ type: "", coordinates: [] });
+      onCreate({ type: "", coordinates: [], area: "0.00" });
     },
-    // eventDebugFn: console.log,
   });
   return null;
 }

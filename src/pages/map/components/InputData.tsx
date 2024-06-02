@@ -5,14 +5,18 @@ import {
   } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import FireEvents from "./inputAtributesData/FireEvents";
+import { PartialSilvanusGeoJson } from "../../../types";
 
 const InputData = ({
     activeTab,
-    administrativeAreaState
+    administrativeAreaState,
+    partialGeoJson
 }:{
     activeTab: number;
     administrativeAreaState: string[];
+    partialGeoJson: PartialSilvanusGeoJson | null;
 }) => {
+
     return (
         <div className="mt-2">
             {/* FIRE EVENTS */}
@@ -29,7 +33,11 @@ const InputData = ({
                     <span className="text-base font-semibold">Fire Events</span>
                 </AccordionSummary>
                 <AccordionDetails sx={{ backgroundColor: 'white' }}>
-                    <FireEvents administrativeAreaState={administrativeAreaState}/>
+                    <FireEvents 
+                        administrativeAreaState={administrativeAreaState} 
+                        activeTab={activeTab}
+                        partialGeoJson={partialGeoJson}
+                    />
                 </AccordionDetails>
             </Accordion>
 

@@ -52,20 +52,20 @@ export default function FireEvents({
 
   const onSubmit = (data: FormValues) => {
     if (partialGeoJson?.geometry.type) {
-      mutate({
-        type: partialGeoJson.type,
-        geometry: {
-          ...partialGeoJson.geometry,
-          coordinates: partialGeoJson.geometry.coordinates,
-        },
-        properties: {
-          daterange: `${formattedStart}/${formattedEnd}`,
-          fire_intensity: data.fire_intensity,
-          fire_type: data.fire_type,
-          fire_size: Number(data.fire_size) || 0,
-          // pilot_id,
-        },
-      });
+      // mutate({
+      //   type: partialGeoJson.type,
+      //   geometry: {
+      //     ...partialGeoJson.geometry,
+      //     coordinates: partialGeoJson.geometry.coordinates,
+      //   },
+      //   properties: {
+      //     daterange: `${formattedStart}/${formattedEnd}`,
+      //     fire_intensity: data.fire_intensity,
+      //     fire_type: data.fire_type,
+      //     fire_size: Number(data.fire_size) || 0,
+      //     // pilot_id,
+      //   },
+      // });
     } else if (state[state.length - 1]) {
       const form = new FormData();
       // form.set("pilot_id", pilot_id);

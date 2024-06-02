@@ -5,19 +5,22 @@ import AdministrativeInput from "./inputLocation/AdministrativeInput";
 import DrawInput from "./inputLocation/DrawInput";
 import InputData from "./InputData";
 import ShapeFileInput from "./inputLocation/ShapeFileInput";
+import { PartialSilvanusGeoJson } from "../../../types";
 
 const SideDrawer = ({
         activeTab, 
         setActiveTab,
         setEnableDrawingTools,
         setSelectedLocation,
-        setShowGeo
+        setShowGeo,
+        partialGeoJson
         }:{
         activeTab: number;
         setActiveTab: Dispatch<SetStateAction<number>>;
         setEnableDrawingTools: Dispatch<SetStateAction<boolean>>;
         setSelectedLocation: Dispatch<SetStateAction<string>>;
         setShowGeo: Dispatch<SetStateAction<boolean>>;
+        partialGeoJson: PartialSilvanusGeoJson | null;
         }) => {
 
     const [administrativeAreaState, setAdministrativeAreaState] = useState<string[]>([]);
@@ -84,6 +87,7 @@ const SideDrawer = ({
                     <InputData 
                         activeTab={activeTab}
                         administrativeAreaState={administrativeAreaState}
+                        partialGeoJson={partialGeoJson}
                     />
                 </div>
             </div>

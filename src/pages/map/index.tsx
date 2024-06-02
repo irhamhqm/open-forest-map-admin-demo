@@ -23,7 +23,8 @@ function App() {
   const [drawnObj, setDrawnObj] = useState<{
     type: string;
     coordinates: LatLng | LatLng[] | LatLng[][] | LatLng[][][];
-  }>({ type: "", coordinates: [] });
+    area: string;
+  }>({ type: "", coordinates: [], area: "0.00" });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<string>("");
   const [showGeo, setShowGeo] = useState(false);
@@ -49,18 +50,11 @@ function App() {
   }, [location?.state?.signedUp]);
 
   const partialFormattedSilvanusGeoJson = useMemo(() => {
-    // let val = { coordinates: [[{ lat: 0, lon: 0 }]], type: "" };
-
     if (drawnObj.coordinates) {
-      // val = {
-      //   coordinates: parseToSilvanusCoord(drawnObj.coordinates),
-      //   type: drawnObj.type,
-      // };
-      // console.log(val);
-
       return sivalnusCoordToSilvanusGeo({
         coordinates: parseToSilvanusCoord(drawnObj.coordinates),
         type: drawnObj.type,
+        area: drawnObj.area,
       });
     }
 
@@ -113,11 +107,9 @@ function App() {
       setShowGeo(false);
     } else if (activeTab === 0) {
       setShowGeo(true);
-      setDrawnObj({ type: "", coordinates: [] });
+      setDrawnObj({ type: "", coordinates: [], area: "0.00" });
     }
   }, [activeTab]);
-
-  console.log('serviceById.data: ', serviceById.data)
 
   return (
     <>
@@ -130,6 +122,7 @@ function App() {
               setEnableDrawingTools={setEnableDrawingTools}
               setSelectedLocation={setSelectedLocation}
               setShowGeo={setShowGeo}
+              partialGeoJson={partialFormattedSilvanusGeoJson}
             />
             <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'ml-96' : 'ml-16'}`}>
               <Header pilotData={pilotData} setDrawerOpen={setDrawerOpen} drawerOpen={drawerOpen}/>
@@ -168,7 +161,6 @@ function App() {
                     <FeatureGroup>
                       <Drawing
                         onCreate={(val) => setDrawnObj(val)}
-                        activeTab={activeTab}
                       />
                     </FeatureGroup>
                   )}

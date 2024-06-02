@@ -54,9 +54,11 @@ export const parseToGeojson = (payload: Raw | undefined) => {
 export const sivalnusCoordToSilvanusGeo = ({
   coordinates,
   type,
+  area,
 }: {
   coordinates: SilvanusCoord[][] | SilvanusCoord[] | SilvanusCoord;
   type: string;
+  area: string;
 }): PartialSilvanusGeoJson => {
   return {
     type: "Feature",
@@ -64,6 +66,7 @@ export const sivalnusCoordToSilvanusGeo = ({
       type,
       coordinates,
     },
+    area: area,
   };
 };
 

@@ -35,6 +35,7 @@ export type PartialSilvanusGeoJson = {
     type: string;
     coordinates: SilvanusCoord[][] | SilvanusCoord[] | SilvanusCoord;
   };
+  area: string;
 };
 
 export interface IsMeData {
